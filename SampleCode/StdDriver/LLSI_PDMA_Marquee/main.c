@@ -116,12 +116,12 @@ int main(void)
     PDMA_Open(1 << 0);
     /* Transfer count is TEST_COUNT, transfer width is 32 bits(one word) */
     PDMA_SetTransferCnt(0, PDMA_WIDTH_32, TEST_COUNT);
+    /* Transfer type is single transfer */
+    PDMA_SetBurstType(0, PDMA_REQ_SINGLE, 0);
     /* Set source address is g_au32RED_Marquee0, destination address is &LLSI0->DATA */
     PDMA_SetTransferAddr(0, (uint32_t)g_au32RED_Marquee0, PDMA_SAR_INC, (uint32_t)&LLSI0->DATA, PDMA_DAR_FIX);
     /* Request source is LLSI0 */
     PDMA_SetTransferMode(0, PDMA_LLSI0, FALSE, 0);
-    /* Transfer type is single transfer */
-    PDMA_SetBurstType(0, PDMA_REQ_SINGLE, 0);
 
     /* Init LLSI */
     LLSI_Init();
