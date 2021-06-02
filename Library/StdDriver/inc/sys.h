@@ -73,6 +73,23 @@ extern "C"
 #define SYS_BODCTL_BODVL_2_7V           (1UL<<SYS_BODCTL_BODVL_Pos)       /*!< Setting Brown Out Detector Threshold Voltage as 2.7V */
 #define SYS_BODCTL_BODVL_2_2V           (0UL<<SYS_BODCTL_BODVL_Pos)       /*!< Setting Brown Out Detector Threshold Voltage as 2.2V */
 
+#define SYS_BODCTL_LVRDGSEL_0CLK       (0x0UL<<SYS_BODCTL_LVRDGSEL_Pos)   /*! LVR Output De-glitch Time Without de-glitch function. */
+#define SYS_BODCTL_LVRDGSEL_4CLK       (0x1UL<<SYS_BODCTL_LVRDGSEL_Pos)   /*! LVR Output De-glitch Time is selected 4 HCLK clock */
+#define SYS_BODCTL_LVRDGSEL_8CLK       (0x2UL<<SYS_BODCTL_LVRDGSEL_Pos)   /*! LVR Output De-glitch Time is selected 8 HCLK clock */
+#define SYS_BODCTL_LVRDGSEL_16CLK      (0x3UL<<SYS_BODCTL_LVRDGSEL_Pos)   /*! LVR Output De-glitch Time is selected 16 HCLK clock */
+#define SYS_BODCTL_LVRDGSEL_32CLK      (0x4UL<<SYS_BODCTL_LVRDGSEL_Pos)   /*! LVR Output De-glitch Time is selected 32 HCLK clock */
+#define SYS_BODCTL_LVRDGSEL_64CLK      (0x5UL<<SYS_BODCTL_LVRDGSEL_Pos)   /*! LVR Output De-glitch Time is selected 64 HCLK clock */
+#define SYS_BODCTL_LVRDGSEL_128CLK     (0x6UL<<SYS_BODCTL_LVRDGSEL_Pos)   /*! LVR Output De-glitch Time is selected 128 HCLK clock */
+#define SYS_BODCTL_LVRDGSEL_256CLK     (0x7UL<<SYS_BODCTL_LVRDGSEL_Pos)   /*! LVR Output De-glitch Time is selected 256 HCLK clock */
+
+#define SYS_BODCTL_BODDGSEL_0CLK       (0x0UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is sampled by LIRC clock. */
+#define SYS_BODCTL_BODDGSEL_4CLK       (0x1UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 4 HCLK clock */
+#define SYS_BODCTL_BODDGSEL_8CLK       (0x2UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 8 HCLK clock */
+#define SYS_BODCTL_BODDGSEL_16CLK      (0x3UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 16 HCLK clock */
+#define SYS_BODCTL_BODDGSEL_32CLK      (0x4UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 32 HCLK clock */
+#define SYS_BODCTL_BODDGSEL_64CLK      (0x5UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 64 HCLK clock */
+#define SYS_BODCTL_BODDGSEL_128CLK     (0x6UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 128 HCLK clock */
+#define SYS_BODCTL_BODDGSEL_256CLK     (0x7UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 256 HCLK clock */
 
 /*---------------------------------------------------------------------------------------------------------*/
 /*  Multi-Function constant definitions.                                                                   */
