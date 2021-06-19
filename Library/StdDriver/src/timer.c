@@ -203,6 +203,23 @@ void TIMER_EnableCapture(TIMER_T *timer, uint32_t u32CapMode, uint32_t u32Edge)
 }
 
 /**
+  * @brief      Select Timer Capture Source
+  *
+  * @param[in]  timer       The pointer of the specified Timer module. It could be TIMER0, TIMER1, TIMER2, TIMER3.
+  * @param[in]  u32Sr       Timer capture source. Possible values are
+  *                         - \ref TIMER_CAPTURE_FROM_EXTERNAL
+  *                         - \ref TIMER_CAPTURE_FROM_LIRC
+  *
+  * @return     None
+  *
+  * @details    This API is used to select timer capture source from TMx_EXT or internal singal.
+  */
+void TIMER_CaptureSelect(TIMER_T *timer, uint32_t u32Src)
+{
+    timer->CTL = (timer->CTL & (~TIMER_CTL_CAPSRC_Msk)) | u32Src;
+}
+
+/**
   * @brief      Disable Timer Capture Function
   *
   * @param[in]  timer   The pointer of the specified Timer module. It could be TIMER0, TIMER1, TIMER2, TIMER3.

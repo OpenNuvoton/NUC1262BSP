@@ -35,17 +35,22 @@ extern "C"
 #define TIMER_PERIODIC_MODE                     (1UL << TIMER_CTL_OPMODE_Pos)      /*!< Timer working in periodic mode */
 #define TIMER_TOGGLE_MODE                       (2UL << TIMER_CTL_OPMODE_Pos)      /*!< Timer working in toggle-output mode */
 #define TIMER_CONTINUOUS_MODE                   (3UL << TIMER_CTL_OPMODE_Pos)      /*!< Timer working in continuous counting mode */
+
 #define TIMER_TOUT_PIN_FROM_TMX                 (0UL << TIMER_CTL_TGLPINSEL_Pos)   /*!< Timer toggle-output pin is from TMx pin */
 #define TIMER_TOUT_PIN_FROM_TMX_EXT             (1UL << TIMER_CTL_TGLPINSEL_Pos)   /*!< Timer toggle-output pin is from TMx_EXT pin */
 
 #define TIMER_COUNTER_EVENT_FALLING             (0UL << TIMER_EXTCTL_CNTPHASE_Pos) /*!< Counter increase on falling edge detection */
 #define TIMER_COUNTER_EVENT_RISING              (1UL << TIMER_EXTCTL_CNTPHASE_Pos) /*!< Counter increase on rising edge detection */
+
 #define TIMER_CAPTURE_FREE_COUNTING_MODE        (0UL << TIMER_EXTCTL_CAPFUNCS_Pos) /*!< Timer capture event to get timer counter value */
 #define TIMER_CAPTURE_COUNTER_RESET_MODE        (1UL << TIMER_EXTCTL_CAPFUNCS_Pos) /*!< Timer capture event to reset timer counter */
 
 #define TIMER_CAPTURE_EVENT_FALLING             (0UL << TIMER_EXTCTL_CAPEDGE_Pos)  /*!< Falling edge detection to trigger capture event */
 #define TIMER_CAPTURE_EVENT_RISING              (1UL << TIMER_EXTCTL_CAPEDGE_Pos)  /*!< Rising edge detection to trigger capture event */
 #define TIMER_CAPTURE_EVENT_FALLING_RISING      (2UL << TIMER_EXTCTL_CAPEDGE_Pos)  /*!< Both falling and rising edge detection to trigger capture event */
+
+#define TIMER_CAPTURE_FROM_EXTERNAL             (0UL << TIMER_CTL_CAPSRC_Pos)
+#define TIMER_CAPTURE_FROM_LIRC                 (1UL << TIMER_CTL_CAPSRC_Pos)
 
 #define TIMER_TRGSEL_TIMEOUT_EVENT              (0UL << TIMER_CTL_TRGSSEL_Pos)     /*!< Select internal trigger source from timer time-out event */
 #define TIMER_TRGSEL_CAPTURE_EVENT              (1UL << TIMER_CTL_TRGSSEL_Pos)     /*!< Select internal trigger source from timer capture event */
@@ -106,12 +111,12 @@ extern "C"
   *
   * @param[in]  timer       The pointer of the specified Timer module. It could be TIMER0, TIMER1, TIMER2, TIMER3.
   * @param[in]  u32ToutSel  Toggle-output pin selection, valid values are:
-  *                         - \ref TIMER_TOUT_PIN_FROM_TX
-  *                         - \ref TIMER_TOUT_PIN_FROM_TX_EXT
+  *                         - \ref TIMER_TOUT_PIN_FROM_TMX
+  *                         - \ref TIMER_TOUT_PIN_FROM_TMX_EXT
   *
   * @return     None
   *
-  * @details    This macro is used to select timer toggle-output pin is output on Tx or Tx_EXT pin.
+  * @details    This macro is used to select timer toggle-output pin is output on TMx or TMx_EXT pin.
   */
 #define TIMER_SELECT_TOUT_PIN(timer, u32ToutSel)    ((timer)->CTL = ((timer)->CTL & ~TIMER_CTL_TGLPINSEL_Msk) | (u32ToutSel))
 
@@ -450,6 +455,7 @@ uint32_t TIMER_Open(TIMER_T *timer, uint32_t u32Mode, uint32_t u32Freq);
 void TIMER_Close(TIMER_T *timer);
 void TIMER_Delay(TIMER_T *timer, uint32_t u32Usec);
 void TIMER_EnableCapture(TIMER_T *timer, uint32_t u32CapMode, uint32_t u32Edge);
+void TIMER_CaptureSelect(TIMER_T *timer, uint32_t u32Src);
 void TIMER_DisableCapture(TIMER_T *timer);
 void TIMER_EnableEventCounter(TIMER_T *timer, uint32_t u32Edge);
 void TIMER_DisableEventCounter(TIMER_T *timer);
