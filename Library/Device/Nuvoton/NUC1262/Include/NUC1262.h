@@ -4868,14 +4868,10 @@ typedef struct
      * |        |          |User can configure the peripheral by setting REQSRC0.
      * |        |          |0 = Disable PDMA.
      * |        |          |1 = Reserved.
-     * |        |          |2 = Channel connects to USB_TX.
-     * |        |          |3 = Channel connects to USB_RX.
      * |        |          |4 = Channel connects to UART0_TX.
      * |        |          |5 = Channel connects to UART0_RX.
      * |        |          |6 = Channel connects to UART1_TX.
      * |        |          |7 = Channel connects to UART1_RX.
-     * |        |          |8 = Channel connects to UART2_TX.
-     * |        |          |9 = Channel connects to UART2_RX.
      * |        |          |16 = Channel connects to SPI0_TX.
      * |        |          |17 = Channel connects to SPI0_RX.
      * |        |          |18 = Channel connects to SPI1_TX.

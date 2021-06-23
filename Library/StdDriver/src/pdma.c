@@ -116,14 +116,10 @@ void PDMA_SetTransferAddr(uint32_t u32Ch, uint32_t u32SrcAddr, uint32_t u32SrcCt
  * @param[in]   u32Ch           The selected channel
  * @param[in]   u32Peripheral   The selected peripheral. Valid values are
  *                - \ref PDMA_MEM
- *                - \ref PDMA_USB_TX
- *                - \ref PDMA_USB_RX
  *                - \ref PDMA_UART0_TX
  *                - \ref PDMA_UART0_RX
  *                - \ref PDMA_UART1_TX
  *                - \ref PDMA_UART1_RX
- *                - \ref PDMA_UART2_TX
- *                - \ref PDMA_UART2_RX
  *                - \ref PDMA_SPI0_TX
  *                - \ref PDMA_SPI0_RX
  *                - \ref PDMA_SPI1_TX
