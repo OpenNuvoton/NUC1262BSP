@@ -91,6 +91,18 @@ extern "C"
 #define SYS_BODCTL_BODDGSEL_128CLK     (0x6UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 128 HCLK clock */
 #define SYS_BODCTL_BODDGSEL_256CLK     (0x7UL<<SYS_BODCTL_BODDGSEL_Pos)   /*! BOD Output De-glitch Time is selected 256 HCLK clock */
 
+#define SYS_BODCTL_VDETPINSEL_PIN0     (0UL<<SYS_BODCTL_VDETPINSEL_Pos)   /*!< VDET input voltage is from VDET_P0 (PB.0) */
+#define SYS_BODCTL_VDETPINSEL_PIN1     (1UL<<SYS_BODCTL_VDETPINSEL_Pos)   /*!< VDET input voltage is from VDET_P1 (PB.1) */
+
+#define SYS_BODCTL_VDETDGSEL_0CLK      (0x0UL<<SYS_BODCTL_VDETDGSEL_Pos)  /*! VDET Output De-glitch Time is sampled by VDET clock. */
+#define SYS_BODCTL_VDETDGSEL_16CLK     (0x1UL<<SYS_BODCTL_VDETDGSEL_Pos)  /*! VDET Output De-glitch Time is selected 16 HCLK clock */
+#define SYS_BODCTL_VDETDGSEL_32CLK     (0x2UL<<SYS_BODCTL_VDETDGSEL_Pos)  /*! VDET Output De-glitch Time is selected 32 HCLK clock */
+#define SYS_BODCTL_VDETDGSEL_64CLK     (0x3UL<<SYS_BODCTL_VDETDGSEL_Pos)  /*! VDET Output De-glitch Time is selected 64 HCLK clock */
+#define SYS_BODCTL_VDETDGSEL_128CLK    (0x4UL<<SYS_BODCTL_VDETDGSEL_Pos)  /*! VDET Output De-glitch Time is selected 128 HCLK clock */
+#define SYS_BODCTL_VDETDGSEL_256CLK    (0x5UL<<SYS_BODCTL_VDETDGSEL_Pos)  /*! VDET Output De-glitch Time is selected 256 HCLK clock */
+#define SYS_BODCTL_VDETDGSEL_512CLK    (0x6UL<<SYS_BODCTL_VDETDGSEL_Pos)  /*! VDET Output De-glitch Time is selected 512 HCLK clock */
+#define SYS_BODCTL_VDETDGSEL_1024CLK   (0x7UL<<SYS_BODCTL_VDETDGSEL_Pos)  /*! VDET Output De-glitch Time is selected 1024 HCLK clock */
+
 /*---------------------------------------------------------------------------------------------------------*/
 /*  Multi-Function constant definitions.                                                                   */
 /*---------------------------------------------------------------------------------------------------------*/
