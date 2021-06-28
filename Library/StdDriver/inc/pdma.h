@@ -77,14 +77,10 @@ extern "C"
 /*  Peripheral Transfer Mode Constant Definitions                                                          */
 /*---------------------------------------------------------------------------------------------------------*/
 #define PDMA_MEM            0UL            /*!<DMA Connect to Memory  \hideinitializer */
-#define PDMA_USB_TX         2UL            /*!<DMA Connect to USB TX  \hideinitializer */
-#define PDMA_USB_RX         3UL            /*!<DMA Connect to USB RX  \hideinitializer */
 #define PDMA_UART0_TX       4UL            /*!<DMA Connect to UART0 TX  \hideinitializer */
 #define PDMA_UART0_RX       5UL            /*!<DMA Connect to UART0 RX  \hideinitializer */
 #define PDMA_UART1_TX       6UL            /*!<DMA Connect to UART1 TX  \hideinitializer */
 #define PDMA_UART1_RX       7UL            /*!<DMA Connect to UART1 RX  \hideinitializer */
-#define PDMA_UART2_TX       8UL            /*!<DMA Connect to UART2 TX  \hideinitializer */
-#define PDMA_UART2_RX       9UL            /*!<DMA Connect to UART2 RX  \hideinitializer */
 #define PDMA_SPI0_TX        16UL           /*!<DMA Connect to SPI0 TX  \hideinitializer */
 #define PDMA_SPI0_RX        17UL           /*!<DMA Connect to SPI0 RX  \hideinitializer */
 #define PDMA_SPI1_TX        18UL           /*!<DMA Connect to SPI1 TX  \hideinitializer */
