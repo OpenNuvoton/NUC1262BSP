@@ -13,8 +13,8 @@
 #include "NuMicro.h"
 #include "usbd_audio.h"
 
-#define HIRC_AUTO_TRIM      0x411   /* Use USB signal to fine tune HIRC 48MHz */
-#define TRIM_INIT           (SYS_BASE+0x118)
+#define HIRC_AUTO_TRIM      0x611   /* Use USB signal to fine tune HIRC 48MHz */
+#define TRIM_INIT           (SYS_BASE+0x110)
 
 void EnableCLKO(uint32_t u32ClkSrc, uint32_t u32ClkDiv)
 {
@@ -242,7 +242,7 @@ int32_t main(void)
                 USBD->INTSTS = USBD_INTSTS_SOFIF_Msk;
 
                 /* Re-enable crystal-less */
-                SYS->IRCTCTL = HIRC_AUTO_TRIM;
+                SYS->IRCTCTL = HIRC_AUTO_TRIM | (8 << SYS_IRCTCTL_BOUNDARY_Pos);
             }
         }
 

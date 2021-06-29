@@ -17,8 +17,8 @@
    If using crystal-less, system will be 48MHz, otherwise, system is 72MHz
 */
 #define CRYSTAL_LESS        1
-#define HIRC_AUTO_TRIM      0x411   /* Use USB signal to fine tune HIRC 48MHz */
-#define TRIM_INIT           (SYS_BASE+0x118)
+#define HIRC_AUTO_TRIM      0x611   /* Use USB signal to fine tune HIRC 48MHz */
+#define TRIM_INIT           (SYS_BASE+0x110)
 
 int IsDebugFifoEmpty(void);
 
@@ -176,7 +176,7 @@ int32_t main(void)
                 USBD->INTSTS = USBD_INTSTS_SOFIF_Msk;
 
                 /* Re-enable crystal-less */
-                SYS->IRCTCTL = HIRC_AUTO_TRIM;
+                SYS->IRCTCTL = HIRC_AUTO_TRIM | (8 << SYS_IRCTCTL_BOUNDARY_Pos);
             }
         }
 
