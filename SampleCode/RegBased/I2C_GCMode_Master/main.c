@@ -136,13 +136,17 @@ void SYS_Init(void)
 
     /* Enable I2C controller */
     CLK->APBCLK0 |= CLK_APBCLK0_I2C0CKEN_Msk;
-	
+
     /* Set PB/PA multi-function pins for I2C0 SDA and SCL */
     SYS->GPB_MFPL &= ~(SYS_GPB_MFPL_PB4MFP_Msk);
     SYS->GPB_MFPL |= (SYS_GPB_MFPL_PB4MFP_I2C0_SDA);
 
     SYS->GPA_MFPL &= ~(SYS_GPA_MFPL_PA5MFP_Msk);
     SYS->GPA_MFPL |= (SYS_GPA_MFPL_PA5MFP_I2C0_SCL);
+
+    /* I2C pins enable schmitt trigger */
+    PB->SMTEN |= GPIO_SMTEN_SMTEN4_Msk;
+    PA->SMTEN |= GPIO_SMTEN_SMTEN5_Msk;
 }
 
 void UART0_Init(void)

@@ -197,6 +197,10 @@ void SYS_Init(void)
 
     SYS->GPA_MFPL &= ~(SYS_GPA_MFPL_PA5MFP_Msk);
     SYS->GPA_MFPL |= (SYS_GPA_MFPL_PA5MFP_I2C0_SCL);
+
+    /* I2C pins enable schmitt trigger */
+    PB->SMTEN |= GPIO_SMTEN_SMTEN4_Msk;
+    PA->SMTEN |= GPIO_SMTEN_SMTEN5_Msk;
 }
 
 
