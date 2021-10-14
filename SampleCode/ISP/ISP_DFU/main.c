@@ -12,8 +12,8 @@
 #include "fmc_user.h"
 #include "dfu_transfer.h"
 
-#define HIRC_AUTO_TRIM      0x411   /* Use USB signal to fine tune HIRC 48MHz */
-#define TRIM_INIT           (SYS_BASE+0x118)
+#define HIRC_AUTO_TRIM      0x611   /* Use USB signal to fine tune HIRC 48MHz */
+#define TRIM_INIT           (SYS_BASE+0x110)
 
 #define V6M_AIRCR_VECTKEY_DATA    0x05FA0000UL
 #define V6M_AIRCR_SYSRESETREQ     0x00000004UL
@@ -112,7 +112,7 @@ int32_t main(void)
                 USBD->INTSTS = USBD_INTSTS_SOFIF_Msk;
 
                 /* Re-enable crystal-less */
-                SYS->IRCTCTL = HIRC_AUTO_TRIM;
+                SYS->IRCTCTL = HIRC_AUTO_TRIM | (8 << SYS_IRCTCTL_BOUNDARY_Pos);
             }
         }
 
