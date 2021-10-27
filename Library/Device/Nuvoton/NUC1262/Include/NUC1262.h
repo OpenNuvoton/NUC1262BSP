@@ -754,14 +754,14 @@ typedef struct
      * |        |          |Others = Reserved.
      * |[25:24] |UART0SEL  |UART Clock Source Selection
      * |        |          |00 = Clock source from 4~24 MHz external high speed crystal oscillator (HXT) clock.
-     * |        |          |01 = Clock source from PLL clock.
+     * |        |          |01 = Clock source from PLL/2 clock.
      * |        |          |10 = Clock source from 32.768 kHz external low speed crystal oscillator (LXT) clock.
      * |        |          |11 = Clock source from HIRC/2 clock.
      * |[27:26] |UART1SEL  |UART Clock Source Selection
      * |        |          |00 = Clock source from 4~24 MHz external high speed crystal oscillator (HXT) clock.
-     * |        |          |01 = Clock source from PLL clock.
+     * |        |          |01 = Clock source from PLL/2 clock.
      * |        |          |10 = Clock source from 32.768 kHz external low speed crystal oscillator (LXT) clock.
-     * |        |          |11 = Clock source from HIRC/2 clock.       
+     * |        |          |11 = Clock source from HIRC/2 clock.
      * @var CLK_T::CLKDIV0
      * Offset: 0x18  Clock Divider Number Register 0
      * ---------------------------------------------------------------------------------------------------
@@ -797,12 +797,12 @@ typedef struct
      * |        |          |Others = Reserved.
      * |[25:24] |SPI0SEL   |SPI0 Clock Source Selection
      * |        |          |00 = Clock source from 4~24 MHz external high speed crystal oscillator (HXT) clock.
-     * |        |          |01 = Clock source from PLL clock.
+     * |        |          |01 = Clock source from PLL/2 clock.
      * |        |          |10 = Clock source from PCLK0.
      * |        |          |11 = Clock source from HIRC clock.
      * |[27:26] |SPI1SEL   |SPI1 Clock Source Selection
      * |        |          |00 = Clock source from 4~24 MHz external high speed crystal oscillator (HXT) clock.
-     * |        |          |01 = Clock source from PLL clock.
+     * |        |          |01 = Clock source from PLL/2 clock.
      * |        |          |10 = Clock source from PCLK0.
      * |        |          |11 = Clock source from HIRC clock.
      * @var CLK_T::PLLCTL
@@ -904,6 +904,22 @@ typedef struct
      * |        |          |Note1: If LIRC is selected, LIRCEN (CLK_PWRCTL[3]) must be enabled.
      * |        |          |Note2: If LXT is selected, LXTEN (CLK_PWRCTL[1]) must be enabled.
      * |        |          |Note3: This bit is also used for Brown-out detector clock source.
+     * @var CLK_T::LXTCTL
+     * Offset: 0x54  LXT Control Register
+     * ---------------------------------------------------------------------------------------------------
+     * |Bits    |Field     |Descriptions
+     * | :----: | :----:   | :---- |
+     * |[3:1]   |GAIN      |Oscillator Gain Option
+     * |        |          |User can select oscillator gain according to crystal external loading and operating temperature range. 
+     * |        |          |The greater gain value corresponding to stronger driving capability and higher power consumption.
+     * |        |          |000 = L0 mode (ESR=35K; CL=25pF).
+     * |        |          |001 = L1 mode (ESR=35K; CL=25pF).
+     * |        |          |010 = L2 mode (ESR=35K; CL=25pF).
+     * |        |          |011 = L3 mode (ESR=70K; CL=25pF).
+     * |        |          |100 = L4 mode (ESR=70K; CL=25pF).
+     * |        |          |101 = L5 mode (ESR=70K; CL=25pF).
+     * |        |          |110 = L6 mode (ESR=90K; CL=25pF).
+     * |        |          |111 = L7 mode (ESR=90K; CL=25pF).
      * @var CLK_T::CLKDCTL
      * Offset: 0x70  Clock Fail Detector Control Register
      * ---------------------------------------------------------------------------------------------------
@@ -982,7 +998,9 @@ typedef struct
     __IO uint32_t CLKDIV1;               /*!< [0x0038] Clock Divider Number Register 1                                  */
     __I  uint32_t RESERVE1[1];
     __IO uint32_t BODCLK;                /*!< [0x0040] Clock Source Select for BOD Control Register                     */
-    __I  uint32_t RESERVE2[11];
+    __I  uint32_t RESERVE2[4];
+    __IO uint32_t LXTCTL;                /*!< [0x0054] LXT Control Register                                             */
+    __I  uint32_t RESERVE3[6];
     __IO uint32_t CLKDCTL;               /*!< [0x0070] Clock Fail Detector Control Register                             */
     __IO uint32_t CLKDSTS;               /*!< [0x0074] Clock Fail Detector Status Register                              */
     __IO uint32_t CDUPB;                 /*!< [0x0078] Clock Frequency Detector Upper Boundary Register                 */
@@ -1257,6 +1275,9 @@ typedef struct
 
 #define CLK_BODCLK_VDETCKSEL_Pos         (0)                                               /*!< CLK_T::BODCLK: VDETCKSEL Position      */
 #define CLK_BODCLK_VDETCKSEL_Msk         (0x1ul << CLK_BODCLK_VDETCKSEL_Pos)               /*!< CLK_T::BODCLK: VDETCKSEL Mask          */
+
+#define CLK_LXTCTL_GAIN_Pos              (1)                                               /*!< CLK_T::LXTCTL: GAIN Position           */
+#define CLK_LXTCTL_GAIN_Msk              (0x7ul << CLK_LXTCTL_GAIN_Pos)                    /*!< CLK_T::LXTCTL: GAIN Mask               */
 
 #define CLK_CLKDCTL_HXTFDEN_Pos          (4)                                               /*!< CLK_T::CLKDCTL: HXTFDEN Position       */
 #define CLK_CLKDCTL_HXTFDEN_Msk          (0x1ul << CLK_CLKDCTL_HXTFDEN_Pos)                /*!< CLK_T::CLKDCTL: HXTFDEN Mask           */
@@ -2149,16 +2170,16 @@ typedef struct
      * |        |          |If the interrupt mode is level triggered, the de-bounce enable bit is ignored.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::INTEN
      * Offset: 0x1C/0x5C/0x9C/0xDC/0x15C  PA-F Interrupt Enable Control
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
-     * |[n]     |FLIENn    |Port 0-5 Pin[n] Falling Edge or Low Level Interrupt Trigger Type Enable Bit
+     * |[n]     |FLIENn    |Port A-F Pin[n] Falling Edge or Low Level Interrupt Trigger Type Enable Bit
      * |        |          |The FLIEN (Px_INTEN[n]) bit is used to enable the interrupt for each of the corresponding input Px.n pin.
      * |        |          |Set bit to 1 also enable the pin wake-up function.
      * |        |          |When setting the FLIEN (Px_INTEN[n]) bit to 1 :
@@ -2168,10 +2189,10 @@ typedef struct
      * |        |          |1 = Px.n level low or high to low interrupt Enabled.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * |[n+16]  |RHIENn    |Port A-F Pin[n] Rising Edge or High Level Interrupt Trigger Type Enable Bit
      * |        |          |The RHIEN (Px_INTEN[n+16]) bit is used to enable the interrupt for each of the corresponding input Px.n pin.
      * |        |          |Set bit to 1 also enable the pin wake-up function.
@@ -2182,10 +2203,10 @@ typedef struct
      * |        |          |1 = Px.n level high or low to high interrupt Enabled.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::INTSRC
      * Offset: 0x20/0x60/0xA0/0xE0/0x160  PA-F Interrupt Source Flag
      * ---------------------------------------------------------------------------------------------------
@@ -2209,15 +2230,15 @@ typedef struct
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
-     * |[n]     |SMTENn    |Port 0-5 Pin[n] Input Schmitt Trigger Enable Bit
+     * |[n]     |SMTENn    |Port A-F Pin[n] Input Schmitt Trigger Enable Bit
      * |        |          |0 = Px.n input schmitt trigger function Disabled.
      * |        |          |1 = Px.n input schmitt trigger function Enabled.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::SLEWCTL
      * Offset: 0x28/0x68/0xA8/0xE8/0x128/0x168  PA-F High Slew Rate Control
      * ---------------------------------------------------------------------------------------------------
@@ -2228,27 +2249,27 @@ typedef struct
      * |        |          |1 = Px.n output with higher slew rate.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F. 
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::DRVCTL
      * Offset: 0x02C/0x16C  Port A and F High Drive Strength Control
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
-     * |[n]     |HDRVENn   |Port E Pin[n] Driving Strength Control
+     * |[n]     |HDRVENn   |Port A and F Pin[n] Driving Strength Control
      * |        |          |0 = Px.n output with basic driving strength.
      * |        |          |1 = Px.n output with high driving strength.
      * |        |          |Note:
-     * |        |          |n=0,1,2,3,5,6,7 for port A. 
+     * |        |          |n=0,1,2,3,5,6,7 for port A.
      * |        |          |n=2,15 for port F.
      * @var GPIO_T::PUSEL
      * Offset: 0x30/0x70/0xB0/0xF0/0x170  PA-F Pull-up  Selection Register
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
-     * |[2n]    |PUSELn   |Port A-F Pin[n] Pull-up Enable Register
+     * |[2n]    |PUSELn    |Port A-F Pin[n] Pull-up Enable Register
      * |        |          |Determine each I/O Pull-up of Px.n pins.
      * |        |          |0 = Px.n pull-up disabled.
      * |        |          |1 = Px.n pull-up enabled.
@@ -2257,10 +2278,10 @@ typedef struct
      * |        |          |The independent pull-up control register only valid when MODEn (Px_MODE[2n+1:2n]) set as tri-state and open-drain mode.
      * |        |          |Note2:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F. 
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      */
 
 
@@ -8058,18 +8079,18 @@ typedef struct
      * |        |          |Note: This bit can be cleared by software writing 1.
      * |[5]     |MCURF     |MCU Reset Flag
      * |        |          |The MCU reset flag is set by the Reset Signal from the Cortex-M0 Core to indicate the previous reset source.
-     * |        |          |0 = No reset from Cortex-M0.
-     * |        |          |1 = The Cortex-M0 had issued the reset signal to reset the system by writing 1 to the bit SYSRESETREQ(AIRCR[2], Application Interrupt and Reset Control Register, address = 0xE000ED0C) in system control registers of Cortex-M0 core.
+     * |        |          |0 = No reset from Cortex-M23.
+     * |        |          |1 = The Cortex-M23 had issued the reset signal to reset the system by writing 1 to the bit SYSRESETREQ(AIRCR[2], Application Interrupt and Reset Control Register, address = 0xE000ED0C) in system control registers of Cortex-M23 core.
      * |        |          |Note: This bit can be cleared by software writing 1.
      * |[7]     |CPURF     |CPU Reset Flag
      * |        |          |The CPU reset flag is set by hardware if software writes CPURST (SYS_IPRST0[1]) 1 to reset Cortex-M0 Core and Flash Memory Controller (FMC).
      * |        |          |0 = No reset from CPU.
-     * |        |          |1 = The Cortex-M0 Core and FMC are reset by software setting CPURST to 1.
+     * |        |          |1 = The Cortex-M23 Core and FMC are reset by software setting CPURST to 1.
      * |        |          |Note: This bit can be cleared by software writing 1.
      * |[8]     |CPULKRF   |CPU Lockup Reset Flag
-     * |        |          |The CPU lockup reset flag is set by hardware if Cortex-M0 lockup happened.
+     * |        |          |The CPU lockup reset flag is set by hardware if Cortex-M23 lockup happened.
      * |        |          |0 = No reset from CPU lockup happened.
-     * |        |          |1 = The Cortex-M0 lockup happened and chip is reset.
+     * |        |          |1 = The Cortex-M23 lockup happened and chip is reset.
      * |        |          |Note: This bit can be cleared by software writing 1.
      * @var SYS_T::IPRST0
      * Offset: 0x08  Peripheral  Reset Control Register 0
@@ -8447,17 +8468,17 @@ typedef struct
      * |        |          |10 = Trim retry count limitation is 256 loops.
      * |        |          |11 = Trim retry count limitation is 512 loops.
      * |[8]     |CESTOPEN  |Clock Error Stop Enable Bit
-     * |        |          |0 = The trim operation is keep going if clock is inaccuracy.
-     * |        |          |1 = The trim operation is stopped if clock is inaccuracy.
+     * |        |          |0 = The trim operation is keep going if clock is inaccurate.
+     * |        |          |1 = The trim operation is stopped if clock is inaccurate.
      * |[9]     |BOUNDEN   |Boundary Enable Bit
      * |        |          |0 = Boundary function Disabled.
-     * |        |          |1 = Boundary function Enabled.   
+     * |        |          |1 = Boundary function Enabled.
      * |[10]    |REFCKSEL  |Reference Clock Selection
      * |        |          |0 = HIRC trim reference clock is from LXT (32.768 kHz).
-     * |        |          |1 = HIRC trim reference clock is from internal USB synchronous mode.
+     * |        |          |1 = HIRC trim reference clock is from USB synchronous mode packet.
      * |[20:16] |BOUNDARY  |Boundary Selection
      * |        |          |Fill the boundary range from 0x1 to 0x1F, 0x0 is reserved.
-     * |        |          |Note: This field is effective only when the BOUNDEN(SYS_IRCTCTL[9]) is enable.  
+     * |        |          |Note: This field is effective only when the BOUNDEN(SYS_IRCTCTL[9]) is enabled.  
      * @var SYS_T::IRCTIEN
      * Offset: 0x84  HIRC Trim Interrupt Enable Register
      * ---------------------------------------------------------------------------------------------------
@@ -8465,12 +8486,12 @@ typedef struct
      * | :----: | :----:   | :---- |
      * |[1]     |TFAILIEN  |HIRC Trim Failure Interrupt Enable Bit
      * |        |          |This bit controls if an interrupt will be triggered while HIRC trim value update limitation count reached and HIRC frequency still not locked on target frequency set by FREQSEL(SYS_IRCTCTL[1:0]).
-     * |        |          |If this bit is high and TFAILIF(SYS_IRCTSTS[1]) is set during auto trim operation, an interrupt will be triggered to notify that HIRC trim value update limitation count was reached.
+     * |        |          |If this bit is high and TFAILIF(SYS_IRCTSTS[1]) is set during auto trim operation, an interrupt will be triggered to notify that HIRC trim value update limitation count reached.
      * |        |          |0 = Disable TFAILIF(SYS_IRCTSTS[1]) status to trigger an interrupt to CPU.
      * |        |          |1 = Enable TFAILIF(SYS_IRCTSTS[1]) status to trigger an interrupt to CPU.
      * |[2]     |CLKEIEN   |HIRC Clock Error Interrupt Enable Bit
-     * |        |          |This bit controls if CPU would get an interrupt while HIRC clock is inaccuracy during auto trim operation.
-     * |        |          |If this bit is set to1, and CLKERRIF(SYS_IRCTSTS[2]) is set during auto trim operation, an interrupt will be triggered to notify the clock frequency is inaccuracy.
+     * |        |          |This bit controls if CPU would get an interrupt while HIRC clock is inaccurate during auto trim operation.
+     * |        |          |If this bit is set to1, and CLKERRIF(SYS_IRCTSTS[2]) is set during auto trim operation, an interrupt will be triggered to notify the clock frequency is inaccurate.
      * |        |          |0 = Disable CLKERRIF(SYS_IRCTSTS[2]) status to trigger an interrupt to CPU.
      * |        |          |1 = Enable CLKERRIF(SYS_IRCTSTS[2]) status to trigger an interrupt to CPU.
      * @var SYS_T::IRCTISTS
@@ -8486,12 +8507,12 @@ typedef struct
      * |[1]     |TFAILIF   |Trim Failure Interrupt Status
      * |        |          |This bit indicates that HIRC trim value update limitation count reached and the HIRC clock frequency still does not be locked.
      * |        |          |Once this bit is set, the auto trim operation stopped and FREQSEL(SYS_IRCTCTL[1:0]) will be cleared to 00 by hardware automatically.
-     * |        |          |If this bit is set and TFAILIEN(SYS_IRCTIEN[1]) is high, an interrupt will be triggered to notify that HIRC trim value update limitation count was reached.
+     * |        |          |If this bit is set and TFAILIEN(SYS_IRCTIEN[1]) is high, an interrupt will be triggered to notify that HIRC trim value update limitation count reached.
      * |        |          |Write 1 to clear this to 0.
-     * |        |          |0 = Trim value update limitation count does not reach.
+     * |        |          |0 = Trim value update limitation count not reached.
      * |        |          |1 = Trim value update limitation count reached and HIRC frequency still not locked.
      * |[2]     |CLKERRIF  |Clock Error Interrupt Status
-     * |        |          |When the frequency of 32.768 kHz external low speed crystal oscillator (LXT) or 48 MHz internal high speed RC oscillator (HIRC) is shift larger to unreasonable value, this bit will be set and to be an indicate that clock frequency is inaccuracy.
+     * |        |          |When the frequency of 32.768 kHz external low speed crystal oscillator (LXT) or 48 MHz internal high speed RC oscillator (HIRC) is shift larger to unreasonable value, this bit will be set and to be an indicate that clock frequency is inaccurate.
      * |        |          |Once this bit is set to 1, the auto trim operation stopped and FREQSEL(SYS_IRCTCL[1:0]) will be cleared to 00 by hardware automatically if CESTOPEN(SYS_IRCTCTL[8]) is set to 1.
      * |        |          |If this bit is set and CLKEIEN(SYS_IRCTIEN[2]) is high, an interrupt will be triggered to notify the clock frequency is inaccuracy.
      * |        |          |Write 1 to clear this to 0.
@@ -8537,7 +8558,7 @@ typedef struct
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[11:0]  |VTEMP     |Temperature Sensor Offset Value (Read Only)
-     * |        |          |This field reflects temperature sensor output voltage offset at 25 Celsius degree from flash.
+     * |        |          |This field reflects temperature sensor output voltage offset at 25 Celsius degree from Flash.
      */
 
     __I  uint32_t PDID;                  /*!< [0x0000] Part Device Identification Number Register                       */
@@ -8563,7 +8584,7 @@ typedef struct
     __IO uint32_t GPF_MFPL;              /*!< [0x0058] GPIOF Low Byte Multiple Function Control Register                */
     __IO uint32_t GPF_MFPH;              /*!< [0x005C] GPIOF High Byte Multiple Function Control Register               */
     __I  uint32_t RESERVE4[8];
-    __IO uint32_t IRCTCTL;               /*!< [0x0080] HIRC Trim Control Register                                      */
+    __IO uint32_t IRCTCTL;               /*!< [0x0080] HIRC Trim Control Register                                       */
     __IO uint32_t IRCTIEN;               /*!< [0x0084] HIRC Trim Interrupt Enable Register                              */
     __IO uint32_t IRCTISTS;              /*!< [0x0088] HIRC Trim Interrupt Status Register                              */
     __I  uint32_t RESERVE5[13];

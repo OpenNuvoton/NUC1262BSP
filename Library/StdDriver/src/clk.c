@@ -337,16 +337,14 @@ void CLK_SetHCLK(uint32_t u32ClkSrc, uint32_t u32ClkDiv)
   * |\ref CLKO_MODULE    |\ref CLK_CLKSEL2_CLKOSEL_SOF          | x                        |
   * |\ref WWDT_MODULE    |\ref CLK_CLKSEL2_WWDTSEL_HCLK_DIV2048 | x                        |
   * |\ref WWDT_MODULE    |\ref CLK_CLKSEL2_WWDTSEL_LIRC         | x                        |
-  * |\ref RTC_MODULE     |\ref CLK_CLKSEL2_RTCSEL_LXT           | x                        |
-  * |\ref RTC_MODULE     |\ref CLK_CLKSEL2_RTCSEL_LIRC          | x                        |
   * |\ref SPI0_MODULE    |\ref CLK_CLKSEL2_SPI0SEL_HXT          | x                        |
   * |\ref SPI0_MODULE    |\ref CLK_CLKSEL2_SPI0SEL_PLL_DIV2     | x                        |
   * |\ref SPI0_MODULE    |\ref CLK_CLKSEL2_SPI0SEL_PCLK0        | x                        |
-  * |\ref SPI0_MODULE    |\ref CLK_CLKSEL2_SPI0SEL_HIRC48       | x                        |
+  * |\ref SPI0_MODULE    |\ref CLK_CLKSEL2_SPI0SEL_HIRC         | x                        |
   * |\ref SPI1_MODULE    |\ref CLK_CLKSEL2_SPI1SEL_HXT          | x                        |
   * |\ref SPI1_MODULE    |\ref CLK_CLKSEL2_SPI1SEL_PLL_DIV2     | x                        |
   * |\ref SPI1_MODULE    |\ref CLK_CLKSEL2_SPI1SEL_PCLK0        | x                        |
-  * |\ref SPI1_MODULE    |\ref CLK_CLKSEL2_SPI1SEL_HIRC48       | x                        |
+  * |\ref SPI1_MODULE    |\ref CLK_CLKSEL2_SPI1SEL_HIRC         | x                        |
   * |\ref USBD_MODULE    |\ref CLK_CLKSEL3_USBDSEL_HIRC         | x                        |
   * |\ref USBD_MODULE    |\ref CLK_CLKSEL3_USBDSEL_PLL          |\ref CLK_CLKDIV0_USB(x)   |
   */
@@ -436,7 +434,6 @@ void CLK_DisableXtalRC(uint32_t u32ClkMask)
   *             - \ref GPIOF_MODULE
   *             - \ref WDT_MODULE
   *             - \ref WWDT_MODULE
-  *             - \ref RTC_MODULE
   *             - \ref TMR0_MODULE
   *             - \ref TMR1_MODULE
   *             - \ref TMR2_MODULE
@@ -453,17 +450,17 @@ void CLK_DisableXtalRC(uint32_t u32ClkMask)
   *             - \ref BPWM0_MODULE
   *             - \ref BPWM1_MODULE
   *             - \ref BPWM2_MODULE
-  *             - \ref BPWM3_MODULE  
-  *             - \ref LLSI0_MODULE    
-  *             - \ref LLSI1_MODULE   
-  *             - \ref LLSI2_MODULE   
-  *             - \ref LLSI3_MODULE     
-  *             - \ref LLSI4_MODULE   
-  *             - \ref LLSI5_MODULE  
-  *             - \ref LLSI6_MODULE   
-  *             - \ref LLSI7_MODULE       
-  *             - \ref LLSI8_MODULE   
-  *             - \ref LLSI9_MODULE         
+  *             - \ref BPWM3_MODULE
+  *             - \ref LLSI0_MODULE
+  *             - \ref LLSI1_MODULE
+  *             - \ref LLSI2_MODULE
+  *             - \ref LLSI3_MODULE
+  *             - \ref LLSI4_MODULE
+  *             - \ref LLSI5_MODULE
+  *             - \ref LLSI6_MODULE
+  *             - \ref LLSI7_MODULE
+  *             - \ref LLSI8_MODULE
+  *             - \ref LLSI9_MODULE
   * @return     None
   * @details    This function enable module clock.
   */
@@ -488,7 +485,6 @@ void CLK_EnableModuleClock(uint32_t u32ModuleIdx)
   *             - \ref GPIOF_MODULE
   *             - \ref WDT_MODULE
   *             - \ref WWDT_MODULE
-  *             - \ref RTC_MODULE
   *             - \ref TMR0_MODULE
   *             - \ref TMR1_MODULE
   *             - \ref TMR2_MODULE
@@ -505,17 +501,17 @@ void CLK_EnableModuleClock(uint32_t u32ModuleIdx)
   *             - \ref BPWM0_MODULE
   *             - \ref BPWM1_MODULE
   *             - \ref BPWM2_MODULE
-  *             - \ref BPWM3_MODULE  
-  *             - \ref LLSI0_MODULE    
-  *             - \ref LLSI1_MODULE   
-  *             - \ref LLSI2_MODULE   
-  *             - \ref LLSI3_MODULE     
-  *             - \ref LLSI4_MODULE   
-  *             - \ref LLSI5_MODULE  
-  *             - \ref LLSI6_MODULE   
-  *             - \ref LLSI7_MODULE       
-  *             - \ref LLSI8_MODULE   
-  *             - \ref LLSI9_MODULE   
+  *             - \ref BPWM3_MODULE
+  *             - \ref LLSI0_MODULE
+  *             - \ref LLSI1_MODULE
+  *             - \ref LLSI2_MODULE
+  *             - \ref LLSI3_MODULE
+  *             - \ref LLSI4_MODULE
+  *             - \ref LLSI5_MODULE
+  *             - \ref LLSI6_MODULE
+  *             - \ref LLSI7_MODULE
+  *             - \ref LLSI8_MODULE
+  *             - \ref LLSI9_MODULE
   * @return     None
   * @details    This function disable module clock.
   */
@@ -756,7 +752,6 @@ void CLK_DisableSysTick(void)
   *             - \ref UART0_MODULE
   *             - \ref UART1_MODULE
   *             - \ref USBD_MODULE
-
   * @return     Selected module clock source setting
   * @details    This function get selected module clock source.
   */
@@ -781,7 +776,6 @@ uint32_t CLK_GetModuleClockSource(uint32_t u32ModuleIdx)
   * @param[in]  u32ModuleIdx is module index.
   *             - \ref UART0_MODULE
   *             - \ref UART1_MODULE
-  *             - \ref OTG_MODULE
   *             - \ref USBD_MODULE
   *             - \ref ADC_MODULE
   * @return     Selected module clock divider number setting
