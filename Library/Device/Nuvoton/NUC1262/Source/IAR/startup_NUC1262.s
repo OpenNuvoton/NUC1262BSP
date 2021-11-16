@@ -58,15 +58,15 @@ __vector_table
     DCD     TMR2_IRQHandler             ; Timer 2 interrupt                                      
     DCD     TMR3_IRQHandler             ; Timer 3 interrupt                                      
     DCD     UART0_IRQHandler            ; UART0 interrupt                                        
-    DCD     UART1_IRQHandler            ; UART1 interrupt                                        
-    DCD     SPI0_IRQHandler             ; SPI0 interrupt                                         
-    DCD     SPI1_IRQHandler             ; SPI1 interrupt                                         
-    DCD     Default_Handler             ; Reserved                                         
-    DCD     Default_Handler             ; Reserved                                         
-    DCD     I2C0_IRQHandler             ; I2C0 interrupt                                         
-    DCD     I2C1_IRQHandler             ; I2C1 interrupt                                        
-    DCD     BPWM2_IRQHandler            ; BPWM2 interrupt        
-    DCD     BPWM3_IRQHandler            ; BPWM3 interrupt        
+    DCD     UART1_IRQHandler            ; UART1 interrupt
+    DCD     SPI0_IRQHandler             ; SPI0 interrupt
+    DCD     SPI1_IRQHandler             ; SPI1 interrupt
+    DCD     BPWM2_IRQHandler            ; BPWM2 interrupt
+    DCD     BPWM3_IRQHandler            ; BPWM3 interrupt
+    DCD     I2C0_IRQHandler             ; I2C0 interrupt
+    DCD     I2C1_IRQHandler             ; I2C1 interrupt
+    DCD     Default_Handler             ; Reserved
+    DCD     Default_Handler             ; Reserved
     DCD     Default_Handler             ; Reserved
     DCD     USBD_IRQHandler             ; USBD interrupt
     DCD     Default_Handler             ; Reserved

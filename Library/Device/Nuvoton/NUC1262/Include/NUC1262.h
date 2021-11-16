@@ -687,7 +687,7 @@ typedef struct
      * |        |          |111 = Clock source from HIRC/2 clock.
      * |        |          |Others = Reserved.
      * |        |          |Note: These bits are write protected. Refer to the SYS_REGLCTL register.
-     * |[5:3]   |STCLKSEL  |Cortex-M0 SysTick Clock Source Selection (Write Protect)
+     * |[5:3]   |STCLKSEL  |Cortex-M23 SysTick Clock Source Selection (Write Protect)
      * |        |          |If SYST_CTRL[2]=0, SysTick uses listed clock source below.
      * |        |          |000 = Clock source from HXT.
      * |        |          |001 = Clock source from LXT.
@@ -752,12 +752,12 @@ typedef struct
      * |        |          |101 = Clock source from 10 kHz internal low speed RC oscillator (LIRC) clock.
      * |        |          |111 = Clock source from HIRC/2 clock.
      * |        |          |Others = Reserved.
-     * |[25:24] |UART0SEL  |UART Clock Source Selection
+     * |[25:24] |UART0SEL  |UART0 Clock Source Selection
      * |        |          |00 = Clock source from 4~24 MHz external high speed crystal oscillator (HXT) clock.
      * |        |          |01 = Clock source from PLL/2 clock.
      * |        |          |10 = Clock source from 32.768 kHz external low speed crystal oscillator (LXT) clock.
      * |        |          |11 = Clock source from HIRC/2 clock.
-     * |[27:26] |UART1SEL  |UART Clock Source Selection
+     * |[27:26] |UART1SEL  |UART1 Clock Source Selection
      * |        |          |00 = Clock source from 4~24 MHz external high speed crystal oscillator (HXT) clock.
      * |        |          |01 = Clock source from PLL/2 clock.
      * |        |          |10 = Clock source from 32.768 kHz external low speed crystal oscillator (LXT) clock.

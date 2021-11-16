@@ -226,8 +226,8 @@ uint32_t CLK_SetCoreClock(uint32_t u32Hclk)
         u32HIRCSTB = CLK->STATUS & CLK_STATUS_HIRCSTB_Msk;
     }
 
-    /* Select HCLK clock source to PLL,
-       Select HCLK clock source divider as 2
+    /* Select HCLK clock source to PLL/2,
+       Select HCLK clock source divider as 1
        and update system core clock
     */
     CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_PLL_DIV2, CLK_CLKDIV0_HCLK(1));

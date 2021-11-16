@@ -88,15 +88,6 @@ void SYS_Init(void)
 
     /* Set core clock to 72MHz */
     CLK_SetCoreClock(72000000);
-
-    /* Set XT1_OUT(PF.2) and XT1_IN(PF.3) to input mode */
-    PF->MODE &= ~(GPIO_MODE_MODE2_Msk | GPIO_MODE_MODE3_Msk);
-
-    /* Enable HIRC clock */
-    CLK_EnableXtalRC(CLK_PWRCTL_HXTEN_Msk);
-    
-    /* Wait for HIRC clock ready */
-    CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk);
     
     /* Enable UART0 module clock */
     CLK_EnableModuleClock(UART0_MODULE);

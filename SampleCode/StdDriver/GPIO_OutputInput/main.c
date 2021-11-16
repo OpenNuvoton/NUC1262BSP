@@ -145,7 +145,7 @@ int32_t main(void)
         printf("  [OK].\n");
     }
 
-    /* Configure PA.2 and PE.11 to default Quasi-bidirectional mode */
+    /* Configure PB.2 and PA.11 to default Quasi-bidirectional mode */
     GPIO_SetMode(PB, BIT2, GPIO_MODE_QUASI);
     GPIO_SetMode(PA, BIT11, GPIO_MODE_QUASI);
 

@@ -112,7 +112,7 @@ void GPIO_DisableInt(GPIO_T *port, uint32_t u32Pin)
 /**
  * @brief       Set GPIO slew rate control
  *
- * @param[in]   port        GPIO port. It could be PA, PB, PC, PD and PF.
+ * @param[in]   port        GPIO port. It could be PA, PB, PC, PD or PF.
  * @param[in]   u32PinMask  The single or multiple pins of specified GPIO port. \n
  *                          It could be BIT0 ~ BIT3, BIT5 ~ BIT11 for PA. \n
  *                          It could be BIT0 ~ BIT15 for PB. \n

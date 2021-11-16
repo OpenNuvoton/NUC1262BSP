@@ -255,7 +255,7 @@ void RS485_FunctionTest(void)
     printf("|  ______                                            _____  |\n");
     printf("| |      |                                          |     | |\n");
     printf("| |Master|--UART1_TXD(PA.3)        UART1_RXD(PA.2)--|Slave| |\n");
-    printf("| |      |--UART1_nRTS(PA.0)      UART1_nRTS(PA.1)--|     | |\n");
+    printf("| |      |--UART1_nRTS(PA.0)      UART1_nRTS(PA.0)--|     | |\n");
     printf("| |______|                                          |_____| |\n");
     printf("|                                                           |\n");
     printf("+-----------------------------------------------------------+\n");

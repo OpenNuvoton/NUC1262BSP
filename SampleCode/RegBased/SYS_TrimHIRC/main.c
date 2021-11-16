@@ -59,7 +59,7 @@ void SYS_Init(void)
     /* Set XT1_OUT(PF.2) and XT1_IN(PF.3) as input mode to use HXT */
     PF->MODE &= ~(GPIO_MODE_MODE2_Msk | GPIO_MODE_MODE3_Msk);
 
-    /* Enable HIRC and LXT clock */
+    /* Enable HIRC, HXT and LXT clock */
     CLK->PWRCTL |= (CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_HXTEN_Msk | CLK_PWRCTL_LXTEN_Msk);
 
     /* Wait for HIRC, HXT and LXT clock ready */
