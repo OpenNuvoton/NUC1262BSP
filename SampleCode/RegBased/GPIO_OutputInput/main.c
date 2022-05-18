@@ -79,7 +79,7 @@ void UART0_Init()
 int32_t main(void)
 {
 
-    int32_t i32Err, i32TimeOutCnt; ;
+    int32_t i32Err, i32TimeOutCnt;
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -139,7 +139,7 @@ int32_t main(void)
     /* Set time out counter */
     i32TimeOutCnt = 100;
 
-    /* Wait for PE.11 input pin status is high for a while */
+    /* Wait for PA.11 input pin status is high for a while */
     while(PA11 != 1)
     {
         if(i32TimeOutCnt > 0)

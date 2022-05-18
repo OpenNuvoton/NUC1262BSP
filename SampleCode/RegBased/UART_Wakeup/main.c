@@ -1,7 +1,7 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V3.00
- * @brief    Show how to wake up system form Power-down mode by UART interrupt.
+ * @brief    Show how to wake up system from Power-down mode by UART interrupt.
  *
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
@@ -31,8 +31,12 @@ void UART_PowerDownWakeUpTest(void);
 /*---------------------------------------------------------------------------------------------------------*/
 void PowerDownFunction(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /* Check if all the debug messages are finished */
-    UART_WAIT_TX_EMPTY(UART0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    UART_WAIT_TX_EMPTY(UART0)
+        if(--u32TimeOutCnt == 0) break;
 
     /* Set the processor is deep sleep as its low power mode */
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
@@ -56,10 +60,10 @@ void SYS_Init(void)
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
 
-    /* Enable HIRC, HXT and LXT clock */
-    CLK->PWRCTL |= (CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_HXTEN_Msk | CLK_PWRCTL_LXTEN_Msk);
+    /* Enable HIRC and LXT clock */
+    CLK->PWRCTL |= (CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_LXTEN_Msk);
 
-    /* Wait for HIRC, HXT and LXT clock ready */
+    /* Wait for HIRC and LXT clock ready */
     while((CLK->STATUS & (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_LXTSTB_Msk)) != (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_LXTSTB_Msk));
 
     /* Select HCLK clock source as HIRC first */
@@ -175,14 +179,16 @@ int32_t main(void)
 void UART1_IRQHandler(void)
 {
     uint32_t u32IntSts = UART1->INTSTS;
-    uint32_t u32Data, u32WkSts;
+    uint32_t u32Data, u32WkSts, u32TimeOutCnt;
 
     if(u32IntSts & UART_INTSTS_WKINT_Msk)               /* UART wake-up interrupt flag */
     {
     	u32WkSts = UART1->WKSTS;
     	UART1->WKSTS = u32WkSts;
         printf("UART wake-up.\n");
-        UART_WAIT_TX_EMPTY(UART0);
+        u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+        UART_WAIT_TX_EMPTY(UART0)
+            if(--u32TimeOutCnt == 0) break;
     }
     else if(u32IntSts & (UART_INTSTS_RDAINT_Msk | UART_INTSTS_RXTOINT_Msk)) /* UART receive data available flag */
     {
@@ -221,9 +227,9 @@ void UART_DataWakeUp(void)
     /* Set UART data wake-up start bit compensation value.
        It indicates how many clock cycle selected by UART_CLK does the UART controller can get the first bit (start bit)
        when the device is wake-up from power-down mode.
-       If UART_CLK is selected as HIRC/2(24MHz) and the HIRC stable time is about 10.67us,
-       the data wake-up start bit compensation value can be set as 1024. */
-    UART1->DWKCOMP = 1024;
+       If UART_CLK is selected as HIRC/2(24MHz) and the HIRC stable time is about 30.8us,
+       the data wake-up start bit compensation value can be set as 739. */
+    UART1->DWKCOMP = 739;
 
     printf("System enter to Power-down mode.\n");
     printf("Send data with baud rate 9600bps to UART1 to wake-up system.\n\n");
@@ -234,10 +240,10 @@ void UART_DataWakeUp(void)
 /*---------------------------------------------------------------------------------------------------------*/
 void UART_RxThresholdWakeUp(void)
 {
-    /* Wait data transmission is finished and select UART clock source as LXT */
+    /* Select UART1 clock source as LXT */
     CLK->CLKSEL1 = (CLK->CLKSEL1 & (~CLK_CLKSEL1_UART1SEL_Msk)) | CLK_CLKSEL1_UART1SEL_LXT;
 
-    /* Set UART baud rate and baud rate compensation */
+    /* Set UART1 baud rate and baud rate compensation */
     UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__LXT, 9600);
     UART1->BRCOMP = 0xA5;
 
@@ -260,10 +266,10 @@ void UART_RxThresholdWakeUp(void)
 /*---------------------------------------------------------------------------------------------------------*/
 void UART_RS485WakeUp(void)
 {
-    /* Wait data transmission is finished and select UART clock source as LXT */
+    /* Select UART1 clock source as LXT */
     CLK->CLKSEL1 = (CLK->CLKSEL1 & (~CLK_CLKSEL1_UART1SEL_Msk)) | CLK_CLKSEL1_UART1SEL_LXT;
 
-    /* Set UART baud rate and baud rate compensation */
+    /* Set UART1 baud rate and baud rate compensation */
     UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__LXT, 9600);
     UART1->BRCOMP = 0xA5;
 
@@ -275,7 +281,7 @@ void UART_RS485WakeUp(void)
     /* Enable parity source selection function */
     UART1->LINE |= (UART_LINE_PSS_Msk | UART_LINE_PBE_Msk);
 
-    /* Enable UART RS485 address match, Rx Threshold and Rx time-out wake-up frunction */
+    /* Enable UART RS485 address match, Rx Threshold and Rx time-out wake-up function */
     UART1->WKCTL |= UART_WKCTL_WKRFRTEN_Msk | UART_WKCTL_WKRS485EN_Msk | UART_WKCTL_WKTOUTEN_Msk;
 
     /* Enable UART Rx time-out function */
@@ -333,8 +339,6 @@ void UART_PowerDownWakeUpTest(void)
     UART_PowerDown_TestItem();
     u32Item = getchar();
     printf("%c\n\n", u32Item);
-    UART_WAIT_TX_EMPTY(UART0);
-
     switch(u32Item)
     {
         case '1':

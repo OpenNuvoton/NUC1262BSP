@@ -1,5 +1,5 @@
 /**************************************************************************//**
- * @file     FMC_IAP.c
+ * @file     main.c
  * @version  V3.00
  * $Revision: 1 $
  * $Date: 20/11/27 $
@@ -21,6 +21,7 @@ extern uint32_t loaderImageBase;
 extern uint32_t loaderImageLimit;
 
 uint32_t g_u32ImageSize;
+int32_t g_FMC_i32ErrCode;
 
 #if defined ( __ICCARM__ )
 uint32_t *g_au32funcTable = (uint32_t *)0x100e00; /* The location of function table */

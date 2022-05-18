@@ -40,7 +40,7 @@ void UART_ClearIntFlag(UART_T* uart, uint32_t u32InterruptFlag)
 {
 
     if(u32InterruptFlag & UART_INTSTS_RLSINT_Msk)       /* Clear Receive Line Status Interrupt */
-        uart->FIFOSTS = UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk | UART_FIFOSTS_FEF_Msk | UART_FIFOSTS_ADDRDETF_Msk;
+        uart->FIFOSTS = UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk | UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_ADDRDETF_Msk;
 
     if(u32InterruptFlag & UART_INTSTS_MODEMINT_Msk)     /* Clear MODEM Status Interrupt */
         uart->MODEMSTS |= UART_MODEMSTS_CTSDETF_Msk;
@@ -304,12 +304,12 @@ void UART_SetLine_Config(UART_T* uart, uint32_t u32baudrate, uint32_t u32data_wi
         case UART0_BASE:
             u8UartClkSrcSel = (CLK->CLKSEL1 & CLK_CLKSEL1_UART0SEL_Msk) >> CLK_CLKSEL1_UART0SEL_Pos;
             u8UartClkDivNum = (CLK->CLKDIV0 & CLK_CLKDIV0_UART0DIV_Msk) >> CLK_CLKDIV0_UART0DIV_Pos;
-            break;    
+            break;
 
         case UART1_BASE:
             u8UartClkSrcSel = (CLK->CLKSEL1 & CLK_CLKSEL1_UART1SEL_Msk) >> CLK_CLKSEL1_UART1SEL_Pos;
             u8UartClkDivNum = (CLK->CLKDIV0 & CLK_CLKDIV0_UART1DIV_Msk) >> CLK_CLKDIV0_UART1DIV_Pos;
-            break;     
+            break;
     }
     
  
@@ -376,19 +376,19 @@ void UART_SelectIrDAMode(UART_T* uart, uint32_t u32Buadrate, uint32_t u32Directi
 
     /* Select IrDA function mode */
     uart->FUNCSEL = UART_FUNCSEL_IrDA;
-    
+
     /* Get UART clock source selection and UART clock divider number */
     switch((uint32_t)uart)
     {
         case UART0_BASE:
             u8UartClkSrcSel = (CLK->CLKSEL1 & CLK_CLKSEL1_UART0SEL_Msk) >> CLK_CLKSEL1_UART0SEL_Pos;
             u8UartClkDivNum = (CLK->CLKDIV0 & CLK_CLKDIV0_UART0DIV_Msk) >> CLK_CLKDIV0_UART0DIV_Pos;
-            break;    
+            break;
 
         case UART1_BASE:
             u8UartClkSrcSel = (CLK->CLKSEL1 & CLK_CLKSEL1_UART1SEL_Msk) >> CLK_CLKSEL1_UART1SEL_Pos;
             u8UartClkDivNum = (CLK->CLKDIV0 & CLK_CLKDIV0_UART1DIV_Msk) >> CLK_CLKDIV0_UART1DIV_Pos;
-            break;     
+            break;
     }
     
  
@@ -410,12 +410,12 @@ void UART_SelectIrDAMode(UART_T* uart, uint32_t u32Buadrate, uint32_t u32Directi
     /* Configure IrDA relative settings */
     if(u32Direction == UART_IRDA_RXEN)
     {
-        uart->IRDA |= UART_IRDA_RXINV_Msk;     //Rx signal is inverse
+        uart->IRDA |= UART_IRDA_RXINV_Msk;     /* Rx signal is inverse */
         uart->IRDA &= ~UART_IRDA_TXEN_Msk;
     }
     else
     {
-        uart->IRDA &= ~UART_IRDA_TXINV_Msk;    //Tx signal is not inverse
+        uart->IRDA &= ~UART_IRDA_TXINV_Msk;    /* Tx signal is not inverse */
         uart->IRDA |= UART_IRDA_TXEN_Msk;
     }
 
@@ -465,7 +465,7 @@ uint32_t UART_Write(UART_T* uart, uint8_t *pu8TxBuf, uint32_t u32WriteBytes)
     for(u32Count = 0; u32Count != u32WriteBytes; u32Count++)
     {
         u32delayno = 0;
-        while((uart->FIFOSTS & UART_FIFOSTS_TXEMPTYF_Msk) == 0)   /* Wait Tx empty and Time-out manner */
+        while(UART_IS_TX_FULL(uart))     /* Wait Tx not full or Time-out manner */
         {
             u32delayno++;
             if(u32delayno >= 0x40000000)

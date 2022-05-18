@@ -126,6 +126,7 @@ void UART0_Init(void)
 int main(void)
 {
     volatile uint32_t u32InitCount;
+    uint32_t u32TimeOutCnt;
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -168,9 +169,25 @@ int main(void)
     /* Enable Timer2 external event counter input function */
     TIMER2->CMP = 56789;
     TIMER2->CTL |= TIMER_CTL_RSTCNT_Msk;
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
     while(TIMER2->CNT != 0x0ul) {}
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for TIMER2 counter is reset time-out!\n");
+            return -1;
+        }
+    }
     TIMER2->CTL = TIMER_CTL_CNTEN_Msk | TIMER_CTL_INTEN_Msk | TIMER_CTL_EXTCNTEN_Msk | TIMER_CONTINUOUS_MODE;
-    while(!(TIMER2->CTL & TIMER_CTL_ACTSTS_Msk));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(TIMER2->CTL & TIMER_CTL_ACTSTS_Msk))
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for TIMER2 is active time-out!\n");
+            return -1;
+        }
+    }
 
     /* To check if counter value of Timer2 should be 0 while event counter mode is enabled */
     if(TIMER_GetCounter(TIMER2) != 0)
@@ -179,7 +196,7 @@ int main(void)
 
         /* Stop Timer2 counting */
         TIMER2->CTL = 0;
-        while(1);
+        return -1;
     }
 
     printf("Start to check Timer2 counter value ......\n\n");
@@ -188,14 +205,16 @@ int main(void)
     GenerateEventCounterSource(3, 3, 1);
 
     /* To check if counter value of Timer2 should be 1 */
-    while(TIMER_GetCounter(TIMER2) == 0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(TIMER_GetCounter(TIMER2) == 0)
+        if(--u32TimeOutCnt == 0) break;
     if(TIMER_GetCounter(TIMER2) != 1)
     {
         printf("Get unexpected counter value. (%d)\n", TIMER_GetCounter(TIMER2));
 
         /* Stop Timer2 counting */
         TIMER2->CTL = 0;
-        while(1);
+        return -1;
     }
 
     /* To generate remains counts to TM2 pin */

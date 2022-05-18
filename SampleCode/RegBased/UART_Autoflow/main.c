@@ -125,7 +125,7 @@ void UART1_Init()
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
 
-int main(void)
+int32_t main(void)
 {
 
     /* Unlock protected registers */
@@ -200,7 +200,7 @@ void AutoFlow_FunctionTest(void)
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
-/*  AutoFlow Function Tx Test                                                                              */
+/*  AutoFlow Function Test (Master)                                                                        */
 /*---------------------------------------------------------------------------------------------------------*/
 void AutoFlow_FunctionTxTest()
 {
@@ -231,7 +231,7 @@ void AutoFlow_FunctionTxTest()
 /*---------------------------------------------------------------------------------------------------------*/
 void AutoFlow_FunctionRxTest()
 {
-    uint32_t u32Idx;
+    uint32_t u32Idx, u32Err = 0;
 
     /* Enable RTS autoflow control */
     UART1->INTEN |= UART_INTEN_ATORTSEN_Msk;
@@ -265,11 +265,15 @@ void AutoFlow_FunctionRxTest()
     {
         if(g_u8RecData[u32Idx] != (u32Idx & 0xFF))
         {
-            printf("Compare Data Failed\n");
-            while(1);
+            u32Err = 1;
+            break;
         }
     }
-    printf("\n Receive OK & Check OK\n");
+
+    if( u32Err )
+        printf("Compare Data Failed\n");
+    else
+        printf("\n Receive OK & Check OK\n");
 
     /* Disable UART1 interrupt */
     NVIC_DisableIRQ(UART1_IRQn);
@@ -297,6 +301,7 @@ void UART1_IRQHandler(void)
         }
     }
 
+    /* Handle transmission error */
     if(UART1->FIFOSTS & (UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk | UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_RXOVIF_Msk))
     {
         UART1->FIFOSTS = (UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk | UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_RXOVIF_Msk);

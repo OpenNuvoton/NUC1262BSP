@@ -144,7 +144,7 @@ int main(void)
     NVIC_EnableIRQ(EINT024_IRQn);
 
     /* Configure PB.4 as EINT1 pin and enable interrupt by falling and rising edge trigger */
-    PB->MODE = (PD->MODE & (~GPIO_MODE_MODE4_Msk)) | (GPIO_MODE_INPUT << GPIO_MODE_MODE4_Pos);
+    PB->MODE = (PB->MODE & (~GPIO_MODE_MODE4_Msk)) | (GPIO_MODE_INPUT << GPIO_MODE_MODE4_Pos);
     PB->INTTYPE |= (GPIO_INTTYPE_EDGE << GPIO_INTTYPE_TYPE4_Pos);
     PB->INTEN |= (GPIO_INTEN_FLIEN4_Msk | GPIO_INTEN_RHIEN4_Msk);
     NVIC_EnableIRQ(EINT135_IRQn);

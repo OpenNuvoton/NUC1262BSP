@@ -453,7 +453,7 @@ void I2C_10bit_LB_MasterTx(I2C_T *tI2CM, uint32_t u32Status)
 
 int32_t I2C_10bit_Read_Write_SLAVE(I2C_T *tI2CM, I2C_T *tI2CS, uint16_t u16slvaddr)
 {
-    uint32_t i;
+    uint32_t i, u32TimeOutCnt;
 
     g_u32I2CMPort = (uint32_t) tI2CM;
     g_u32I2CSPort = (uint32_t) tI2CS;
@@ -500,7 +500,15 @@ int32_t I2C_10bit_Read_Write_SLAVE(I2C_T *tI2CM, I2C_T *tI2CS, uint16_t u16slvad
         I2C_SET_CONTROL_REG(I2C0, I2C_CTL_STA);
 
         /* Wait I2C Rx Finish */
-        while(g_u8MstEndFlag == 0);
+        u32TimeOutCnt = I2C_TIMEOUT;
+        while(g_u8MstEndFlag == 0)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for I2C Rx finish time-out!\n");
+                return -1;
+            }
+        }
 
         /* Compare data */
         if(g_u8MstRxData != g_au8MstTxData[3])

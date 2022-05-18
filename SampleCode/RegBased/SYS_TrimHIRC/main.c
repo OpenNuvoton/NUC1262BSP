@@ -140,6 +140,7 @@ int32_t main(void)
 
     /* Enable Interrupt */
     NVIC_EnableIRQ(CLKDIRC_IRQn);
+
     /* Trim HIRC to 48MHz */
     TrimHIRC();
 
@@ -153,6 +154,8 @@ int32_t main(void)
 
 void TrimHIRC(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /* Enable IRC Trim, set HIRC clock and enable interrupt */
     SYS->IRCTIEN |= (SYS_IRCTIEN_CLKEIEN_Msk | SYS_IRCTIEN_TFAILIEN_Msk);
     SYS->IRCTCTL = (SYS->IRCTCTL & (~SYS_IRCTCTL_FREQSEL_Msk)) | 0x1;
@@ -160,15 +163,20 @@ void TrimHIRC(void)
     CLK_SysTickDelay(2000); /* Waiting for HIRC Frequency Lock */
 
     /* Get HIRC Frequency Lock */
-    while(1)
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while( (SYS->IRCTISTS & SYS_IRCTISTS_FREQLOCK_Msk) == 0 )
     {
-        if(SYS->IRCTISTS & SYS_IRCTISTS_FREQLOCK_Msk)
+        if(--u32TimeOutCnt == 0)
         {
-            printf("HIRC Frequency Lock\n");
-            SYS->IRCTISTS = SYS_IRCTISTS_FREQLOCK_Msk;     /* Clear Trim Lock */
-            break;
+            printf("HIRC Trim failed\n");
+            return;
         }
     }
+
+    printf("HIRC Frequency Lock\n");
+
+    /* Clear Trim Lock */
+    SYS->IRCTISTS = SYS_IRCTISTS_FREQLOCK_Msk;
 
     /* Enable CKO clock source */
     CLK->APBCLK0 |= CLK_APBCLK0_CLKOCKEN_Msk;

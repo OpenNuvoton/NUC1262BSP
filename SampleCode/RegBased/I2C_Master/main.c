@@ -58,6 +58,8 @@ void I2C0_IRQHandler(void)
 /*---------------------------------------------------------------------------------------------------------*/
 void I2C_MasterRx(uint32_t u32Status)
 {
+    uint32_t u32TimeOutCnt;
+
     if(u32Status == 0x08)                       /* START has been transmitted and prepare SLA+W */
     {
         I2C0->DAT = s_u8DeviceAddr << 1;     /* Write SLA+W to Register I2CDAT */
@@ -133,7 +135,9 @@ void I2C_MasterRx(uint32_t u32Status)
         s_u8MstRxAbortFlag = 1;
         getchar();
         I2C_SET_CONTROL_REG(I2C0, I2C_CTL_SI);
-        while(I2C0->CTL & I2C_CTL_SI_Msk);
+        u32TimeOutCnt = I2C_TIMEOUT;
+        while(I2C0->CTL & I2C_CTL_SI_Msk)
+            if(--u32TimeOutCnt == 0) break;
     }
 }
 
@@ -142,6 +146,8 @@ void I2C_MasterRx(uint32_t u32Status)
 /*---------------------------------------------------------------------------------------------------------*/
 void I2C_MasterTx(uint32_t u32Status)
 {
+    uint32_t u32TimeOutCnt;
+
     if(u32Status == 0x08)                       /* START has been transmitted */
     {
         I2C0->DAT = s_u8DeviceAddr << 1;     /* Write SLA+W to Register I2CDAT */
@@ -210,7 +216,9 @@ void I2C_MasterTx(uint32_t u32Status)
         s_u8MstTxAbortFlag = 1;
         getchar();
         I2C_SET_CONTROL_REG(I2C0, I2C_CTL_SI);
-        while(I2C0->CTL & I2C_CTL_SI_Msk);
+        u32TimeOutCnt = I2C_TIMEOUT;
+        while(I2C0->CTL & I2C_CTL_SI_Msk)
+            if(--u32TimeOutCnt == 0) break;
     }
 }
 
@@ -360,7 +368,7 @@ int32_t Read_Write_SLAVE(uint8_t slvaddr)
             /* I2C as master sends START signal */
             I2C_SET_CONTROL_REG(I2C0, I2C_CTL_STA);
 
-            /* Wait I2C Tx Finish or Unexpected Abort*/
+            /* Wait I2C Tx Finish or Unexpected Abort */
             do
             {
                 if(s_u8TimeoutFlag)
@@ -370,7 +378,7 @@ int32_t Read_Write_SLAVE(uint8_t slvaddr)
                     SYS->IPRST1 |= SYS_IPRST1_I2C0RST_Msk;
                     SYS->IPRST1 = 0;
                     I2C0_Init();
-                    /* Set MasterTx abort flag*/
+                    /* Set MasterTx abort flag */
                     s_u8MstTxAbortFlag = 1;
                 }
             } while(s_u8MstEndFlag == 0 && s_u8MstTxAbortFlag == 0);
@@ -378,9 +386,9 @@ int32_t Read_Write_SLAVE(uint8_t slvaddr)
             s_u8MstEndFlag = 0;
             if(s_u8MstTxAbortFlag)
             {
-                /* Clear MasterTx abort flag*/
+                /* Clear MasterTx abort flag */
                 s_u8MstTxAbortFlag = 0;
-                /* Set Master re-start flag*/
+                /* Set Master re-start flag */
                 s_u8MstReStartFlag = 1;
                 break;
             }
@@ -393,17 +401,17 @@ int32_t Read_Write_SLAVE(uint8_t slvaddr)
 
             I2C_SET_CONTROL_REG(I2C0, I2C_CTL_STA);
 
-            /* Wait I2C Rx Finish or Unexpected Abort*/
+            /* Wait I2C Rx Finish or Unexpected Abort */
             do {
                 if(s_u8TimeoutFlag)
                 {
-                    /* When I2C timeout, reset IP*/
+                    /* When I2C timeout, reset IP */
                     printf(" MasterRx time out, any to reset IP\n");
                     getchar();
                     SYS->IPRST1 |= SYS_IPRST1_I2C0RST_Msk;
                     SYS->IPRST1 = 0;
                     I2C0_Init();
-                    /* Set MasterRx abort flag*/
+                    /* Set MasterRx abort flag */
                     s_u8MstRxAbortFlag = 1;
                 }
             } while(s_u8MstEndFlag == 0 && s_u8MstRxAbortFlag == 0);
@@ -411,14 +419,14 @@ int32_t Read_Write_SLAVE(uint8_t slvaddr)
 
             if(s_u8MstRxAbortFlag )
             {
-                /* Clear MasterRx abort flag*/
+                /* Clear MasterRx abort flag */
                 s_u8MstRxAbortFlag = 0;
-                /* Set Master re-start flag*/
+                /* Set Master re-start flag */
                 s_u8MstReStartFlag = 1;
                 break;
             }
         }
-    } while(s_u8MstReStartFlag); /*If unexpected abort happens, re-start the transmition*/
+    } while(s_u8MstReStartFlag); /* If unexpected abort happens, re-start the transmition */
 
     /* Compare data */
     if(s_u8MstRxData != s_au8MstTxData[2])
@@ -448,7 +456,7 @@ int32_t main(void)
     UART0_Init();
 
     /*
-        This sample code sets I2C bus clock to 150kHz. Then, Master accesses Slave with Byte Write
+        This sample code sets I2C bus clock to 100kHz. Then, Master accesses Slave with Byte Write
         and Byte Read operations, and check if the read data is equal to the programmed data.
     */
     printf("\n");

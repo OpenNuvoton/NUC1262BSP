@@ -50,10 +50,10 @@ void RS485_HANDLE()
 
     if(UART_GET_INT_FLAG(UART1, UART_INTSTS_RLSINT_Msk) && UART_GET_INT_FLAG(UART1, UART_INTSTS_RDAINT_Msk))      /* RLS INT & RDA INT */
     {
-        if(UART_RS485_GET_ADDR_FLAG(UART1))         /* ADD_IF, RS485 mode */
+        if(UART_RS485_GET_ADDR_FLAG(UART1))         /* RS485 address byte detect flag */
         {
             addr = UART_READ(UART1);
-            UART_RS485_CLEAR_ADDR_FLAG(UART1);      /* clear ADD_IF flag */
+            UART_RS485_CLEAR_ADDR_FLAG(UART1);      /* Clear RS485 address byte detect flag */
             printf("\nAddr=0x%x,Get:", addr);
 
 #if (IS_USE_RS485NMM ==1) //RS485_NMM
@@ -71,7 +71,7 @@ void RS485_HANDLE()
 #endif
         }
     }
-    else if(UART_GET_INT_FLAG(UART1, UART_INTSTS_RDAINT_Msk) || UART_GET_INT_FLAG(UART1, UART_INTSTS_RXTOINT_Msk))       /* Rx Ready or Time-out INT*/
+    else if(UART_GET_INT_FLAG(UART1, UART_INTSTS_RDAINT_Msk) || UART_GET_INT_FLAG(UART1, UART_INTSTS_RXTOINT_Msk))       /* Rx Ready or Time-out INT */
     {
         /* Handle received data */
         printf("%d,", UART1->DAT);
@@ -92,12 +92,13 @@ void RS485_HANDLE()
 /*---------------------------------------------------------------------------------------------------------*/
 void RS485_9bitModeSlave()
 {
+    uint32_t u32TimeOutCnt;
+
     /* Set Data Format, only need parity enable whatever parity ODD/EVEN */
     UART_SetLine_Config(UART1, 0, UART_WORD_LEN_8, UART_PARITY_EVEN, UART_STOP_BIT_1);
 
     /* Set RTS pin active level as high level active */
-    UART1->MODEM &= ~UART_MODEM_RTSACTLV_Msk;
-    UART1->MODEM |= UART_RTS_IS_HIGH_LEV_ACTIVE;
+    UART1->MODEM = (UART1->MODEM & (~UART_MODEM_RTSACTLV_Msk)) | UART_RTS_IS_HIGH_LEV_ACTIVE;
 
 #if(IS_USE_RS485NMM == 1)
     printf("+-----------------------------------------------------------+\n");
@@ -143,9 +144,11 @@ void RS485_9bitModeSlave()
     GetChar();
 
     /* Flush FIFO */
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
     while(UART_GET_RX_EMPTY(UART1) == 0)
     {
         UART_READ(UART1);
+        if(--u32TimeOutCnt == 0) break;
     }
 
     /* Disable RDA/RLS/RTO interrupt */
@@ -202,17 +205,16 @@ void RS485_9bitModeMaster()
 
     /* Set RS485-Master as AUD mode */
     /* Enable AUD mode to HW control RTS pin automatically */
-    /* You also can use GPIO to control RTS pin for replacing AUD mode*/
+    /* You also can use GPIO to control RTS pin for replacing AUD mode */
     UART_SelectRS485Mode(UART1, UART_ALTCTL_RS485AUD_Msk, 0);
 
     /* Set RTS pin active level as high level active */
-    UART1->MODEM &= ~UART_MODEM_RTSACTLV_Msk;
-    UART1->MODEM |= UART_RTS_IS_HIGH_LEV_ACTIVE;
+    UART1->MODEM = (UART1->MODEM & (~UART_MODEM_RTSACTLV_Msk)) | UART_RTS_IS_HIGH_LEV_ACTIVE;
 
     /* Set TX delay time */
     UART1->TOUT = 0x2000;
 
-    /* Prepare Data to transmit*/
+    /* Prepare data to transmit */
     for(i32 = 0; i32 < 10; i32++)
     {
         g_u8SendDataGroup1[i32] = i32;

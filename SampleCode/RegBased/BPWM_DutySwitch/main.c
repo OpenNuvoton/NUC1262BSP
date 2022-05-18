@@ -22,7 +22,7 @@
 /*---------------------------------------------------------------------------------------------------------*/
 
 
-uint32_t CalNewDutyCMR(BPWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32DutyCycle, uint32_t u32CycleResolution);
+uint32_t CalNewDutyCMR(BPWM_T *bpwm, uint32_t u32ChannelNum, uint32_t u32DutyCycle, uint32_t u32CycleResolution);
 
 /**
  * @brief       BPWM0 IRQ Handler

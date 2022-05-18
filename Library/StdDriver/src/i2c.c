@@ -18,6 +18,7 @@
   @{
 */
 
+int32_t g_I2C_i32ErrCode = 0;       /*!< I2C global error code */
 
 /** @addtogroup I2C_EXPORTED_FUNCTIONS I2C Exported Functions
   @{
@@ -39,14 +40,24 @@
 uint32_t I2C_Open(I2C_T *i2c, uint32_t u32BusClock)
 {
     uint32_t u32Div;
+    uint32_t u32Pclk;
 
-    u32Div = (uint32_t)(((SystemCoreClock * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
+    if(i2c == I2C1)
+    {
+        u32Pclk = CLK_GetPCLK1Freq();
+    }
+    else
+    {
+        u32Pclk = CLK_GetPCLK0Freq();
+    }
+
+    u32Div = (uint32_t)(((u32Pclk * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
     i2c->CLKDIV = u32Div;
 
     /* Enable I2C */
     i2c->CTL |= I2C_CTL_I2CEN_Msk;
 
-    return (SystemCoreClock / ((u32Div + 1) << 2));
+    return (u32Pclk / ((u32Div + 1) << 2));
 }
 
 /**
@@ -164,9 +175,21 @@ void I2C_EnableInt(I2C_T *i2c)
  */
 uint32_t I2C_GetBusClockFreq(I2C_T *i2c)
 {
-    uint32_t u32Divider = i2c->CLKDIV;
+    uint32_t u32Divider;
+    uint32_t u32Pclk;
 
-    return (SystemCoreClock / ((u32Divider + 1) << 2));
+    if(i2c == I2C1)
+    {
+        u32Pclk = CLK_GetPCLK1Freq();
+    }
+    else
+    {
+        u32Pclk = CLK_GetPCLK0Freq();
+    }
+
+    u32Divider = i2c->CLKDIV;
+
+    return (u32Pclk / ((u32Divider + 1) << 2));
 }
 
 /**
@@ -182,11 +205,21 @@ uint32_t I2C_GetBusClockFreq(I2C_T *i2c)
 uint32_t I2C_SetBusClockFreq(I2C_T *i2c, uint32_t u32BusClock)
 {
     uint32_t u32Div;
+    uint32_t u32Pclk;
 
-    u32Div = (uint32_t)(((SystemCoreClock * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
+    if(i2c == I2C1)
+    {
+        u32Pclk = CLK_GetPCLK1Freq();
+    }
+    else
+    {
+        u32Pclk = CLK_GetPCLK0Freq();
+    }
+
+    u32Div = (uint32_t)(((u32Pclk * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
     i2c->CLKDIV = u32Div;
 
-    return (SystemCoreClock / ((u32Div + 1) << 2));
+    return (u32Pclk / ((u32Div + 1) << 2));
 }
 
 /**
@@ -391,16 +424,31 @@ void I2C_DisableWakeup(I2C_T *i2c)
   *
   * @details    The function is used for I2C Master write a byte data to Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
+  *
   */
 
 uint8_t I2C_WriteByte(I2C_T *i2c, uint8_t u8SlaveAddr, const uint8_t data)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Ctrl = 0;
+    uint32_t u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -442,17 +490,31 @@ uint8_t I2C_WriteByte(I2C_T *i2c, uint8_t u8SlaveAddr, const uint8_t data)
   *
   * @details    The function is used for I2C Master write multi bytes data to Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
+  *
   */
 
 uint32_t I2C_WriteMultiBytes(I2C_T *i2c, uint8_t u8SlaveAddr, const uint8_t *data, uint32_t u32wLen)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Ctrl = 0;
-    uint32_t u32txLen = 0;
+    uint32_t u32txLen = 0, u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                              /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -498,17 +560,31 @@ uint32_t I2C_WriteMultiBytes(I2C_T *i2c, uint8_t u8SlaveAddr, const uint8_t *dat
   *
   * @details    The function is used for I2C Master specify a address that data write to in Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
+  *
   */
 
 uint8_t I2C_WriteByteOneReg(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t u8DataAddr, const uint8_t data)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Ctrl = 0;
-    uint32_t u32txLen = 0;
+    uint32_t u32txLen = 0, u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                              /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -560,17 +636,31 @@ uint8_t I2C_WriteByteOneReg(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t u8DataAddr,
   *
   * @details    The function is used for I2C Master specify a byte address that multi data bytes write to in Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
+  *
   */
 
 uint32_t I2C_WriteMultiBytesOneReg(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t u8DataAddr, const uint8_t *data, uint32_t u32wLen)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Ctrl = 0;
-    uint32_t u32txLen = 0;
+    uint32_t u32txLen = 0, u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                              /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -619,17 +709,31 @@ uint32_t I2C_WriteMultiBytesOneReg(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t u8Da
   *
   * @details    The function is used for I2C Master specify two bytes address that data write to in Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
+  *
   */
 
 uint8_t I2C_WriteByteTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16DataAddr, const uint8_t data)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Addr = 1, u8Ctrl = 0;
-    uint32_t u32txLen = 0;
+    uint32_t u32txLen = 0, u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                                         /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -686,17 +790,31 @@ uint8_t I2C_WriteByteTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16DataAd
   *
   * @details    The function is used for I2C Master specify a byte address that multi data write to in Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
+  *
   */
 
 uint32_t I2C_WriteMultiBytesTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16DataAddr, const uint8_t *data, uint32_t u32wLen)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Addr = 1, u8Ctrl = 0;
-    uint32_t u32txLen = 0;
+    uint32_t u32txLen = 0, u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                                         /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -746,15 +864,30 @@ uint32_t I2C_WriteMultiBytesTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u1
   *
   * @details    The function is used for I2C Master to read a byte data from Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
+  *
   */
 uint8_t I2C_ReadByte(I2C_T *i2c, uint8_t u8SlaveAddr)
 {
     uint8_t u8Xfering = 1, u8Err = 0, rdata = 0, u8Ctrl = 0;
+    uint32_t u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                                /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -799,17 +932,30 @@ uint8_t I2C_ReadByte(I2C_T *i2c, uint8_t u8SlaveAddr)
   *
   * @details    The function is used for I2C Master to read multi data bytes from Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
   *
   */
 uint32_t I2C_ReadMultiBytes(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t *rdata, uint32_t u32rLen)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Ctrl = 0;
-    uint32_t u32rxLen = 0;
+    uint32_t u32rxLen = 0, u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                                /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -862,16 +1008,30 @@ uint32_t I2C_ReadMultiBytes(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t *rdata, uin
   *
   * @details    The function is used for I2C Master specify a byte address that a data byte read from Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
   *
   */
 uint8_t I2C_ReadByteOneReg(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t u8DataAddr)
 {
     uint8_t u8Xfering = 1, u8Err = 0, rdata = 0, u8Ctrl = 0;
+    uint32_t u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                                /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -931,17 +1091,30 @@ uint8_t I2C_ReadByteOneReg(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t u8DataAddr)
   *
   * @details    The function is used for I2C Master specify a byte address that multi data bytes read from Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
   *
   */
 uint32_t I2C_ReadMultiBytesOneReg(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t u8DataAddr, uint8_t *rdata, uint32_t u32rLen)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Ctrl = 0;
-    uint32_t u32rxLen = 0;
+    uint32_t u32rxLen = 0, u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                                /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -1004,16 +1177,30 @@ uint32_t I2C_ReadMultiBytesOneReg(I2C_T *i2c, uint8_t u8SlaveAddr, uint8_t u8Dat
   *
   * @details    The function is used for I2C Master specify two bytes address that a data byte read from Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
   *
   */
 uint8_t I2C_ReadByteTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16DataAddr)
 {
     uint8_t u8Xfering = 1, u8Err = 0, rdata = 0, u8Addr = 1, u8Ctrl = 0;
+    uint32_t u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                                         /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:
@@ -1079,17 +1266,30 @@ uint8_t I2C_ReadByteTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16DataAdd
   *
   * @details    The function is used for I2C Master specify two bytes address that multi data bytes read from Slave.
   *
+  * @note       This function sets g_I2C_i32ErrCode to I2C_ERR_TIMEOUT if waiting I2C time-out.
   *
   */
 uint32_t I2C_ReadMultiBytesTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16DataAddr, uint8_t *rdata, uint32_t u32rLen)
 {
     uint8_t u8Xfering = 1, u8Err = 0, u8Addr = 1, u8Ctrl = 0;
-    uint32_t u32rxLen = 0;
+    uint32_t u32rxLen = 0, u32TimeOutCount = 0u;
+
+    g_I2C_i32ErrCode = 0;
 
     I2C_START(i2c);                                                         /* Send START */
     while(u8Xfering && (u8Err == 0))
     {
-        I2C_WAIT_READY(i2c);
+        u32TimeOutCount = I2C_TIMEOUT;
+        I2C_WAIT_READY(i2c)
+        {
+            if(--u32TimeOutCount == 0)
+            {
+                g_I2C_i32ErrCode = I2C_ERR_TIMEOUT;
+                u8Err = 1u;
+                break;
+            }
+        }
+
         switch(I2C_GET_STATUS(i2c))
         {
         case 0x08:

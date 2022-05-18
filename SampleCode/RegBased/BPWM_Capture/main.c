@@ -33,7 +33,7 @@
 /* The capture internal counter down count from 0x10000, and reload to 0x10000 after    */
 /* input signal falling happens (Time B/C/D)                                            */
 /*--------------------------------------------------------------------------------------*/
-void CalPeriodTime()
+int32_t CalPeriodTime()
 {
     uint16_t au16Count[4];
     uint32_t u32i;
@@ -43,7 +43,15 @@ void CalPeriodTime()
     BPWM0->CAPIF = BPWM_CAPIF_CAPFIF0_Msk;
 
     /* Wait for Capture Falling Indicator  */
-    while((BPWM0->CAPIF & BPWM_CAPIF_CAPFIF0_Msk) == 0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while((BPWM0->CAPIF & BPWM_CAPIF_CAPFIF0_Msk) == 0)
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for BPWM Capture Falling Indicator time-out!\n");
+            return -1;
+        }
+    }
 
     /* Clear Capture Falling Indicator (Time B)*/
     BPWM0->CAPIF = BPWM_CAPIF_CAPFIF0_Msk;
@@ -53,7 +61,16 @@ void CalPeriodTime()
     while(u32i < 4)
     {
         /* Wait for Capture Falling Indicator */
-        while((BPWM0->CAPIF & BPWM_CAPIF_CAPFIF0_Msk) == 0);
+        u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+        while((BPWM0->CAPIF & BPWM_CAPIF_CAPFIF0_Msk) == 0)
+        while(BPWM_GetCaptureIntFlag(BPWM, u32Ch) < 2)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for BPWM Capture Falling Indicator time-out!\n");
+                return -1;
+            }
+        }
 
         /* Clear Capture Falling and Rising Indicator */
         BPWM0->CAPIF = BPWM_CAPIF_CAPFIF0_Msk | BPWM_CAPIF_CAPRIF0_Msk;
@@ -62,7 +79,16 @@ void CalPeriodTime()
         au16Count[u32i++] = BPWM_GET_CAPTURE_FALLING_DATA(BPWM0, 0);
 
         /* Wait for Capture Rising Indicator */
-        while((BPWM0->CAPIF & BPWM_CAPIF_CAPRIF0_Msk) == 0);
+        u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+        while((BPWM0->CAPIF & BPWM_CAPIF_CAPRIF0_Msk) == 0)
+        while(BPWM_GetCaptureIntFlag(BPWM, u32Ch) < 1)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for BPWM Capture Rising Indicator time-out!\n");
+                return -1;
+            }
+        }
 
         /* Clear Capture Rising Indicator */
         BPWM0->CAPIF = BPWM_CAPIF_CAPRIF0_Msk;
@@ -85,9 +111,15 @@ void CalPeriodTime()
     printf("\nCapture Result: Rising Time = %d, Falling Time = %d \nHigh Period = %d, Low Period = %d, Total Period = %d.\n\n",
            u16RisingTime, u16FallingTime, u16HighPeriod, u16LowPeriod, u16TotalPeriod);
     if((u16HighPeriod < 7199) || (u16HighPeriod > 7201) || (u16LowPeriod < 16799) || (u16LowPeriod > 16801) || (u16TotalPeriod < 23999) || (u16TotalPeriod > 24001))
+    {
         printf("Capture Test Fail!!\n");
+        return -1;
+    }
     else
+    {
         printf("Capture Test Pass!!\n");
+        return 0;
+    }
 }
 
 
@@ -173,6 +205,8 @@ int32_t main(void)
        to lock protected register. If user want to write
        protected register, please issue SYS_UnlockReg()
        to unlock protected register if necessary */
+
+    uint32_t u32TimeOutCnt;
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -274,13 +308,23 @@ int32_t main(void)
         BPWM0->CNTEN |= BPWM_CNTEN_CNTEN0_Msk;
 
         /* Wait until BPWM0 channel 0 Timer start to count */
-        while((BPWM0->CNT) == 0);
+        u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+        while((BPWM0->CNT) == 0)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for BPWM channel 0 Timer start to count time-out!\n");
+                return -1;
+            }
+        }
 
         /* Enable capture input path for BPWM0 channel 0 */
         BPWM0->CAPINEN |= BPWM_CAPINEN_CAPINEN0_Msk;
 
         /* Capture the Input Waveform Data */
-        CalPeriodTime();
+        if( CalPeriodTime() < 0)
+            return -1;
+
         /*------------------------------------------------------------------------------------------------------------*/
         /* Stop BPWM1 channel 0 (Recommended procedure method 1)                                                      */
         /* Set BPWM Timer loaded value(Period) as 0. When BPWM internal counter(CNT) reaches to 0, disable BPWM Timer */
@@ -290,9 +334,17 @@ int32_t main(void)
         BPWM1->PERIOD = 0;
 
         /* Wait until BPWM1 channel 0 Timer Stop */
-        while((BPWM1->CNT & BPWM_CNT_CNT_Msk) != 0);
+        u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+        while((BPWM1->CNT & BPWM_CNT_CNT_Msk) != 0)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for BPWM channel 0 Timer Stop time-out!\n");
+                return -1;
+            }
+        }
 
-        /* Disable Timer for PWM1 channel 0 */
+        /* Disable Timer for BPWM1 channel 0 */
         BPWM1->CNTEN &= ~BPWM_CNTEN_CNTEN0_Msk;
 
         /* Disable BPWM Output path for BPWM1 channel 0 */
@@ -307,7 +359,15 @@ int32_t main(void)
         BPWM0->PERIOD = 0;
 
         /* Wait until BPWM0 channel 0 current counter reach to 0 */
-        while((BPWM0->CNT & BPWM_CNT_CNT_Msk) != 0);
+        u32TimeOutCnt = SystemCoreClock;  /* 1 second time-out */
+        while((BPWM0->CNT & BPWM_CNT_CNT_Msk) != 0)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for BPWM channel 0 current counter reach to 0 time-out!\n");
+                return -1;
+            }
+        }
 
         /* Disable Timer for BPWM0 channel 0 */
         BPWM0->CNTEN &= ~BPWM_CNTEN_CNTEN0_Msk;
@@ -316,7 +376,7 @@ int32_t main(void)
         BPWM0->CAPCTL &= ~BPWM_CAPCTL_CAPEN0_Msk;
         BPWM0->CAPINEN &= ~BPWM_CAPINEN_CAPINEN0_Msk;
 
-        /* Clear Capture Interrupt flag for PWMB channel 0 */
+        /* Clear Capture Interrupt flag for BPWM0 channel 0 */
         BPWM0->CAPIF = BPWM_CAPIF_CAPFIF0_Msk;
 
     }

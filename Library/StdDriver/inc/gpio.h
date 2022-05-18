@@ -178,7 +178,7 @@ extern "C"
  *                          It could be BIT0 ~ BIT3, BIT5 ~ BIT11 for PA. \n
  *                          It could be BIT0 ~ BIT15 for PB. \n
  *                          It could be BIT0 ~ BIT7, BIT14 for PC. \n
- *                          It could be BIT0 ~ BIT3, BIT15 for PD. \n 
+ *                          It could be BIT0 ~ BIT3, BIT15 for PD. \n
  *                          It could be BIT0 ~ BIT6, BIT14, BIT15 for PF.
  *
  * @return      None
@@ -418,8 +418,8 @@ extern "C"
  * @param[in]   port            GPIO port. It could be PA, PB, PC, PD or PF.
  * @param[in]   u32Pin          The pin of specified GPIO port. \n
  *                              It could be 0 ~ 3, 5 ~ 11 for PA GPIO port. \n
- *                              It could be 0 ~ 15 for PB GPIO port. \n 
- *                              It could be 0 ~ 7, 14 for PC GPIO port. \n 
+ *                              It could be 0 ~ 15 for PB GPIO port. \n
+ *                              It could be 0 ~ 7, 14 for PC GPIO port. \n
  *                              It could be 0 ~ 3, 15 for PD GPIO port. \n
  *                              It could be 0 ~ 6, 14, 15 for PF GPIO port.
  *

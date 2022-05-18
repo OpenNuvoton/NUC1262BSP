@@ -14,6 +14,7 @@
 #include "NuMicro.h"
 
 
+int32_t g_FMC_i32ErrCode;
 
 void SYS_Init(void)
 {
@@ -127,7 +128,7 @@ int main()
         if(u32Data != u32RData)
         {
             printf("[Read/Write FAIL]\n");
-            while(1);
+            return -1;
         }
     }
     /* Disable FMC ISP function */

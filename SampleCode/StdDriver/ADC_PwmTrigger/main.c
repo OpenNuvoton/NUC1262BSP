@@ -96,6 +96,8 @@ void UART0_Init()
 /*---------------------------------------------------------------------------------------------------------*/
 void ADC_PWMTrigTest_SingleOpMode()
 {
+    uint32_t u32TimeOutCnt;
+
     printf("\n<<< PWM trigger test (Single mode) >>>\n");
 
     /* Power on ADC module */
@@ -129,8 +131,24 @@ void ADC_PWMTrigTest_SingleOpMode()
     BPWM_Start(BPWM0, BPWM_CH_0_MASK);
 
     /* wait for one cycle */
-    while(BPWM_GetPeriodIntFlag(BPWM0, 0) == 0);
-    while(BPWM_GetZeroIntFlag(BPWM0, 0) == 0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(BPWM_GetPeriodIntFlag(BPWM0, 0) == 0)
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for BPWM period interrupt time-out!\n");
+            return;
+        }
+    }
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(BPWM_GetZeroIntFlag(BPWM0, 0) == 0)
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for BPWM zero interrupt time-out!\n");
+            return;
+        }
+    }
     BPWM_ClearPeriodIntFlag(BPWM0, 0);
     BPWM_ClearZeroIntFlag(BPWM0, 0);
 
@@ -138,7 +156,15 @@ void ADC_PWMTrigTest_SingleOpMode()
     BPWM_ForceStop(BPWM0, BPWM_CH_0_MASK);
 
     /* Wait conversion done */
-    while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT))
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for ADC conversion done time-out!\n");
+            return;
+        }
+    }
 
     /* Clear the ADC interrupt flag */
     ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);

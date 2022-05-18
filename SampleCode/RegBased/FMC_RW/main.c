@@ -12,6 +12,7 @@
 #include "NuMicro.h"
 
 
+int32_t g_FMC_i32ErrCode;
 
 void SYS_Init(void)
 {

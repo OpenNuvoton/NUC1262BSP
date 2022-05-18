@@ -61,8 +61,18 @@ extern "C"
 #define I2C_PECTX_ENABLE            1    /*!< Enable  SMBus Packet Error Check Transmit function                          \hideinitializer */
 #define I2C_PECTX_DISABLE           0    /*!< Disable SMBus Packet Error Check Transmit function                          \hideinitializer */
 
+/*---------------------------------------------------------------------------------------------------------*/
+/* I2C Define Error Code                                                                                   */
+/*---------------------------------------------------------------------------------------------------------*/
+#define I2C_TIMEOUT     SystemCoreClock  /*!< I2C time-out counter (1 second time-out)                                    */
+#define I2C_OK          ( 0L)            /*!< I2C operation OK                                                            */
+#define I2C_ERR_FAIL    (-1L)            /*!< I2C operation failed                                                        */
+#define I2C_ERR_TIMEOUT (-2L)            /*!< I2C operation abort due to timeout error                                    */
+
 
 /*@}*/ /* end of group I2C_EXPORTED_CONSTANTS */
+
+extern int32_t g_I2C_i32ErrCode;
 
 /** @addtogroup I2C_EXPORTED_FUNCTIONS I2C Exported Functions
   @{

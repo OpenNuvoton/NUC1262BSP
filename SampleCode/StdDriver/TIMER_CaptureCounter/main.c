@@ -156,7 +156,7 @@ int main(void)
     /* Enable Timer2 NVIC */
     NVIC_EnableIRQ(TMR2_IRQn);
 
-    /* Open Timer0 in toggle-output mode and toggle-output frequency is 500 Hz*/
+    /* Open Timer0 in toggle-output mode and toggle-output frequency is 500 Hz */
     TIMER_Open(TIMER0, TIMER_TOGGLE_MODE, 1000);
 
     /* Open Timer3 in toggle-output mode and toggle-output frequency is 1 Hz */
@@ -202,7 +202,7 @@ int main(void)
                 if(u32CAPDiff != 500)
                 {
                     printf("*** FAIL ***\n");
-                    while(1);
+                    return -1;
                 }
             }
             u32InitCount = g_au32TMRINTCount[2];

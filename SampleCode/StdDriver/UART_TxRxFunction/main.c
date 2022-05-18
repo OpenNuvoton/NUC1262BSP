@@ -166,7 +166,7 @@ void UART_TEST_HANDLE()
         }
         printf("\nTransmission Test:");
 
-       /* Forces a write of all user-space buffered data for the given output */
+        /* Forces a write of all user-space buffered data for the given output */
         fflush(stdout);
     }
 

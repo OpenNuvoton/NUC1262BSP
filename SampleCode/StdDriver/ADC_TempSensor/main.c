@@ -64,6 +64,7 @@ void SYS_Init(void)
 void ADC_FunctionTest()
 {
     int32_t  i32ConversionData;
+    uint32_t u32TimeOutCnt;
 
     printf("\n");
     printf("+----------------------------------------------------------------------+\n");
@@ -96,7 +97,15 @@ void ADC_FunctionTest()
     ADC_START_CONV(ADC);
 
     /* Wait ADC conversion done */
-    while(g_u32AdcIntFlag == 0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(g_u32AdcIntFlag == 0)
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for ADC conversion done time-out!\n");
+            return;
+        }
+    }
 
     /* Disable the A/D interrupt */
     ADC_DisableInt(ADC, ADC_ADF_INT);
@@ -104,7 +113,7 @@ void ADC_FunctionTest()
     /* Get the conversion result of the channel 30 */
     i32ConversionData = ADC_GET_CONVERSION_DATA(ADC, 30);
     printf("Conversion result of temperature sensor: 0x%X (%d)\n\n", i32ConversionData, i32ConversionData);
-    
+
 }
 
 void ADC_IRQHandler(void)

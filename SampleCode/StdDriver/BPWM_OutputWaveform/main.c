@@ -216,13 +216,13 @@ int32_t main(void)
     printf("\nPress any key to stop.\n");
     getchar();
 
-    /* Start BPWM0 counter */
+    /* Stop BPWM0 counter */
     BPWM_ForceStop(BPWM0, 0x3F);
-    /* Start BPWM1 counter */
+    /* Stop BPWM1 counter */
     BPWM_ForceStop(BPWM1, 0x3F);
-    /* Start BPWM2 counter */
+    /* Stop BPWM2 counter */
     BPWM_ForceStop(BPWM2, 0x3F);
-    /* Start BPWM3 counter */
+    /* Stop BPWM3 counter */
     BPWM_ForceStop(BPWM3, 0x3F);
 
     printf("Done.");

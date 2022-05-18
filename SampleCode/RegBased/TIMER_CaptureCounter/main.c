@@ -212,7 +212,7 @@ int main(void)
                 if(u32CAPDiff != 500)
                 {
                     printf("*** FAIL ***\n");
-                    while(1);
+                    return -1;
                 }
             }
             u32InitCount = g_au32TMRINTCount[2];

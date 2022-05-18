@@ -65,11 +65,11 @@ void GPIO_SetMode(GPIO_T *port, uint32_t u32PinMask, uint32_t u32Mode)
  *                              It could be 0 ~ 3, 15 for PD GPIO port. \n
  *                              It could be 0 ~ 6, 14, 15 for PF GPIO port.
  * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be
- *                            - \ref GPIO_INT_RISING
- *                            - \ref GPIO_INT_FALLING
- *                            - \ref GPIO_INT_BOTH_EDGE
- *                            - \ref GPIO_INT_HIGH
- *                            - \ref GPIO_INT_LOW
+ *                              - \ref GPIO_INT_RISING
+ *                              - \ref GPIO_INT_FALLING
+ *                              - \ref GPIO_INT_BOTH_EDGE
+ *                              - \ref GPIO_INT_HIGH
+ *                              - \ref GPIO_INT_LOW
  *
  * @return      None
  *
@@ -78,10 +78,10 @@ void GPIO_SetMode(GPIO_T *port, uint32_t u32PinMask, uint32_t u32Mode)
 void GPIO_EnableInt(GPIO_T *port, uint32_t u32Pin, uint32_t u32IntAttribs)
 {
     /* Configure interrupt mode of specified pin */
-    port->INTTYPE |= (((u32IntAttribs >> 24) & 0xFFUL) << u32Pin);
+    port->INTTYPE = (port->INTTYPE & ~(1ul << u32Pin)) | (((u32IntAttribs >> 24) & 0xFFUL) << u32Pin);
 
     /* Enable interrupt function of specified pin */
-    port->INTEN |= ((u32IntAttribs & 0xFFFFFFUL) << u32Pin);
+    port->INTEN = (port->INTEN & ~(0x00010001ul << u32Pin)) | ((u32IntAttribs & 0xFFFFFFUL) << u32Pin);
 }
 
 
@@ -120,8 +120,8 @@ void GPIO_DisableInt(GPIO_T *port, uint32_t u32Pin)
  *                          It could be BIT0 ~ BIT3, BIT15 for PD. \n
  *                          It could be BIT0 ~ BIT6, BIT14, BIT15 for PF.
  * @param[in]   u32Mode     Slew rate mode. It could be
- *                          - \ref GPIO_SLEWCTL_NORMAL 
- *                          - \ref GPIO_SLEWCTL_HIGH 
+ *                          - \ref GPIO_SLEWCTL_NORMAL
+ *                          - \ref GPIO_SLEWCTL_HIGH
  *
  * @return      None
  *

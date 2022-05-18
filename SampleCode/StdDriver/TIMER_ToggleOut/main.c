@@ -47,7 +47,7 @@ void SYS_Init(void)
     /* Peripheral clock source */
     CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_PCLK0, 0);
 
-    /* Set PB.5 as Timer0 toggle-outout pin*/
+    /* Set PB.5 as Timer0 toggle-outout pin */
     SYS->GPB_MFPL = (SYS->GPB_MFPL & (~TM0_PB5_Msk)) | TM0_PB5;
 }
 

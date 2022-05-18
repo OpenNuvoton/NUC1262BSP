@@ -15,29 +15,26 @@
 #include "targetdev.h"
 #include "i2c_transfer.h"
 
-#define PLLCTL_SETTING      CLK_PLLCTL_72MHz_HIRC
-#define PLL_CLOCK           71884800
-
 uint32_t u32Pclk0;
 uint32_t u32Pclk1;
 
 void ProcessHardFault(void) {}
 void SH_Return(void) {}
 
-void SYS_Init(void)
+int32_t SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Enable HIRC clock (Internal RC 22.1184MHz) and HXT clock (external XTAL 12MHz) */
     /* Enable HIRC clock */
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
     /* Wait for HIRC clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
-
-    /* Select HCLK clock source as HIRC first */
-    CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HIRC;
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while (!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk))
+        if(--u32TimeOutCnt == 0) return -1;
 
     /* Disable PLL clock before setting PLL frequency */
     CLK->PLLCTL |= CLK_PLLCTL_PD_Msk;
@@ -46,7 +43,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+        if(--u32TimeOutCnt == 0) return -1;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -57,7 +56,9 @@ void SYS_Init(void)
     SystemCoreClock = 144000000 / 2;
     CyclesPerUs     = SystemCoreClock / 1000000;  /* For CLK_SysTickDelay() */
 
+    /* Enable I2C1 peripheral clock */
     CLK->APBCLK0 |= CLK_APBCLK0_I2C1CKEN_Msk;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -66,7 +67,9 @@ void SYS_Init(void)
     SYS->GPA_MFPL |= (SYS_GPA_MFPL_PA6MFP_I2C1_SDA | SYS_GPA_MFPL_PA7MFP_I2C1_SCL);
 
     /* I2C clock pin enable schmitt trigger */
-    PC->SMTEN |= GPIO_SMTEN_SMTEN4_Msk;
+    PA->SMTEN |= GPIO_SMTEN_SMTEN7_Msk;
+
+    return 0;
 }
 
 int main(void)
@@ -77,7 +80,7 @@ int main(void)
     SYS_UnlockReg();
 
     /* Init System, peripheral clock and multi-function I/O */
-    SYS_Init();
+    if( SYS_Init() < 0 ) goto _APROM;
 
     /* Enable ISP */
     CLK->AHBCLK |= CLK_AHBCLK_ISPCKEN_Msk;

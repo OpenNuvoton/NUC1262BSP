@@ -1,7 +1,7 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V3.00
- * @brief    Show how to wake up system form Power-down mode by UART interrupt.
+ * @brief    Show how to wake up system from Power-down mode by UART interrupt.
  *
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
@@ -29,8 +29,12 @@ void UART_PowerDownWakeUpTest(void);
 /*---------------------------------------------------------------------------------------------------------*/
 void PowerDownFunction(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /* Check if all the debug messages are finished */
-    UART_WAIT_TX_EMPTY(UART0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    UART_WAIT_TX_EMPTY(UART0)
+        if(--u32TimeOutCnt == 0) break;
 
     /* Enter to Power-down mode */
     CLK_PowerDown();
@@ -50,7 +54,7 @@ void SYS_Init(void)
     /* Enable HIRC and LXT clock */
     CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk|CLK_PWRCTL_LXTEN_Msk);
 
-    /* Waiting for HIRC and LXT clock ready */
+    /* Wait for HIRC and LXT clock ready */
     CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk|CLK_STATUS_LXTSTB_Msk);
 
     /* Set core clock to 72MHz */
@@ -148,13 +152,15 @@ int32_t main(void)
 /*---------------------------------------------------------------------------------------------------------*/
 void UART1_IRQHandler(void)
 {
-    uint32_t u32Data;
+    uint32_t u32Data, u32TimeOutCnt;
 
     if(UART_GET_INT_FLAG(UART1, UART_INTSTS_WKINT_Msk))     /* UART wake-up interrupt flag */
     {
         UART_ClearIntFlag(UART1, UART_INTSTS_WKINT_Msk);
         printf("UART wake-up.\n");
-        UART_WAIT_TX_EMPTY(UART0);
+        u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+        UART_WAIT_TX_EMPTY(UART0)
+            if(--u32TimeOutCnt == 0) break;
     }
     else if(UART_GET_INT_FLAG(UART1, UART_INTSTS_RDAINT_Msk | UART_INTSTS_RXTOINT_Msk))  /* UART receive data available flag */
     {
@@ -187,7 +193,7 @@ void UART_CTSWakeUp(void)
 /*---------------------------------------------------------------------------------------------------------*/
 void UART_DataWakeUp(void)
 {
-    /* Enable UART data wake-up frunction */
+    /* Enable UART data wake-up function */
     UART1->WKCTL |= UART_WKCTL_WKDATEN_Msk;
 
     /* Set UART data wake-up start bit compensation value.
@@ -292,8 +298,8 @@ void UART_PowerDownWakeUpTest(void)
     /* Lock protected registers */
     SYS_LockReg();
 
-    printf("\nCPU @ %dHz\n", SystemCoreClock);    
-    
+    printf("\nCPU @ %dHz\n", SystemCoreClock);
+
     /* Enable UART wake-up and receive data available interrupt */
     UART_EnableInt(UART1, UART_INTEN_WKIEN_Msk | UART_INTEN_RDAIEN_Msk | UART_INTEN_RXTOIEN_Msk);
 
@@ -335,6 +341,4 @@ void UART_PowerDownWakeUpTest(void)
 
     /* Disable UART Interrupt */
     UART_DisableInt(UART1, UART_INTEN_WKIEN_Msk | UART_INTEN_RDAIEN_Msk | UART_INTEN_RXTOIEN_Msk);
-    NVIC_DisableIRQ(UART1_IRQn);
-
 }

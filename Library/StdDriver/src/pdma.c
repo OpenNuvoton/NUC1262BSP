@@ -44,7 +44,7 @@ void PDMA_Open(uint32_t u32Mask)
         if((1 << i) & u32Mask)
         {
             PDMA->DSCT[i].CTL = 0UL;
-			u32ChSelect[i] = PDMA_MEM;
+            u32ChSelect[i] = PDMA_MEM;
         }
     }
 

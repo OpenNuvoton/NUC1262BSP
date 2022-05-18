@@ -1510,11 +1510,15 @@ Example: If user want to set PA.0 as UART0_RXD and PA.1 as UART0_TXD in initial 
   */
 __STATIC_INLINE void SYS_UnlockReg(void)
 {
+    uint32_t u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+
     do
     {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
+
+        if(--u32TimeOutCnt == 0) break;
     }
     while(SYS->REGLCTL == 0);
 }

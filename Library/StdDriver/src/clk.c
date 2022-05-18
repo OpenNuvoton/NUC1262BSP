@@ -21,10 +21,10 @@
 */
 
 /**
-  * @brief      Disable frequency output function
+  * @brief      Disable clock divider output function
   * @param      None
   * @return     None
-  * @details    This function disable frequency output function.
+  * @details    This function disable clock divider output function.
   */
 void CLK_DisableCKO(void)
 {
@@ -33,24 +33,24 @@ void CLK_DisableCKO(void)
 }
 
 /**
-  * @brief      This function enable frequency divider module clock.
-  *             enable frequency divider clock function and configure frequency divider.
+  * @brief      This function enable clock divider output module clock,
+  *             enable clock divider output function and set frequency selection.
   * @param[in]  u32ClkSrc is frequency divider function clock source. Including :
   *             - \ref CLK_CLKSEL2_CLKOSEL_HXT
   *             - \ref CLK_CLKSEL2_CLKOSEL_LXT
   *             - \ref CLK_CLKSEL2_CLKOSEL_HCLK
   *             - \ref CLK_CLKSEL2_CLKOSEL_HIRC_DIV2
   *             - \ref CLK_CLKSEL2_CLKOSEL_SOF
-  *             - \ref CLK_CLKSEL2_CLKOSEL_HIRC
-  * @param[in]  u32ClkDiv is divider output frequency selection.
-  * @param[in]  u32ClkDivBy1En is frequency divided by one enable.
+  *             - \ref CLK_CLKSEL2_CLKOSEL_HIRC48
+  * @param[in]  u32ClkDiv is divider output frequency selection. It could be 0~15.
+  * @param[in]  u32ClkDivBy1En is clock divided by one enabled.
   * @return     None
   *
-  * @details    Output selected clock to CKO. The output clock frequency is divided by u32ClkDiv.
-  *             The formula is:
-  *                 CKO frequency = (Clock source frequency) / 2^(u32ClkDiv + 1)
+  * @details    Output selected clock to CKO. The output clock frequency is divided by u32ClkDiv. \n
+  *             The formula is: \n
+  *                 CKO frequency = (Clock source frequency) / 2^(u32ClkDiv + 1) \n
   *             This function is just used to set CKO clock.
-  *             User must enable I/O for CKO clock output pin by themselves.
+  *             User must enable I/O for CKO clock output pin by themselves. \n
   */
 void CLK_EnableCKO(uint32_t u32ClkSrc, uint32_t u32ClkDiv, uint32_t u32ClkDivBy1En)
 {
@@ -77,7 +77,7 @@ void CLK_PowerDown(void)
     /* Set the processor uses deep sleep as its low power mode */
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
-    /* Set system Power-down enabled*/
+    /* Set system Power-down enabled */
     CLK->PWRCTL |= CLK_PWRCTL_PDEN_Msk;
 
     /* Chip enter Power-down mode after CPU run WFI instruction */
@@ -190,7 +190,7 @@ uint32_t CLK_GetCPUFreq(void)
   * @param[in]  u32Hclk is HCLK frequency. The range of u32Hclk is 25 MHz ~ 72 MHz.
   * @return     HCLK frequency
   * @details    This function is used to set HCLK frequency. The frequency unit is Hz. \n
-  *             It would configure PLL frequency to 100MHz ~ 144MHz,
+  *             It would configure PLL frequency to 50MHz ~ 144MHz,
   *             set HCLK clock divider as 1 and switch HCLK clock source to PLL/2. \n
   *             The register write-protection function should be disabled before using this function.
   */
@@ -421,7 +421,7 @@ void CLK_DisableXtalRC(uint32_t u32ClkMask)
 }
 
 /**
-  * @brief      This function enable module clock
+  * @brief      Enable module clock
   * @param[in]  u32ModuleIdx is module index. Including :
   *             - \ref PDMA_MODULE
   *             - \ref ISP_MODULE
@@ -462,7 +462,7 @@ void CLK_DisableXtalRC(uint32_t u32ClkMask)
   *             - \ref LLSI8_MODULE
   *             - \ref LLSI9_MODULE
   * @return     None
-  * @details    This function enable module clock.
+  * @details    This function is used to enable module clock.
   */
 void CLK_EnableModuleClock(uint32_t u32ModuleIdx)
 {
@@ -472,7 +472,7 @@ void CLK_EnableModuleClock(uint32_t u32ModuleIdx)
 }
 
 /**
-  * @brief      This function disable module clock
+  * @brief      Disable module clock
   * @param[in]  u32ModuleIdx is module index
   *             - \ref PDMA_MODULE
   *             - \ref ISP_MODULE
@@ -513,7 +513,7 @@ void CLK_EnableModuleClock(uint32_t u32ModuleIdx)
   *             - \ref LLSI8_MODULE
   *             - \ref LLSI9_MODULE
   * @return     None
-  * @details    This function disable module clock.
+  * @details    This function is used to disable module clock.
   */
 void CLK_DisableModuleClock(uint32_t u32ModuleIdx)
 {
@@ -528,7 +528,7 @@ void CLK_DisableModuleClock(uint32_t u32ModuleIdx)
   * @param[in]  u32PllClkSrc is PLL clock source. Including :
   *             - \ref CLK_PLLCTL_PLLSRC_HXT
   *             - \ref CLK_PLLCTL_PLLSRC_HIRC_DIV2
-  * @param[in]  u32PllFreq is PLL frequency.
+  * @param[in]  u32PllFreq is PLL frequency. The range of u32PllFreq is 50 MHz ~ 500 MHz.
   * @return     PLL frequency
   * @details    This function is used to configure PLLCTL register to set specified PLL frequency. \n
   *             The register write-protection function should be disabled before using this function.
@@ -672,11 +672,11 @@ void CLK_DisablePLL(void)
   *             - \ref CLK_STATUS_PLLSTB_Msk
   * @retval     0  clock is not stable
   * @retval     1  clock is stable
-  * @details    To wait for clock ready by specified clock source stable flag or timeout (~700ms)
+  * @details    To wait for clock ready by specified clock source stable flag or timeout (>500ms)
   */
 uint32_t CLK_WaitClockReady(uint32_t u32ClkMask)
 {
-    int32_t i32TimeOutCnt = 3000000;
+    int32_t i32TimeOutCnt = SystemCoreClock>>1; /* 500ms time-out */
 
     while((CLK->STATUS & u32ClkMask) != u32ClkMask)
     {
@@ -708,9 +708,18 @@ void CLK_EnableSysTick(uint32_t u32ClkSrc, uint32_t u32Count)
 
     /* Set System Tick clock source */
     if(u32ClkSrc == CLK_CLKSEL0_STCLKSEL_HCLK)
+    {
+        /* Select System Tick clock source from core clock */
         SysTick->CTRL |= SysTick_CTRL_CLKSOURCE_Msk;
+    }
     else
+    {
+        /* Select System Tick external reference clock source */
         CLK->CLKSEL0 = (CLK->CLKSEL0 & ~CLK_CLKSEL0_STCLKSEL_Msk) | u32ClkSrc;
+
+        /* Select System Tick clock source from external reference clock */
+        SysTick->CTRL &= ~SysTick_CTRL_CLKSOURCE_Msk;
+    }
 
     /* Set System Tick reload value */
     SysTick->LOAD = u32Count;
