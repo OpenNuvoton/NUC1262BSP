@@ -54,7 +54,7 @@ void I2C0_IRQHandler(void)
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
-/*  I2C TRx Callback Function                                                                               */
+/*  I2C TRx Callback Function                                                                              */
 /*---------------------------------------------------------------------------------------------------------*/
 void I2C_SlaveTRx(uint32_t u32Status)
 {
@@ -301,6 +301,7 @@ int32_t main(void)
             u32TimeOutCnt = I2C_TIMEOUT;
             while(I2C0->CTL & I2C_CTL_SI_Msk)
                 if(--u32TimeOutCnt == 0) break;
+
             printf("I2C Slave re-start. status[0x%x]\n", I2C0->STATUS);
             I2C_SET_CONTROL_REG(I2C0, I2C_CTL_SI_AA);
         }

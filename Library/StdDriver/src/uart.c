@@ -192,20 +192,22 @@ void UART_Open(UART_T* uart, uint32_t u32baudrate)
         case UART0_BASE:
             u8UartClkSrcSel = (CLK->CLKSEL1 & CLK_CLKSEL1_UART0SEL_Msk) >> CLK_CLKSEL1_UART0SEL_Pos;
             u8UartClkDivNum = (CLK->CLKDIV0 & CLK_CLKDIV0_UART0DIV_Msk) >> CLK_CLKDIV0_UART0DIV_Pos;
-            break;    
+            break;
 
         case UART1_BASE:
             u8UartClkSrcSel = (CLK->CLKSEL1 & CLK_CLKSEL1_UART1SEL_Msk) >> CLK_CLKSEL1_UART1SEL_Pos;
             u8UartClkDivNum = (CLK->CLKDIV0 & CLK_CLKDIV0_UART1DIV_Msk) >> CLK_CLKDIV0_UART1DIV_Pos;
-            break;     
+            break;
+
+        default:
+            return;
     }
-    
- 
+
     /* Get PLL clock frequency if UART clock source selection is PLL/2 */
     if(u8UartClkSrcSel == 1ul)
     {
         au32ClkTbl[u8UartClkSrcSel] = (CLK_GetPLLClockFreq()>>1);
-    }        
+    }
 
     /* Select UART function */
     uart->FUNCSEL = UART_FUNCSEL_UART;
@@ -310,14 +312,16 @@ void UART_SetLine_Config(UART_T* uart, uint32_t u32baudrate, uint32_t u32data_wi
             u8UartClkSrcSel = (CLK->CLKSEL1 & CLK_CLKSEL1_UART1SEL_Msk) >> CLK_CLKSEL1_UART1SEL_Pos;
             u8UartClkDivNum = (CLK->CLKDIV0 & CLK_CLKDIV0_UART1DIV_Msk) >> CLK_CLKDIV0_UART1DIV_Pos;
             break;
+
+        default:
+            return;
     }
-    
  
     /* Get PLL clock frequency if UART clock source selection is PLL/2 */
     if(u8UartClkSrcSel == 1ul)
     {
         au32ClkTbl[u8UartClkSrcSel] = (CLK_GetPLLClockFreq()>>1);
-    }   
+    }
 
     /* Set UART baud rate */
     if(u32baudrate != 0)
@@ -389,14 +393,16 @@ void UART_SelectIrDAMode(UART_T* uart, uint32_t u32Buadrate, uint32_t u32Directi
             u8UartClkSrcSel = (CLK->CLKSEL1 & CLK_CLKSEL1_UART1SEL_Msk) >> CLK_CLKSEL1_UART1SEL_Pos;
             u8UartClkDivNum = (CLK->CLKDIV0 & CLK_CLKDIV0_UART1DIV_Msk) >> CLK_CLKDIV0_UART1DIV_Pos;
             break;
+
+        default:
+            return;
     }
-    
  
     /* Get PLL clock frequency if UART clock source selection is PLL/2 */
     if(u8UartClkSrcSel == 1ul)
     {
         au32ClkTbl[u8UartClkSrcSel] = (CLK_GetPLLClockFreq()>>1);
-    }   
+    }
 
     /* Set UART IrDA baud rate in mode 0 */
     if(u32Buadrate != 0)
@@ -469,7 +475,7 @@ uint32_t UART_Write(UART_T* uart, uint8_t *pu8TxBuf, uint32_t u32WriteBytes)
         {
             u32delayno++;
             if(u32delayno >= 0x40000000)
-                return FALSE;
+                return u32Count;
         }
         uart->DAT = pu8TxBuf[u32Count];    /* Send UART Data from buffer */
     }

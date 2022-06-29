@@ -152,7 +152,7 @@ void ADC_PWMTrigTest_SingleOpMode()
     {
         if(--u32TimeOutCnt == 0)
         {
-            printf("Wait for PWM period interrupt time-out!\n");
+            printf("Wait for BPWM period interrupt time-out!\n");
             return;
         }
     }
@@ -162,7 +162,7 @@ void ADC_PWMTrigTest_SingleOpMode()
     {
         if(--u32TimeOutCnt == 0)
         {
-            printf("Wait for PWM zero interrupt time-out!\n");
+            printf("Wait for BPWM zero interrupt time-out!\n");
             return;
         }
     }
@@ -189,15 +189,13 @@ void ADC_PWMTrigTest_SingleOpMode()
 
     /* Disable ADC */
     ADC->ADCR = 0;
-
-//     while(1);
 }
 
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
-int main(void)
+int32_t main(void)
 {
 
     /* Unlock protected registers */

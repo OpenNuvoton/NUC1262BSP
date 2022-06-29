@@ -173,8 +173,6 @@ void ADC_PWMTrigTest_SingleOpMode()
 
     /* Disable ADC */
     ADC_POWER_DOWN(ADC);
-
-//     while(1);
 }
 
 
