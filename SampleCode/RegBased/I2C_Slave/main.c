@@ -327,7 +327,7 @@ int32_t main(void)
             s_u8TimeoutFlag = 0;
             s_u8SlvTRxAbortFlag = 1;
         }
-        /* When I2C abort, clear SI to enter non-addressed SLV mode*/
+        /* When I2C abort, clear SI to enter non-addressed SLV mode */
         if(s_u8SlvTRxAbortFlag)
         {
             s_u8SlvTRxAbortFlag = 0;

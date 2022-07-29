@@ -158,10 +158,7 @@ int main(void)
     if(TIMER_GetCounter(TIMER2) != 0)
     {
         printf("Default counter value is not 0. (%d)\n", TIMER_GetCounter(TIMER2));
-
-        /* Stop Timer2 counting */
-        TIMER_Close(TIMER2);
-        return -1;
+        goto lexit;
     }
 
     printf("Start to check Timer2 counter value ......\n\n");
@@ -176,10 +173,7 @@ int main(void)
     if(TIMER_GetCounter(TIMER2) != 1)
     {
         printf("Get unexpected counter value. (%d)\n", TIMER_GetCounter(TIMER2));
-
-        /* Stop Timer2 counting */
-        TIMER_Close(TIMER2);
-        return -1;
+        goto lexit;
     }
 
     /* To generate remains counts to TM2 pin */
@@ -203,6 +197,8 @@ int main(void)
     {
         printf("FAIL.\n");
     }
+
+lexit:
 
     /* Stop Timer2 counting */
     TIMER_Close(TIMER2);

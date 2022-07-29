@@ -113,9 +113,10 @@ int main()
         if(u32Data != u32RData)
         {
             printf("[Read/Write FAIL]\n");
-            return -1;
+            break;
         }
     }
+
     /* Disable FMC ISP function */
     FMC->ISPCTL &=  ~FMC_ISPCTL_ISPEN_Msk;
 
