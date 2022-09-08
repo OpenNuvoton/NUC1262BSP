@@ -21,7 +21,6 @@
 #define TRIM_INIT           (SYS_BASE+0x110)
 
 uint8_t volatile g_u8RemouteWakeup = 0;
-int IsDebugFifoEmpty(void);
 
 void SYS_Init(void)
 {
@@ -115,15 +114,8 @@ void GPCDF_IRQHandler(void)
 
 void PowerDown()
 {
-    uint32_t u32TimeOutCnt;
-
     /* Unlock protected registers */
     SYS_UnlockReg();
-
-    printf("Enter power down ...\n");
-    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
-    while(!IsDebugFifoEmpty())
-        if(--u32TimeOutCnt == 0) break;
 
     /* Wakeup Enable */
     USBD_ENABLE_INT(USBD_INTEN_WKEN_Msk);
@@ -145,10 +137,7 @@ void PowerDown()
         CLK_SysTickDelay(1000); /* Delay 1ms */
         USBD->ATTR ^= USBD_ATTR_RWAKEUP_Msk;
         g_u8RemouteWakeup = 0;
-        printf("Remote Wakeup!!\n");
     }
-
-    printf("device wakeup!\n");
 
     /* Lock protected registers */
     SYS_LockReg();

@@ -21,8 +21,6 @@
 #define HIRC_AUTO_TRIM      0x611   /* Use USB signal to fine tune HIRC 48MHz */
 #define TRIM_INIT           (SYS_BASE+0x110)
 
-int IsDebugFifoEmpty(void);
-
 void SYS_Init(void)
 {
     /*---------------------------------------------------------------------------------------------------------*/
@@ -94,15 +92,8 @@ void UART0_Init(void)
 
 void PowerDown()
 {
-    uint32_t u32TimeOutCnt;
-
     /* Unlock protected registers */
     SYS_UnlockReg();
-
-    printf("Enter power down ...\n");
-    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
-    while(!IsDebugFifoEmpty())
-        if(--u32TimeOutCnt == 0) break;
 
     /* Wakeup Enable */
     USBD_ENABLE_INT(USBD_INTEN_WKEN_Msk);
@@ -112,8 +103,6 @@ void PowerDown()
     /* Clear PWR_DOWN_EN if it is not clear by itself */
     if(CLK->PWRCTL & CLK_PWRCTL_PDEN_Msk)
         CLK->PWRCTL ^= CLK_PWRCTL_PDEN_Msk;
-
-    printf("device wakeup!\n");
 
     /* Lock protected registers */
     SYS_LockReg();
