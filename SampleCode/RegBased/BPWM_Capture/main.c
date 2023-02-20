@@ -38,6 +38,7 @@ int32_t CalPeriodTime()
     uint16_t au16Count[4];
     uint32_t u32i;
     uint16_t u16RisingTime, u16FallingTime, u16HighPeriod, u16LowPeriod, u16TotalPeriod;
+    uint32_t u32TimeOutCnt;
 
     /* Clear Capture Falling Indicator (Time A) */
     BPWM0->CAPIF = BPWM_CAPIF_CAPFIF0_Msk;
@@ -63,7 +64,6 @@ int32_t CalPeriodTime()
         /* Wait for Capture Falling Indicator */
         u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
         while((BPWM0->CAPIF & BPWM_CAPIF_CAPFIF0_Msk) == 0)
-        while(BPWM_GetCaptureIntFlag(BPWM, u32Ch) < 2)
         {
             if(--u32TimeOutCnt == 0)
             {
@@ -81,7 +81,6 @@ int32_t CalPeriodTime()
         /* Wait for Capture Rising Indicator */
         u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
         while((BPWM0->CAPIF & BPWM_CAPIF_CAPRIF0_Msk) == 0)
-        while(BPWM_GetCaptureIntFlag(BPWM, u32Ch) < 1)
         {
             if(--u32TimeOutCnt == 0)
             {
