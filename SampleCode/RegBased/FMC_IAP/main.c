@@ -26,7 +26,7 @@ int32_t g_FMC_i32ErrCode;
 #if defined ( __ICCARM__ )
 uint32_t *g_au32funcTable = (uint32_t *)0x100e00; /* The location of function table */
 #else
-uint32_t *g_au32funcTable = (uint32_t *)0x100a08; /* The location of function table */
+uint32_t *g_au32funcTable = (uint32_t *)0x100a6c; /* The location of function table */
 #endif
 
 
@@ -93,6 +93,9 @@ void UART0_Init()
     UART0->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
+#if defined ( __ICCARM__ )
+#pragma optimize=low
+#endif
 void FMC_LDROM_Test(void)
 {
     int32_t  i32Err;
