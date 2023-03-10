@@ -57,7 +57,7 @@ int main(void)
     printf("The I/O connection for SPI0/SPI1 loopback:\n");
     printf("    SPI0_SS  (PA.3) <--> SPI1_SS  (PC.0)\n    SPI0_CLK (PA.2) <--> SPI1_CLK (PC.1)\n");
     printf("    SPI0_MISO(PA.1) <--> SPI1_MISO(PC.3)\n    SPI0_MOSI(PA.0) <--> SPI1_MOSI(PC.2)\n\n");
-    printf("Please connect SPI0 with SPI1, and press any key to start transmission ...");
+    printf("Please connect SPI0 with SPI1, and press any key to start transmission ...\n");
     getchar();
     printf("\n");
 
