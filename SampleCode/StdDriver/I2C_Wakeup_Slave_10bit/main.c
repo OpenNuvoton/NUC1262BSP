@@ -279,7 +279,7 @@ int32_t main(void)
 
     printf("Configure I2C0 as a slave.\n");
     printf("The I/O connection for I2C0:\n");
-    printf("I2C0_SDA(PD.4), I2C0_SCL(PD.5)\n");
+    printf("I2C0_SDA(PB.4), I2C0_SCL(PA.5)\n");
 
     /* Init I2C0 */
     I2CS_Init_10bit(I2C0, 100000);
