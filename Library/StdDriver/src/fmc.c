@@ -5,8 +5,8 @@
 * $Date: 20/11/27 $
 * @brief    Flash Memory Controller(FMC) driver source file
 *
-* @copyright SPDX-License-Identifier: Apache-2.0
-* @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include <stdio.h>
 #include "NuMicro.h"

@@ -23,7 +23,7 @@
   *
   * <b>Copyright Notice</b>
   *
-  * Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
+  * Copyright (C) 2021~2023 Nuvoton Technology Corp. All rights reserved.
   */
 
 #ifndef __NUC1262_H__

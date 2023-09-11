@@ -4,8 +4,8 @@
  * @brief    A sample code to show how to debug with semihost message print.
  *  
  * @note
- * SPDX-License-Identifier: Apache-2.0
- * @copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NuMicro.h"

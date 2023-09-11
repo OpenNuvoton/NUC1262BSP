@@ -5,8 +5,8 @@
 * $Date: 20/11/27 $
 * @brief    I2C Serial Interface Controller(I2C) driver header file
 *
-* @copyright SPDX-License-Identifier: Apache-2.0
-* @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 
 #ifndef __I2C_H__
