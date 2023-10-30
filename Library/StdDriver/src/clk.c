@@ -528,7 +528,7 @@ void CLK_DisableModuleClock(uint32_t u32ModuleIdx)
   * @param[in]  u32PllClkSrc is PLL clock source. Including :
   *             - \ref CLK_PLLCTL_PLLSRC_HXT
   *             - \ref CLK_PLLCTL_PLLSRC_HIRC_DIV2
-  * @param[in]  u32PllFreq is PLL frequency. The range of u32PllFreq is 50 MHz ~ 500 MHz.
+  * @param[in]  u32PllFreq is PLL frequency. The range of u32PllFreq is 50 MHz ~ 144 MHz.
   * @return     PLL frequency
   * @details    This function is used to configure PLLCTL register to set specified PLL frequency. \n
   *             The register write-protection function should be disabled before using this function.
@@ -576,11 +576,7 @@ uint32_t CLK_EnablePLL(uint32_t u32PllClkSrc, uint32_t u32PllFreq)
     }
 
     /* Select "NO" according to request frequency */
-    if((u32PllFreq <= FREQ_500MHZ) && (u32PllFreq > FREQ_200MHZ))
-    {
-        u32NO = 0;
-    }
-    else if((u32PllFreq <= FREQ_200MHZ) && (u32PllFreq > FREQ_100MHZ))
+    if((u32PllFreq <= FREQ_144MHZ) && (u32PllFreq > FREQ_100MHZ))
     {
         u32NO = 1;
         u32PllFreq = u32PllFreq << 1;
