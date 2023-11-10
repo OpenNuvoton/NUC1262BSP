@@ -3571,10 +3571,10 @@ typedef struct
 #define I2C_STATUS1_ONBUSY_Msk           (0x1ul << I2C_STATUS1_ONBUSY_Pos)                 /*!< I2C_T::STATUS1: ONBUSY Mask            */
 
 #define I2C_TMCTL_STCTL_Pos              (0)                                               /*!< I2C_T::TMCTL: STCTL Position           */
-#define I2C_TMCTL_STCTL_Msk              (0x3ful << I2C_TMCTL_STCTL_Pos)                   /*!< I2C_T::TMCTL: STCTL Mask               */
+#define I2C_TMCTL_STCTL_Msk              (0x1fful << I2C_TMCTL_STCTL_Pos)                  /*!< I2C_T::TMCTL: STCTL Mask               */
 
-#define I2C_TMCTL_HTCTL_Pos              (6)                                               /*!< I2C_T::TMCTL: HTCTL Position           */
-#define I2C_TMCTL_HTCTL_Msk              (0x3ful << I2C_TMCTL_HTCTL_Pos)                   /*!< I2C_T::TMCTL: HTCTL Mask               */
+#define I2C_TMCTL_HTCTL_Pos              (16)                                              /*!< I2C_T::TMCTL: HTCTL Position           */
+#define I2C_TMCTL_HTCTL_Msk              (0x1fful << I2C_TMCTL_HTCTL_Pos)                  /*!< I2C_T::TMCTL: HTCTL Mask               */
 
 #define I2C_BUSCTL_ACKMEN_Pos            (0)                                               /*!< I2C_T::BUSCTL: ACKMEN Position         */
 #define I2C_BUSCTL_ACKMEN_Msk            (0x1ul << I2C_BUSCTL_ACKMEN_Pos)                  /*!< I2C_T::BUSCTL: ACKMEN Mask             */

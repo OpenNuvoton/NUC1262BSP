@@ -381,7 +381,7 @@ void I2C0_Close(void)
 
 }
 
-int32_t Read_Write_SLAVE(uint8_t slvaddr)
+int32_t Read_Write_SLAVE(uint16_t slvaddr)
 {
     uint32_t i;
 
@@ -394,7 +394,7 @@ int32_t Read_Write_SLAVE(uint8_t slvaddr)
         s_u8DeviceAddr = (slvaddr >> 8) | SLV_10BIT_ADDR;
         s_u8DeviceLAddr = slvaddr & 0xFF;
 #else
-        s_u8DeviceAddr = slvaddr;
+        s_u8DeviceAddr = (uint8_t)slvaddr;
 #endif
         s_u8TimeoutFlag = 0;
         for(i = 0; i < 0x100; i++)
