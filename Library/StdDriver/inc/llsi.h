@@ -57,7 +57,7 @@ typedef struct
 /* LLSI Interrupt Mask */
 #define LLSI_UNDFL_INT_MASK          (0x001)                        /*!< Underflow interrupt mask */
 #define LLSI_FEND_INT_MASK           (0x002)                        /*!< Frame end interrupt mask */
-#define LLSI_RST_INT_MASK            (0x004)                        /*!< Reset command interrupt mask */
+#define LLSI_RSTC_INT_MASK           (0x004)                        /*!< Reset command interrupt mask */
 #define LLSI_EMP_INT_MASK            (0x008)                        /*!< FIFO empty interrupt mask */
 #define LLSI_FUL_INT_MASK            (0x010)                        /*!< FIFO full interrupt mask */
 #define LLSI_TXTH_INT_MASK           (0x020)                        /*!< TX threshold interrupt mask */
@@ -70,12 +70,12 @@ typedef struct
 */
 
 /**
-  * @brief      Set LLSI last data flag.
+  * @brief      Set LLSI last data transmit.
   * @param[in]  llsi The pointer of the specified LLSI module.
   * @return     None.
-  * @details    Set LADF (LLSI_STATUS[8]) to set LLSI last data flag.
+  * @details    Set LDT (LLSI_STATUS[8]) to set LLSI last data transmit.
   */
-#define LLSI_SET_LAST_DATA_FLAG(llsi)   ((llsi)->STATUS |= LLSI_STATUS_LADF_Msk)
+#define LLSI_SET_LAST_DATA(llsi)   ((llsi)->STATUS |= LLSI_STATUS_LDT_Msk)
 
 /**
   * @brief      Get the TX FIFO empty flag.

@@ -24,7 +24,7 @@ void LLSI0_IRQHandler()
         while(g_u32DataCount < TEST_COUNT)
         {
             if(g_u32DataCount == (TEST_COUNT - 1))
-                LLSI_SET_LAST_DATA_FLAG(LLSI0);
+                LLSI_SET_LAST_DATA(LLSI0);
             LLSI_WRITE_DATA(LLSI0, g_au32RED_Marquee[g_u32DataCount++]);
         }
         if(g_u32DataCount >= TEST_COUNT)

@@ -3694,38 +3694,33 @@ typedef struct
      * |        |          |0 = LLSI Disabled.
      * |        |          |1 = LLSI Enabled.
      * |[1]     |RSTCEN    |Reset Command Function Enable Bit
-     * |        |          |0 = Reset Command Function Disable.
-     * |        |          |1 = Reset Command Function Enable.
-     * |        |          |If this bit is enabled. When FIFO and shift register are both empty, LLSI will send reset command out.
+     * |        |          |0 = Reset command function Disabled.
+     * |        |          |1 = Reset command function Enabled.
+     * |        |          |Note: If this bit is enabled, when FIFO and shift register are both empty, LLSI will send reset command out.
      * |[2]     |UNDFLINTEN|Underflow Interrupt Enable Bit
-     * |        |          |0 = Underflow interrupt disable.
-     * |        |          |1 = Underflow interrupt enable.
-     * |        |          |If this bit is enabled
-     * |        |          |When the UNDFLIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
+     * |        |          |0 = Underflow interrupt Disabled.
+     * |        |          |1 = Underflow interrupt Enabled.
+     * |        |          |Note: If this bit is enabled, when the UNDFLIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
      * |[3]     |FENDINTEN |Frame End Interrupt Enable Bit
-     * |        |          |0 = Frame end interrupt disable.
-     * |        |          |1 = Frame end interrupt enable.
-     * |        |          |If this bit is enabled
-     * |        |          |When the FENDIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
-     * |[4]     |RSTINTEN  |Reset Command Interrupt Enable
-     * |        |          |0 = Reset command interrupt disable.
-     * |        |          |1 = Reset command interrupt enable.
-     * |        |          |If this bit is enabled
-     * |        |          |When the RSTCIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
-     * |[5]     |EMPINTEN  |FIFO Empty Interrupt Enable
-     * |        |          |0 = FIFO empty interrupt disable.
-     * |        |          |1 = FIFO empty interrupt enable.
-     * |        |          |If this bit is enabled
-     * |        |          |When the EMPIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
-     * |[6]     |FULINTEN  |FIFO FULL Interrupt Enable
-     * |        |          |0 = FIFO full interrupt disable.
-     * |        |          |1 = FIFO full interrupt enable.
-     * |        |          |If this bit is enabled
-     * |        |          |When the FULIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
-     * |[7]     |TXTHIEN   |Transmit FIFO Threshold Interrupt Enable
-     * |        |          |0 = TX FIFO Threshold interrupt disable.
-     * |        |          |1 = TX FIFO Threshold interrupt enable.
-     * |        |          |Note: This bit in only support in software mode.
+     * |        |          |0 = Frame end interrupt Disabled.
+     * |        |          |1 = Frame end interrupt Enabled.
+     * |        |          |Note: If this bit is enabled, when the FENDIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
+     * |[4]     |RSTCINTEN |Reset Command Interrupt Enable Bit
+     * |        |          |0 = Reset command interrupt Disabled.
+     * |        |          |1 = Reset command interrupt Enabled.
+     * |        |          |Note: If this bit is enabled, when the RSTCIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
+     * |[5]     |EMPINTEN  |FIFO Empty Interrupt Enable Bit
+     * |        |          |0 = FIFO empty interrupt Disabled.
+     * |        |          |1 = FIFO empty interrupt Enabled.
+     * |        |          |Note: If this bit is enabled, when the EMPIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
+     * |[6]     |FULINTEN  |FIFO Full Interrupt Enable Bit
+     * |        |          |0 = FIFO full interrupt Disabled.
+     * |        |          |1 = FIFO full interrupt Enabled.
+     * |        |          |Note: If this bit is enabled, when the FULIF interrupt flag is set to 1, the LLSI interrupt signal is generated and inform to CPU.
+     * |[7]     |TXTHIEN   |Transmit FIFO Threshold Interrupt Enable Bit
+     * |        |          |0 = TX FIFO threshold interrupt Disabled.
+     * |        |          |1 = TX FIFO threshold interrupt Enabled.
+     * |        |          |Note: This bit is only supported in software mode.
      * |[8]     |LLSIMODE  |LLSI Mode Select
      * |        |          |0 = Software mode.
      * |        |          |1 = PDMA mode.
@@ -3733,14 +3728,14 @@ typedef struct
      * |        |          |0 = Output RGB format.
      * |        |          |1 = Output GRB format.
      * |[17:16] |TXTH      |Transmit FIFO Threshold
-     * |        |          |If the valid data count of the transmit FIFO buffer is less than or equal to the TXTH setting, the TXTHIF bit will be set to 1, else the TXTHIF bit will be clear to 0
+     * |        |          |If the valid data count of the transmit FIFO buffer is less than or equal to the TXTH setting, the TXTHIF bit will be set to 1, else the TXTHIF bit will be cleared to 0.
      * @var LLSI_T::RSTPERIOD
      * Offset: 0x04  LLSI Reset Period Control Register
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[15:0]  |RSTPERIOD |Reset Command Period
-     * |        |          |This field is used to adjust the time of reset command
+     * |        |          |This field is used to adjust the time of reset command.
      * |        |          |Reset command time = LLSI_CLK * (DIVIDER+1) * RSTPERIOD.
      * @var LLSI_T::PERIOD
      * Offset: 0x08  LLSI Period Control Register
@@ -3748,7 +3743,7 @@ typedef struct
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[7:0]   |PERIOD    |LLSI Period Register
-     * |        |          |This field is used to define data transfer time (TH+TL)
+     * |        |          |This field is used to define data transfer time (TH+TL).
      * |        |          |Data transfer time = LLSI_CLK * (DIVIDER+1) * PERIOD.
      * @var LLSI_T::DUTY
      * Offset: 0x0C  LLSI Duty Control Register
@@ -3777,14 +3772,14 @@ typedef struct
      * | :----: | :----:   | :---- |
      * |[11:0]  |PCNT      |Pixel Count Register
      * |        |          |User should write a frame size to this register before transfer.
-     * |        |          |e.g. If there are total 5 LED (5 pixels) in frame, user should write 5 to this control register.
+     * |        |          |For example, if there are a total of 5 LED (5 pixels) in frame, user should write 5 to this control register.
      * @var LLSI_T::CLKDIV
      * Offset: 0x18  LLSI Clock Divider Register
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[7:0]   |DIVIDER   |LLSI Clock Divider
-     * |        |          |Indicates the LLSI clock, F_LLSI = F_APBCLK / (DIVIDER+1).
+     * |        |          |It indicates the LLSI clock, F_LLSI = F_APBCLK / (DIVIDER+1).
      * @var LLSI_T::STATUS
      * Offset: 0x1C  LLSI Status Register
      * ---------------------------------------------------------------------------------------------------
@@ -3797,21 +3792,21 @@ typedef struct
      * |        |          |1 = Transmit FIFO buffer is empty.
      * |[2]     |FULIF     |FIFO Full Interrupt Flag
      * |        |          |0 = Transmit FIFO buffer is not full.
-     * |        |          |1 = Transmit FIFO buffer is full. 
+     * |        |          |1 = Transmit FIFO buffer is full.
      * |[3]     |TXTHIF    |Transmit FIFO Threshold Interrupt Flag
      * |        |          |0 = The valid data count within the transmit FIFO buffer is larger than the setting value of TXTH.
      * |        |          |1 = The valid data count within the transmit FIFO buffer is less than or equal to the setting value of TXTH.
      * |[4]     |UNDFLIF   |Under Flow Interrupt Flag
      * |        |          |Each transmission LLSI reads 3 bytes data from the FIFO
      * |        |          |This bit is set to 1 when LLSI reads the FIFO and the valid data in FIFO is less than 3 bytes.
-     * |        |          |Software can write one to clear this bit.
+     * |        |          |Software can write 1 to clear this bit.
      * |[5]     |FENDIF    |Frame End Interrupt Flag
      * |        |          |This bit indicates that LLSI has finished data transmission (FIFO empty & shift register empty)
-     * |        |          |When LLSI transfer finish(FIFO empty & shift register empty) this bit is set to 1.
+     * |        |          |When LLSI transfer finish (FIFO empty & shift register empty) this bit is set to 1.
      * |        |          |User can use this flag to prepare data in advance.
-     * |        |          |Software can write one to clear this bit.
-     * |[8]     |LADF      |Last Date Flag
-     * |        |          |Software should set LADF = 1 before write last data to LLSI_DATA
+     * |        |          |Software can write 1 to clear this bit.
+     * |[8]     |LDT       |Last Data Transmit
+     * |        |          |Software should set LDT = 1 before write last data to LLSI_DATA
      * |        |          |This bit will auto clear by hardware after LLSI has finished data transmission.
      * @var LLSI_T::OCTL
      * Offset: 0x20  LLSI Output Control Register
@@ -3853,8 +3848,8 @@ typedef struct
 #define LLSI_CTL_FENDINTEN_Pos           (3)                                               /*!< LLSI_T::CTL: FENDINTEN Position        */
 #define LLSI_CTL_FENDINTEN_Msk           (0x1ul << LLSI_CTL_FENDINTEN_Pos)                 /*!< LLSI_T::CTL: FENDINTEN Mask            */
 
-#define LLSI_CTL_RSTINTEN_Pos            (4)                                               /*!< LLSI_T::CTL: RSTINTEN Position         */
-#define LLSI_CTL_RSTINTEN_Msk            (0x1ul << LLSI_CTL_RSTINTEN_Pos)                  /*!< LLSI_T::CTL: RSTINTEN Mask             */
+#define LLSI_CTL_RSTCINTEN_Pos           (4)                                               /*!< LLSI_T::CTL: RSTCINTEN Position        */
+#define LLSI_CTL_RSTCINTEN_Msk           (0x1ul << LLSI_CTL_RSTCINTEN_Pos)                 /*!< LLSI_T::CTL: RSTCINTEN Mask            */
 
 #define LLSI_CTL_EMPINTEN_Pos            (5)                                               /*!< LLSI_T::CTL: EMPINTEN Position         */
 #define LLSI_CTL_EMPINTEN_Msk            (0x1ul << LLSI_CTL_EMPINTEN_Pos)                  /*!< LLSI_T::CTL: EMPINTEN Mask             */
@@ -3913,8 +3908,8 @@ typedef struct
 #define LLSI_STATUS_FENDIF_Pos           (5)                                               /*!< LLSI_T::STATUS: FENDIF Position        */
 #define LLSI_STATUS_FENDIF_Msk           (0x1ul << LLSI_STATUS_FENDIF_Pos)                 /*!< LLSI_T::STATUS: FENDIF Mask            */
 
-#define LLSI_STATUS_LADF_Pos             (8)                                               /*!< LLSI_T::STATUS: LADF Position          */
-#define LLSI_STATUS_LADF_Msk             (0x1ul << LLSI_STATUS_LADF_Pos)                   /*!< LLSI_T::STATUS: LADF Mask              */
+#define LLSI_STATUS_LDT_Pos              (8)                                               /*!< LLSI_T::STATUS: LDT Position           */
+#define LLSI_STATUS_LDT_Msk              (0x1ul << LLSI_STATUS_LDT_Pos)                    /*!< LLSI_T::STATUS: LDT Mask               */
 
 #define LLSI_OCTL_IDOS_Pos               (0)                                               /*!< LLSI_T::OCTL: IDOS Position            */
 #define LLSI_OCTL_IDOS_Msk               (0x1ul << LLSI_OCTL_IDOS_Pos)                     /*!< LLSI_T::OCTL: IDOS Mask                */
