@@ -5,14 +5,19 @@
  *           with an off-chip SPI Master device with FIFO mode. This sample
  *           code needs to work with SPI_MasterFifoMode sample code.
  *
- * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NuMicro.h"
 
-#define TEST_COUNT 16
+// *** <<< Use Configuration Wizard in Context Menu >>> ***
+// <o> GPIO Slew Rate Control
+// <0=> Basic <1=> Higher
+#define SlewRateMode    0
+// *** <<< end of configuration section >>> ***
+
+#define TEST_COUNT      16
 
 uint32_t g_au32SourceData[TEST_COUNT];
 uint32_t g_au32DestinationData[TEST_COUNT];
@@ -94,7 +99,7 @@ int main(void)
     printf("\n\nExit SPI driver sample code.\n");
 
     /* Disable SPI0 peripheral clock */
-    CLK->APBCLK0 &= (~CLK_APBCLK0_SPI0CKEN_Msk);
+    CLK->APBCLK0 &= ~CLK_APBCLK0_SPI0CKEN_Msk;
     while(1);
 }
 
@@ -103,6 +108,7 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
+
     /* Enable HIRC clock */
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
@@ -144,12 +150,21 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
+
     /* Set PB multi-function pins for UART0 RXD and TXD */
     SYS->GPB_MFPH = (SYS->GPB_MFPH & (~(UART0_RXD_PB12_Msk | UART0_TXD_PB13_Msk))) | UART0_RXD_PB12 | UART0_TXD_PB13;
 
     /* Setup SPI0 multi-function pins */
     SYS->GPA_MFPL &= ~(SYS_GPA_MFPL_PA0MFP_Msk | SYS_GPA_MFPL_PA1MFP_Msk | SYS_GPA_MFPL_PA2MFP_Msk | SYS_GPA_MFPL_PA3MFP_Msk);
-    SYS->GPA_MFPL |= SYS_GPA_MFPL_PA0MFP_SPI0_MOSI | SYS_GPA_MFPL_PA1MFP_SPI0_MISO | SYS_GPA_MFPL_PA2MFP_SPI0_CLK | SYS_GPA_MFPL_PA3MFP_SPI0_SS;
+    SYS->GPA_MFPL |= (SYS_GPA_MFPL_PA0MFP_SPI0_MOSI | SYS_GPA_MFPL_PA1MFP_SPI0_MISO | SYS_GPA_MFPL_PA2MFP_SPI0_CLK | SYS_GPA_MFPL_PA3MFP_SPI0_SS);
+
+#if (SlewRateMode == 0)
+    /* Enable SPI0 I/O basic slew rate */
+    PA->SLEWCTL &= ~(GPIO_SLEWCTL_HSREN0_Msk | GPIO_SLEWCTL_HSREN1_Msk | GPIO_SLEWCTL_HSREN2_Msk | GPIO_SLEWCTL_HSREN3_Msk);
+#elif (SlewRateMode == 1)
+    /* Enable SPI0 I/O higher slew rate */
+    PA->SLEWCTL |= (GPIO_SLEWCTL_HSREN0_Msk | GPIO_SLEWCTL_HSREN1_Msk | GPIO_SLEWCTL_HSREN2_Msk | GPIO_SLEWCTL_HSREN3_Msk);
+#endif
 }
 
 void UART_Init(void)

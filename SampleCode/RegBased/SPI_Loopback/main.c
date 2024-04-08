@@ -1,10 +1,9 @@
-/******************************************************************************
+/**************************************************************************//**
  * @file     main.c
  * @version  V3.00
  * @brief    Demonstrate one SPI Master self-loopback transfer and two SPI 4-wire loopback transfer.
  *           SPI1 will be configured as Master mode and SPI0 will be configured as Slave mode.
  *
- * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2023 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
@@ -12,9 +11,12 @@
 #include "NuMicro.h"
 
 // *** <<< Use Configuration Wizard in Context Menu >>> ***
-//  <c> Two SPI port loopback transfer
-// #define TwoPortLoopback
-//  </c>
+// <c> Two SPI port loopback transfer
+//#define TwoPortLoopback
+// </c>
+// <o> GPIO Slew Rate Control
+// <0=> Basic <1=> Higher
+#define SlewRateMode        0
 // *** <<< end of configuration section >>> ***
 
 #define TEST_COUNT          64
@@ -139,7 +141,7 @@ int main(void)
         printf(" [PASS]\n\n");
 
     /* Disable SPI1 peripheral clock */
-    CLK->APBCLK0 &= (~CLK_APBCLK0_SPI1CKEN_Msk);
+    CLK->APBCLK0 &= ~CLK_APBCLK0_SPI1CKEN_Msk;
 #else
     printf("This sample code demonstrates SPI0/SPI1 loop back transfer.\n\n");
     printf("Configure SPI0 as a slave and SPI1 as a master.\n");
@@ -198,9 +200,9 @@ int main(void)
     printf("\n\nExit SPI driver sample code.\n");
 
     /* Disable SPI0 peripheral clock */
-    CLK->APBCLK0 &= (~CLK_APBCLK0_SPI0CKEN_Msk);
+    CLK->APBCLK0 &= ~CLK_APBCLK0_SPI0CKEN_Msk;
     /* Disable SPI1 peripheral clock */
-    CLK->APBCLK0 &= (~CLK_APBCLK0_SPI1CKEN_Msk);
+    CLK->APBCLK0 &= ~CLK_APBCLK0_SPI1CKEN_Msk;
 #endif
 
     while(1);
@@ -211,6 +213,7 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
+
     /* Enable HIRC clock */
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
@@ -258,18 +261,35 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
+
     /* Set PB multi-function pins for UART0 RXD and TXD */
     SYS->GPB_MFPH = (SYS->GPB_MFPH & (~(UART0_RXD_PB12_Msk | UART0_TXD_PB13_Msk))) | UART0_RXD_PB12 | UART0_TXD_PB13;
 
 #ifdef TwoPortLoopback
     /* Setup SPI0 multi-function pins */
     SYS->GPA_MFPL &= ~(SYS_GPA_MFPL_PA0MFP_Msk | SYS_GPA_MFPL_PA1MFP_Msk | SYS_GPA_MFPL_PA2MFP_Msk | SYS_GPA_MFPL_PA3MFP_Msk);
-    SYS->GPA_MFPL |= SYS_GPA_MFPL_PA0MFP_SPI0_MOSI | SYS_GPA_MFPL_PA1MFP_SPI0_MISO | SYS_GPA_MFPL_PA2MFP_SPI0_CLK | SYS_GPA_MFPL_PA3MFP_SPI0_SS;
+    SYS->GPA_MFPL |= (SYS_GPA_MFPL_PA0MFP_SPI0_MOSI | SYS_GPA_MFPL_PA1MFP_SPI0_MISO | SYS_GPA_MFPL_PA2MFP_SPI0_CLK | SYS_GPA_MFPL_PA3MFP_SPI0_SS);
+
+#if (SlewRateMode == 0)
+    /* Enable SPI0 I/O basic slew rate */
+    PA->SLEWCTL &= ~(GPIO_SLEWCTL_HSREN0_Msk | GPIO_SLEWCTL_HSREN1_Msk | GPIO_SLEWCTL_HSREN2_Msk | GPIO_SLEWCTL_HSREN3_Msk);
+#elif (SlewRateMode == 1)
+    /* Enable SPI0 I/O higher slew rate */
+    PA->SLEWCTL |= (GPIO_SLEWCTL_HSREN0_Msk | GPIO_SLEWCTL_HSREN1_Msk | GPIO_SLEWCTL_HSREN2_Msk | GPIO_SLEWCTL_HSREN3_Msk);
+#endif
 #endif
 
     /* Setup SPI1 multi-function pins */
     SYS->GPC_MFPL &= ~(SYS_GPC_MFPL_PC0MFP_Msk | SYS_GPC_MFPL_PC1MFP_Msk | SYS_GPC_MFPL_PC2MFP_Msk | SYS_GPC_MFPL_PC3MFP_Msk);
-    SYS->GPC_MFPL |= SYS_GPC_MFPL_PC0MFP_SPI1_SS | SYS_GPC_MFPL_PC1MFP_SPI1_CLK | SYS_GPC_MFPL_PC2MFP_SPI1_MOSI | SYS_GPC_MFPL_PC3MFP_SPI1_MISO;
+    SYS->GPC_MFPL |= (SYS_GPC_MFPL_PC0MFP_SPI1_SS | SYS_GPC_MFPL_PC1MFP_SPI1_CLK | SYS_GPC_MFPL_PC2MFP_SPI1_MOSI | SYS_GPC_MFPL_PC3MFP_SPI1_MISO);
+
+#if (SlewRateMode == 0)
+    /* Enable SPI1 I/O basic slew rate */
+    PC->SLEWCTL &= ~(GPIO_SLEWCTL_HSREN0_Msk | GPIO_SLEWCTL_HSREN1_Msk | GPIO_SLEWCTL_HSREN2_Msk | GPIO_SLEWCTL_HSREN3_Msk);
+#elif (SlewRateMode == 1)
+    /* Enable SPI1 I/O higher slew rate */
+    PC->SLEWCTL |= (GPIO_SLEWCTL_HSREN0_Msk | GPIO_SLEWCTL_HSREN1_Msk | GPIO_SLEWCTL_HSREN2_Msk | GPIO_SLEWCTL_HSREN3_Msk);
+#endif
 }
 
 void UART_Init(void)
