@@ -652,7 +652,7 @@ typedef struct
      * | :----: | :----:   | :---- |
      * |[0]     |HXTSTB    |HXT Clock Source Stable Flag (Read Only)
      * |        |          |0 = 4~24 MHz external high speed crystal oscillator (HXT) clock is not stable or disabled.
-     * |        |          |1 = 4~24 MHz external high speed crystal oscillator (HXT)clock is stable and enabled.
+     * |        |          |1 = 4~24 MHz external high speed crystal oscillator (HXT) clock is stable and enabled.
      * |[1]     |LXTSTB    |LXT Clock Source Stable Flag (Read Only)
      * |        |          |0 = 32.768 kHz external low speed crystal oscillator (LXT) clock is not stable or disabled.
      * |        |          |1 = 32.768 kHz external low speed crystal oscillator (LXT) clock is stabled and enabled.
@@ -773,9 +773,9 @@ typedef struct
      * |        |          |USB clock frequency = (PLL clock source frequency) / (USBDIV + 1).
      * |        |          |Note: If the HIRC is selected, it is delivery to USB clock directly.
      * |[11:8]  |UART0DIV  |UART0 Clock Divide Number From UART0 Clock Source
-     * |        |          |UART0 clock frequency = (UART0 clock source frequency) / (UAR0TDIV + 1).
+     * |        |          |UART0 clock frequency = (UART0 clock source frequency) / (UART0DIV + 1).
      * |[15:12] |UART1DIV  |UART1 Clock Divide Number From UART1 Clock Source
-     * |        |          |UART1 clock frequency = (UART1 clock source frequency) / (UAR1TDIV + 1).
+     * |        |          |UART1 clock frequency = (UART1 clock source frequency) / (UART1DIV + 1).
      * |[23:16] |ADCDIV    |ADC Clock Divide Number From ADC Clock Source
      * |        |          |ADC clock frequency = (ADC clock source frequency) / (ADCDIV + 1).
      * @var CLK_T::CLKSEL2
@@ -929,8 +929,8 @@ typedef struct
      * |        |          |0 = 4~24 MHz external high speed crystal oscillator (HXT) clock Fail detector Disabled.
      * |        |          |1 = 4~24 MHz external high speed crystal oscillator (HXT) clock Fail detector Enabled.
      * |[5]     |HXTFIEN   |HXT Clock Fail Interrupt Enable Bit
-     * |        |          |0 = 4~24 MHz external high speed crystal oscillator (HXT)clock Fail interrupt Disabled.
-     * |        |          |1 = 4~24 MHz external high speed crystal oscillator (HXT)clock Fail interrupt Enabled.
+     * |        |          |0 = 4~24 MHz external high speed crystal oscillator (HXT) clock Fail interrupt Disabled.
+     * |        |          |1 = 4~24 MHz external high speed crystal oscillator (HXT) clock Fail interrupt Enabled.
      * |[12]    |LXTFDEN   |LXT Clock Fail Detector Enable Bit
      * |        |          |0 = 32.768 kHz external low speed crystal oscillator (LXT) clock Fail detector Disabled.
      * |        |          |1 = 32.768 kHz external low speed crystal oscillator (LXT) clock Fail detector Enabled.
@@ -955,7 +955,7 @@ typedef struct
      * |        |          |Note2: This bit is write protected. Refer to the SYS_REGLCTL register.
      * |[1]     |LXTFIF    |LXT Clock Fail Interrupt Flag (Write Protect)
      * |        |          |0 = 32.768 kHz external low speed crystal oscillator (LXT) clock normal.
-     * |        |          |1 = 32.768 kHz external low speed crystal oscillator (LXT) stop.
+     * |        |          |1 = 32.768 kHz external low speed crystal oscillator (LXT) clock stop.
      * |        |          |Note1: This bit can be cleared to 0 by software writing 1.
      * |        |          |Note2: This bit is write protected. Refer to the SYS_REGLCTL register.
      * |[8]     |HXTFQIF   |HXT Clock Frequency Monitor Interrupt Flag (Write Protect)

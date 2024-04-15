@@ -148,7 +148,7 @@ extern int32_t g_FMC_i32ErrCode;
  *
  * @return     None
  *
- * @details    This function will set ISPEN bit of ISPCTL control register to disable LDROM update function.
+ * @details    This function will clear LDUEN bit of ISPCTL control register to disable LDROM update function.
  *
  */
 #define FMC_DISABLE_LD_UPDATE()   (FMC->ISPCTL &= ~FMC_ISPCTL_LDUEN_Msk)  /*!< Disable LDROM Update Function  */
@@ -798,6 +798,8 @@ void FMC_EnableConfigUpdate(void);
 void FMC_DisableConfigUpdate(void);
 void FMC_EnableLDUpdate(void);
 void FMC_DisableLDUpdate(void);
+void FMC_EnableSPUpdate(void);
+void FMC_DisableSPUpdate(void);
 int32_t FMC_ReadConfig(uint32_t *u32Config, uint32_t u32Count);
 int32_t FMC_WriteConfig(uint32_t *u32Config, uint32_t u32Count);
 void FMC_SetBootSource(int32_t i32BootSrc);
