@@ -17,7 +17,7 @@
 void BOD_IRQHandler(void)
 {
     /* Check if voltage detector interrupt happen */
-    if( SYS->BODCTL & SYS_BODCTL_VDETIF_Msk )
+    if(SYS->BODCTL & SYS_BODCTL_VDETIF_Msk)
     {
         /* Clear voltage detector interrupt flag */
         SYS->BODCTL |= SYS_BODCTL_VDETIF_Msk;
@@ -32,6 +32,9 @@ void BOD_IRQHandler(void)
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
+
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
@@ -41,7 +44,9 @@ void SYS_Init(void)
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
     /* Wait for HIRC clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as HIRC first */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HIRC;
@@ -53,7 +58,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -91,7 +98,7 @@ void UART0_Init()
     SYS->IPRST1 &= ~SYS_IPRST1_UART0RST_Msk;
 
     /* Configure UART0 and set UART0 baud rate */
-    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 115200);
+    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 115200);
     UART0->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
@@ -120,17 +127,17 @@ int32_t main(void)
 
     printf("Change VDET_P0(PB.0) input voltage.\n");
     printf("The voltage detector interrupt is requested when the input voltage \nis dropped down or raised up through the Bandgap voltage(1.2V).\n\n");
-    UART_WAIT_TX_EMPTY(DEBUG_PORT);    
-    
+    UART_WAIT_TX_EMPTY(DEBUG_PORT);
+
     /* Select voltage detector external input voltage pin as VDET_P0(PB.0) */
     SYS->BODCTL &= ~SYS_BODCTL_VDETPINSEL_Msk;
 
     /* Enable voltage detector function */
-    SYS->BODCTL |= SYS_BODCTL_VDETEN_Msk;   
+    SYS->BODCTL |= SYS_BODCTL_VDETEN_Msk;
 
     /* Enable voltage detector interrupt function */
     SYS->BODCTL |= SYS_BODCTL_VDETIEN_Msk;
-    NVIC_EnableIRQ(BOD_IRQn);    
+    NVIC_EnableIRQ(BOD_IRQn);
 
     /* Wait for voltage detector interrupt happen */
     while(1);

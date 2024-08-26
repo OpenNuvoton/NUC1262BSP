@@ -64,7 +64,7 @@ void PowerDownFunction(void)
     /* Check if all the debug messages are finished */
     u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
     UART_WAIT_TX_EMPTY(DEBUG_PORT)
-        if(--u32TimeOutCnt == 0) break;
+    if(--u32TimeOutCnt == 0) break;
 
     /* Set the processor is deep sleep as its low power mode */
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
@@ -143,7 +143,7 @@ int32_t LircSetting(void)
         /* Disable LIRC and wait for LIRC stable flag is cleared */
         CLK->PWRCTL &= ~CLK_PWRCTL_LIRCEN_Msk;
         u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
-        while( CLK->STATUS & CLK_STATUS_LIRCSTB_Msk )
+        while(CLK->STATUS & CLK_STATUS_LIRCSTB_Msk)
         {
             if(--u32TimeOutCnt == 0)
             {
@@ -157,7 +157,7 @@ int32_t LircSetting(void)
         /* Enable LIRC and wait for LIRC stable flag is set */
         CLK->PWRCTL |= CLK_PWRCTL_LIRCEN_Msk;
         u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
-        while( (CLK->STATUS & CLK_STATUS_LIRCSTB_Msk) == 0 )
+        while((CLK->STATUS & CLK_STATUS_LIRCSTB_Msk) == 0)
         {
             if(--u32TimeOutCnt == 0)
             {
@@ -179,7 +179,7 @@ int32_t LxtSetting(void)
         /* Disable LXT and wait for LXT stable flag is cleared */
         CLK->PWRCTL &= ~CLK_PWRCTL_LXTEN_Msk;
         u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
-        while( CLK->STATUS & CLK_STATUS_LXTSTB_Msk )
+        while(CLK->STATUS & CLK_STATUS_LXTSTB_Msk)
         {
             if(--u32TimeOutCnt == 0)
             {
@@ -193,7 +193,7 @@ int32_t LxtSetting(void)
         /* Enable LXT and wait for LXT stable flag is set */
         CLK->PWRCTL |= CLK_PWRCTL_LXTEN_Msk;
         u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
-        while( (CLK->STATUS & CLK_STATUS_LXTSTB_Msk) == 0 )
+        while((CLK->STATUS & CLK_STATUS_LXTSTB_Msk) == 0)
         {
             if(--u32TimeOutCnt == 0)
             {
@@ -208,6 +208,9 @@ int32_t LxtSetting(void)
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
+
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
@@ -217,7 +220,9 @@ void SYS_Init(void)
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
     /* Wait for HIRC clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as HIRC first */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HIRC;
@@ -229,7 +234,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -264,7 +271,7 @@ void UART0_Init(void)
     SYS->IPRST1 &= ~SYS_IPRST1_UART0RST_Msk;
 
     /* Configure UART0 and set UART0 baud rate */
-    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 115200);
+    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 115200);
     UART0->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
@@ -335,10 +342,10 @@ int32_t main(void)
     PorSetting();
 
     /* LIRC setting */
-    if( LircSetting() < 0 ) goto lexit;
+    if(LircSetting() < 0) goto lexit;
 
     /* LXT setting */
-    if( LxtSetting() < 0 ) goto lexit;
+    if(LxtSetting() < 0) goto lexit;
 
     /* Wake-up source configuration */
     /* Configure PB.3 as Quasi mode and enable interrupt by falling edge trigger */

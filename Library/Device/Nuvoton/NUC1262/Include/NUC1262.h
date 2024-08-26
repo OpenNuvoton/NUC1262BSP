@@ -98,7 +98,10 @@ typedef enum IRQn
 #define __MPU_PRESENT           0       /*!< armikcmu does not provide a MPU present or not       */
 #define __NVIC_PRIO_BITS        2       /*!< armikcmu Supports 2 Bits for the Priority Levels     */
 #define __Vendor_SysTickConfig  0       /*!< Set to 1 if different SysTick Config is used         */
-
+#define __FPU_PRESENT           0
+#ifndef __SOFTFP__
+# define __SOFTFP__             1
+#endif
 
 #include "core_cm0.h"                   /*!< Cortex-M0 processor and core peripherals             */
 #include "system_NUC1262.h"             /*!< NUC1262 System                                    */
@@ -136,7 +139,7 @@ extern void SystemInit(void);
 /**
     @addtogroup ADC Analog to Digital Converter(ADC)
     Memory Mapped Structure for ADC Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -375,7 +378,7 @@ typedef struct
 /**
     @addtogroup ADC_CONST ADC Bit Field Definition
     Constant Definitions for ADC Controller
-    @{ 
+    @{
 */
 
 #define ADC_ADDR_RSLT_Pos                (0)                                               /*!< ADC_T::ADDR: RSLT Position             */
@@ -484,7 +487,7 @@ typedef struct
 /**
     @addtogroup CLK System Clock Controller(CLK)
     Memory Mapped Structure for CLK Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -540,15 +543,15 @@ typedef struct
      * |        |          |1 = Chip waits CPU sleep command WFI and then enters Power-down mode.
      * |        |          |Note: This bit is write protected. Refer to the SYS_REGLCTL register.
      * |[12:10] |HXTGAIN   |HXT Gain Control Bit (Write Protect) HXT Gain Control Bit (Write Protect)
-     * |        |          |Gain control is used to enlarge the gain of crystal to make sure crystal work normally. 
-     * |        |          |If gain control is enabled, crystal will consume more power than gain control off. 
-     * |        |          |000 = HXT frequency is from 4 MHz to 8MHz. 
-     * |        |          |001 = HXT frequency is from 8 MHz to 12MHz. 
+     * |        |          |Gain control is used to enlarge the gain of crystal to make sure crystal work normally.
+     * |        |          |If gain control is enabled, crystal will consume more power than gain control off.
+     * |        |          |000 = HXT frequency is from 4 MHz to 8MHz.
+     * |        |          |001 = HXT frequency is from 8 MHz to 12MHz.
      * |        |          |010 = HXT frequency is from 12 MHz to 16MHz.
-     * |        |          |011 = HXT frequency is from 16 MHz to 24MHz. 
+     * |        |          |011 = HXT frequency is from 16 MHz to 24MHz.
      * |        |          |Others = Reserved.
      * |        |          |Note: These bits are write protected. Refer to the SYS_REGLCTL register.
-     * |[31]    |HXTMD     |HXT Bypass Mode (Write Protect)     
+     * |[31]    |HXTMD     |HXT Bypass Mode (Write Protect)
      * |        |          |0 = HXT work as crystal mode. PF.2 and PF.3 are configured as external high speed crystal (HXT) pins.
      * |        |          |1 = HXT works as external clock mode. PF.3 is configured as external clock input pin.
      * |        |          |Note 1: When HXTMD = 1, PF.3 MFP should be setting as GPIO mode. The DC characteristic of XT1_IN is the same as GPIO.
@@ -858,31 +861,31 @@ typedef struct
      * |        |          |1 = LLSI0 Clock Enabled.
      * |[17]    |LLSI1CKEN |LLSI1 Clock Enable Bit
      * |        |          |0 = LLSI1 Clock Disabled.
-     * |        |          |1 = LLSI1 Clock Enabled.     
+     * |        |          |1 = LLSI1 Clock Enabled.
      * |[18]    |LLSI2CKEN |LLSI2 Clock Enable Bit
      * |        |          |0 = LLSI2 Clock Disabled.
-     * |        |          |1 = LLSI2 Clock Enabled.     
+     * |        |          |1 = LLSI2 Clock Enabled.
      * |[19]    |LLSI3CKEN |LLSI3 Clock Enable Bit
      * |        |          |0 = LLSI3 Clock Disabled.
-     * |        |          |1 = LLSI3 Clock Enabled.     
+     * |        |          |1 = LLSI3 Clock Enabled.
      * |[20]    |LLSI4CKEN |LLSI4 Clock Enable Bit
      * |        |          |0 = LLSI4 Clock Disabled.
-     * |        |          |1 = LLSI4 Clock Enabled.     
+     * |        |          |1 = LLSI4 Clock Enabled.
      * |[21]    |LLSI5CKEN |LLSI5 Clock Enable Bit
      * |        |          |0 = LLSI5 Clock Disabled.
-     * |        |          |1 = LLSI5 Clock Enabled.     
+     * |        |          |1 = LLSI5 Clock Enabled.
      * |[22]    |LLSI6CKEN |LLSI6 Clock Enable Bit
      * |        |          |0 = LLSI6 Clock Disabled.
-     * |        |          |1 = LLSI6 Clock Enabled.     
+     * |        |          |1 = LLSI6 Clock Enabled.
      * |[23]    |LLSI7CKEN |LLSI7 Clock Enable Bit
      * |        |          |0 = LLSI7 Clock Disabled.
-     * |        |          |1 = LLSI7 Clock Enabled.     
+     * |        |          |1 = LLSI7 Clock Enabled.
      * |[24]    |LLSI8CKEN |LLSI8 Clock Enable Bit
      * |        |          |0 = LLSI8 Clock Disabled.
-     * |        |          |1 = LLSI8 Clock Enabled.     
+     * |        |          |1 = LLSI8 Clock Enabled.
      * |[25]    |LLSI9CKEN |LLSI9 Clock Enable Bit
      * |        |          |0 = LLSI9 Clock Disabled.
-     * |        |          |1 = LLSI9 Clock Enabled.         
+     * |        |          |1 = LLSI9 Clock Enabled.
      * @var CLK_T::CLKSEL3
      * Offset: 0x34  Clock Source Select Control Register 3
      * ---------------------------------------------------------------------------------------------------
@@ -910,7 +913,7 @@ typedef struct
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[3:1]   |GAIN      |Oscillator Gain Option
-     * |        |          |User can select oscillator gain according to crystal external loading and operating temperature range. 
+     * |        |          |User can select oscillator gain according to crystal external loading and operating temperature range.
      * |        |          |The greater gain value corresponding to stronger driving capability and higher power consumption.
      * |        |          |000 = L0 mode (ESR=35K; CL=25pF).
      * |        |          |001 = L1 mode (ESR=35K; CL=25pF).
@@ -1012,7 +1015,7 @@ typedef struct
 /**
     @addtogroup CLK_CONST CLK Bit Field Definition
     Constant Definitions for CLK Controller
-    @{ 
+    @{
 */
 
 #define CLK_PWRCTL_HXTEN_Pos             (0)                                               /*!< CLK_T::PWRCTL: HXTEN Position          */
@@ -1321,7 +1324,7 @@ typedef struct
 /**
     @addtogroup CRC Cyclic Redundancy Check Controller(CRC)
     Memory Mapped Structure for CRC Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -1410,7 +1413,7 @@ typedef struct
 /**
     @addtogroup CRC_CONST CRC Bit Field Definition
     Constant Definitions for CRC Controller
-    @{ 
+    @{
 */
 
 #define CRC_CTL_CRCEN_Pos                (0)                                               /*!< CRC_T::CTL: CRCEN Position             */
@@ -1454,7 +1457,7 @@ typedef struct
 /**
     @addtogroup EBI External Bus Interface Controller(EBI)
     Memory Mapped Structure for EBI Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -1610,7 +1613,7 @@ typedef struct
 /**
     @addtogroup EBI_CONST EBI Bit Field Definition
     Constant Definitions for EBI Controller
-    @{ 
+    @{
 */
 
 #define EBI_CTL_EN_Pos                   (0)                                               /*!< EBI_T::CTL: EN Position                  */
@@ -1660,7 +1663,7 @@ typedef struct
 /**
     @addtogroup FMC Flash Memory Controller(FMC)
     Memory Mapped Structure for FMC Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -1936,7 +1939,7 @@ typedef struct
 /**
     @addtogroup FMC_CONST FMC Bit Field Definition
     Constant Definitions for FMC Controller
-    @{ 
+    @{
 */
 
 #define FMC_ISPCTL_ISPEN_Pos             (0)                                               /*!< FMC_T::ISPCTL: ISPEN Position          */
@@ -2043,7 +2046,7 @@ typedef struct
 /**
     @addtogroup GPIO General Purpose Input/Output Controller(GPIO)
     Memory Mapped Structure for GPIO Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -2067,10 +2070,10 @@ typedef struct
      * |        |          |If CIOINI is set to 0, the default value is 0x0000_0000 and all pins will be input mode after chip powered on.
      * |        |          |Note2:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.        
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::DINOFF
      * Offset: 0x04/0x44/0x84/0xC4/0x144  PA-F Digital Input Path Disable Control
      * ---------------------------------------------------------------------------------------------------
@@ -2083,10 +2086,10 @@ typedef struct
      * |        |          |1 = Px.n digital input path Disabled (digital input tied to low).
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::DOUT
      * Offset: 0x08/0x48/0x88/0xC8/0x148  PA-F Data Output Value
      * ---------------------------------------------------------------------------------------------------
@@ -2098,10 +2101,10 @@ typedef struct
      * |        |          |1 = Px.n will drive High if the Px.n pin is configured as Push-pull output or Quasi-bidirectional mode.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::DATMSK
      * Offset: 0x0C/0x4C/0x8C/0xCC/0x14C  PA-F Data Output Write Mask
      * ---------------------------------------------------------------------------------------------------
@@ -2116,10 +2119,10 @@ typedef struct
      * |        |          |Note1: This function only protects the corresponding DOUT (Px_DOUT[n]) bit, and will not protect the corresponding PDIO (Pxn_PDIO[0]) bit.
      * |        |          |Note2:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::PIN
      * Offset: 0x10/0x50/0x90/0xD0/0x150  PA-F Pin Value
      * ---------------------------------------------------------------------------------------------------
@@ -2130,10 +2133,10 @@ typedef struct
      * |        |          |If the bit is 1, it indicates the corresponding pin status is high; else the pin status is low.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::DBEN
      * Offset: 0x14/0x54/0x94/0xD4/0x154  PA-F De-Bounce Enable Control
      * ---------------------------------------------------------------------------------------------------
@@ -2149,10 +2152,10 @@ typedef struct
      * |        |          |If the interrupt mode is level triggered, the de-bounce enable bit is ignored.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F.   
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::INTTYPE
      * Offset: 0x18/0x58/0x98/0xD8/0x158  PA-F Interrupt Trigger Type Control
      * ---------------------------------------------------------------------------------------------------
@@ -2221,10 +2224,10 @@ typedef struct
      * |        |          |1 = Px.n generates an interrupt.
      * |        |          |Note:
      * |        |          |n = 0~3, 5~11 for port A.
-     * |        |          |n = 0~15 for port B.   
-     * |        |          |n = 0~7, 14 for port C.       
-     * |        |          |n = 0~3, 15 for port D.  
-     * |        |          |n = 0~6, 14, 15 for port F. 
+     * |        |          |n = 0~15 for port B.
+     * |        |          |n = 0~7, 14 for port C.
+     * |        |          |n = 0~3, 15 for port D.
+     * |        |          |n = 0~6, 14, 15 for port F.
      * @var GPIO_T::SMTEN
      * Offset: 0x24/0x64/0xA4/0xE4/0x164  PA-F Input Schmitt Trigger Enable
      * ---------------------------------------------------------------------------------------------------
@@ -2348,7 +2351,7 @@ typedef struct
 /**
     @addtogroup GPIO_CONST GPIO Bit Field Definition
     Constant Definitions for GPIO Controller
-    @{ 
+    @{
 */
 
 #define GPIO_MODE_MODE0_Pos              (0)                                               /*!< GPIO_T::MODE: MODE0 Position           */
@@ -3040,7 +3043,7 @@ typedef struct
 /**
     @addtogroup HDIV Hardware Divider(HDIV)
     Memory Mapped Structure for HDIV Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -3106,7 +3109,7 @@ typedef struct
 /**
     @addtogroup HDIV_CONST HDIV Bit Field Definition
     Constant Definitions for HDIV Controller
-    @{ 
+    @{
 */
 
 #define HDIV_DIVIDEND_DIVIDEND_Pos       (0)                                               /*!< HDIV_T::DIVIDEND: DIVIDEND Position    */
@@ -3135,7 +3138,7 @@ typedef struct
 /**
     @addtogroup I2C Inter-IC Bus Controller(I2C)
     Memory Mapped Structure for I2C Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -3435,7 +3438,7 @@ typedef struct
 /**
     @addtogroup I2C_CONST I2C Bit Field Definition
     Constant Definitions for I2C Controller
-    @{ 
+    @{
 */
 
 #define I2C_CTL_AA_Pos                   (2)                                               /*!< I2C_T::CTL: AA Position                */
@@ -3677,7 +3680,7 @@ typedef struct
 /**
     @addtogroup LLSI LED Lighting Strip Interface(LLSI)
     Memory Mapped Structure for LLSI Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -3833,7 +3836,7 @@ typedef struct
 /**
     @addtogroup LLSI_CONST LLSI Bit Field Definition
     Constant Definitions for LLSI Controller
-    @{ 
+    @{
 */
 
 #define LLSI_CTL_LLSIEN_Pos              (0)                                               /*!< LLSI_T::CTL: LLSIEN Position           */
@@ -3922,7 +3925,7 @@ typedef struct
 /**
     @addtogroup PDMA Peripheral Direct Memory Access Controller(PDMA)
     Memory Mapped Structure for PDMA Controller
-    @{ 
+    @{
 */
 
 
@@ -5006,7 +5009,7 @@ typedef struct
 /**
     @addtogroup PDMA_CONST PDMA Bit Field Definition
     Constant Definitions for PDMA Controller
-    @{ 
+    @{
 */
 
 #define PDMA_DSCT_CTL_OPMODE_Pos         (0)                                               /*!< PDMA_T::DSCT_CTL: OPMODE Position     */
@@ -5488,7 +5491,7 @@ typedef struct
 /**
     @addtogroup BPWM Basic Pulse Width Modulation Controller(BPWM)
     Memory Mapped Structure for BPWM Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -6570,7 +6573,7 @@ typedef struct
 /**
     @addtogroup BPWM_CONST BPWM Bit Field Definition
     Constant Definitions for BPWM Controller
-    @{ 
+    @{
 */
 
 #define BPWM_CTL0_CTRLD0_Pos             (0)                                               /*!< BPWM_T::CTL0: CTRLD0 Position          */
@@ -7250,7 +7253,7 @@ typedef struct
 /**
     @addtogroup SPI Serial Peripheral Interface Controller(SPI)
     Memory Mapped Structure for SPI Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -7740,7 +7743,7 @@ typedef struct
 /**
     @addtogroup SPI_CONST SPI Bit Field Definition
     Constant Definitions for SPI Controller
-    @{ 
+    @{
 */
 
 #define SPI_CTL_SPIEN_Pos                (0)                                               /*!< SPI_T::CTL: SPIEN Position             */
@@ -8024,7 +8027,7 @@ typedef struct
 /**
     @addtogroup SYS System Manger Controller(SYS)
     Memory Mapped Structure for SYS Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -8205,7 +8208,7 @@ typedef struct
      * |        |          |1 = LED Lighting Strip Interface 8 controller reset.
      * |[25]    |LLSI9RST  |LLSI9 Controller Reset
      * |        |          |0 = LED Lighting Strip Interface 9 controller normal operation.
-     * |        |          |1 = LED Lighting Strip Interface 9 controller reset.     
+     * |        |          |1 = LED Lighting Strip Interface 9 controller reset.
      * @var SYS_T::BODCTL
      * Offset: 0x18  Brown-out Detector Control Register
      * ---------------------------------------------------------------------------------------------------
@@ -8275,7 +8278,7 @@ typedef struct
      * |        |          |110 = 128 system clock (HCLK).
      * |        |          |111 = 256 system clock (HCLK).
      * |        |          |Note: These bits are write protected. Refer to the SYS_REGLCTL register.
-     * |[16]    |VDETEN    |Voltage Detector Enable Bit   
+     * |[16]    |VDETEN    |Voltage Detector Enable Bit
      * |        |          |0 = VDET detect external input voltage function Disabled.
      * |        |          |1 = VDET detect external input voltage function Enabled.
      * |        |          |Note1: This function is still active in whole chip power-down mode.
@@ -8288,7 +8291,7 @@ typedef struct
      * |        |          |Note2: If VDET_P1 is selected, multi-function pin must be selected correctly in PB1MFP (SYS_GPB_MFPL[7:4]).
      * |[18]    |VDETIEN   |Voltage Detector Interrupt Enable Bit
      * |        |          |0 = VDET interrupt Disabled.
-     * |        |          |1 = VDET interrupt Enabled.          
+     * |        |          |1 = VDET interrupt Enabled.
      * |[19]    |VDETIF    |Voltage Detector Interrupt Flag
      * |        |          |0 = VDET does not detect any voltage draft at external pin down through or up through the voltage of Bandgap.
      * |        |          |1 = When VDET detects the external pin is dropped down through the voltage of Bandgap or the external pin is raised up through the voltage of Bandgap, this bit is set to 1 and the brown-out interrupt is requested if brown-out interrupt is enabled.
@@ -8297,8 +8300,8 @@ typedef struct
      * |        |          |0 = VDET output status is 0.
      * |        |          |It means the detected voltage is higher than Bandgap or VDETEN is 0.
      * |        |          |1 = VDET output status is 1.
-     * |        |          |It means the detected voltage is lower than Bandgap. 
-     * |        |          |If the VDETEN is 0, VDET function disabled, this bit always responds 0. 
+     * |        |          |It means the detected voltage is lower than Bandgap.
+     * |        |          |If the VDETEN is 0, VDET function disabled, this bit always responds 0.
      * |[27:25] |VDETDGSEL |Voltage Detector Output De-glitch Time Select (Write Protect)
      * |        |          |000 = VDET output is sampled by VDET clock.
      * |        |          |001 = 16 system clock (HCLK).
@@ -8308,7 +8311,7 @@ typedef struct
      * |        |          |101 = 256 system clock (HCLK).
      * |        |          |110 = 512 system clock (HCLK).
      * |        |          |111 = 1024 system clock (HCLK).
-     * |        |          |Note: These bits are write protected. Refer to the SYS_REGLCTL register.     
+     * |        |          |Note: These bits are write protected. Refer to the SYS_REGLCTL register.
      * @var SYS_T::IVSCTL
      * Offset: 0x1C  Internal Voltage Source Control Register
      * ---------------------------------------------------------------------------------------------------
@@ -8473,7 +8476,7 @@ typedef struct
      * |        |          |1 = HIRC trim reference clock is from USB synchronous mode packet.
      * |[20:16] |BOUNDARY  |Boundary Selection
      * |        |          |Fill the boundary range from 0x1 to 0x1F, 0x0 is reserved.
-     * |        |          |Note: This field is effective only when the BOUNDEN(SYS_IRCTCTL[9]) is enabled.  
+     * |        |          |Note: This field is effective only when the BOUNDEN(SYS_IRCTCTL[9]) is enabled.
      * @var SYS_T::IRCTIEN
      * Offset: 0x84  HIRC Trim Interrupt Enable Register
      * ---------------------------------------------------------------------------------------------------
@@ -8595,7 +8598,7 @@ typedef struct
 /**
     @addtogroup SYS_CONST SYS Bit Field Definition
     Constant Definitions for SYS Controller
-    @{ 
+    @{
 */
 
 #define SYS_PDID_PDID_Pos                (0)                                               /*!< SYS_T::PDID: PDID Position             */
@@ -9084,7 +9087,7 @@ typedef struct
 /**
     @addtogroup INT_CONST INT Bit Field Definition
     Constant Definitions for INT Controller
-    @{ 
+    @{
 */
 
 #define SYS_NMIEN_BODOUT_Pos             (0)                                               /*!< SYS_INT_T::NMIEN: BODOUT Position         */
@@ -9170,7 +9173,7 @@ typedef struct
 /**
     @addtogroup TIMER Timer Controller(TIMER)
     Memory Mapped Structure for TIMER Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -9187,13 +9190,13 @@ typedef struct
      * |        |          |Timer input clock or event source is divided by (PSC+1) before it is fed to the timer up counter.
      * |        |          |If this field is 0 (PSC = 0), then there is no scaling.
      * |        |          |Note: Update prescale counter value will reset internal 8-bit prescale counter and 24-bit up counter value.
-     * |[8]     |TRGPDMA   |Trigger PDMA Enable Bit  
-     * |        |          |If this bit is set to 1, timer time-out interrupt or capture interrupt can trigger PDMA. 
+     * |[8]     |TRGPDMA   |Trigger PDMA Enable Bit
+     * |        |          |If this bit is set to 1, timer time-out interrupt or capture interrupt can trigger PDMA.
      * |        |          |0 = Timer interrupt trigger PDMA Disabled.
      * |        |          |1 = Timer interrupt trigger PDMA Enabled.
      * |        |          |Note: If TRGSSEL (TIMERx_CTL[18]) = 0, time-out interrupt signal will trigger PDMA. If TRGSSEL (TIMERx_CTL[18]) = 1, capture interrupt signal will trigger PDMA.
-     * |[9]     |TRGBPWM23 |Trigger BPWM23 Enable Bit  
-     * |        |          |If this bit is set to 1, timer time-out interrupt or capture interrupt can trigger BPWM23. 
+     * |[9]     |TRGBPWM23 |Trigger BPWM23 Enable Bit
+     * |        |          |If this bit is set to 1, timer time-out interrupt or capture interrupt can trigger BPWM23.
      * |        |          |0 = Timer interrupt trigger BPWM23 Disabled.
      * |        |          |1 = Timer interrupt trigger BPWM23 Enabled.
      * |        |          |Note: If TRGSSEL (TIMERx_CTL[18]) = 0, time-out interrupt signal will trigger BPWM23. If TRGSSEL (TIMERx_CTL[18]) = 1, capture interrupt signal will trigger BPWM23.
@@ -9207,16 +9210,16 @@ typedef struct
      * |[16]    |CAPSRC    |Capture Pin Source Selection
      * |        |          |0 = Capture Function source is from TMx_EXT (x= 0~3) pin.
      * |        |          |1 = Capture Function source is from LIRC.
-     * |[18]    |TRGSSEL   |Trigger Source Select Bit  
+     * |[18]    |TRGSSEL   |Trigger Source Select Bit
      * |        |          |This bit is used to select trigger source is from Timer time-out interrupt signal or capture interrupt signal.
      * |        |          |0 = Timer time-out interrupt signal is used to trigger BPWM, ADC and PDMA.
      * |        |          |1 = Capture interrupt signal is used to trigger BPWM, ADC and PDMA.
-     * |[19]    |TRGBPWM01 |Trigger BPWM01 Enable Bit  
-     * |        |          |If this bit is set to 1, timer time-out interrupt or capture interrupt can trigger BPWM01. 
+     * |[19]    |TRGBPWM01 |Trigger BPWM01 Enable Bit
+     * |        |          |If this bit is set to 1, timer time-out interrupt or capture interrupt can trigger BPWM01.
      * |        |          |0 = Timer interrupt trigger BPWM01 Disabled.
      * |        |          |1 = Timer interrupt trigger BPWM01 Enabled.
      * |        |          |Note: If TRGSSEL (TIMERx_CTL[18]) = 0, time-out interrupt signal will trigger BPWM01. If TRGSSEL (TIMERx_CTL[18]) = 1, capture interrupt signal will trigger BPWM01.
-     * |[21]    |TRGADC    |Trigger ADC Enable Bit 
+     * |[21]    |TRGADC    |Trigger ADC Enable Bit
      * |        |          |If this bit is set to 1, timer time-out interrupt or capture interrupt can trigger ADC.
      * |        |          |0 = Timer interrupt trigger ADC Disabled.
      * |        |          |1 = Timer interrupt trigger ADC Enabled.
@@ -9372,7 +9375,7 @@ typedef struct
 /**
     @addtogroup TIMER_CONST TIMER Bit Field Definition
     Constant Definitions for TIMER Controller
-    @{ 
+    @{
 */
 
 #define TIMER_CTL_PSC_Pos                (0)                                               /*!< TIMER_T::CTL: PSC Position             */
@@ -9475,7 +9478,7 @@ typedef struct
 /**
     @addtogroup UART Universal Asynchronous Receiver/Transmitter Controller(UART)
     Memory Mapped Structure for UART Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -10031,8 +10034,8 @@ typedef struct
      * |[6]     |DGE       |Deglitch Enable Bit
      * |        |          |0 = Deglitch Disabled.
      * |        |          |1 = Deglitch Enabled.
-     * |        |          |Note: When this bit is set to logic 1, any pulse width less than about 300 ns will be considered a glitch and will be removed in the serial data input (RX). 
-     * |        |          |This bit acts only on RX line and has no effect on the transmitter logic.  
+     * |        |          |Note: When this bit is set to logic 1, any pulse width less than about 300 ns will be considered a glitch and will be removed in the serial data input (RX).
+     * |        |          |This bit acts only on RX line and has no effect on the transmitter logic.
      * @var UART_T::BRCOMP
      * Offset: 0x3C  UART Baud Rate Compensation Register
      * ---------------------------------------------------------------------------------------------------
@@ -10138,7 +10141,7 @@ typedef struct
 /**
     @addtogroup UART_CONST UART Bit Field Definition
     Constant Definitions for UART Controller
-    @{ 
+    @{
 */
 
 #define UART_DAT_DAT_Pos                 (0)                                               /*!< UART_T::DAT: DAT Position              */
@@ -10484,7 +10487,7 @@ typedef struct
 /**
     @addtogroup USBD USB Device Controller(USBD)
     Memory Mapped Structure for USBD Controller
-    @{ 
+    @{
 */
 
 
@@ -10839,7 +10842,7 @@ typedef struct
 /**
     @addtogroup USBD_CONST USBD Bit Field Definition
     Constant Definitions for USBD Controller
-    @{ 
+    @{
 */
 
 #define USBD_INTEN_BUSIEN_Pos            (0)                                               /*!< USBD_T::INTEN: BUSIEN Position         */
@@ -11030,7 +11033,7 @@ typedef struct
 /**
     @addtogroup WDT Watch Dog Timer Controller(WDT)
     Memory Mapped Structure for WDT Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -11134,7 +11137,7 @@ typedef struct
 /**
     @addtogroup WDT_CONST WDT Bit Field Definition
     Constant Definitions for WDT Controller
-    @{ 
+    @{
 */
 
 #define WDT_CTL_RSTEN_Pos                (1)                                               /*!< WDT_T::CTL: RSTEN Position             */
@@ -11182,7 +11185,7 @@ typedef struct
 /**
     @addtogroup WWDT Window Watchdog Timer(WWDT)
     Memory Mapped Structure for WWDT Controller
-    @{ 
+    @{
 */
 
 typedef struct
@@ -11272,7 +11275,7 @@ typedef struct
 /**
     @addtogroup WWDT_CONST WWDT Bit Field Definition
     Constant Definitions for WWDT Controller
-    @{ 
+    @{
 */
 
 #define WWDT_RLDCNT_RLDCNT_Pos           (0)                                               /*!< WWDT_T::RLDCNT: RLDCNT Position        */

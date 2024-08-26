@@ -21,16 +21,21 @@ void AutoBaudRate_RxTest(void);
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
+
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
 
-     /* Enable HIRC clock */
+    /* Enable HIRC clock */
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
     /* Waiting for HIRC clock ready */
-    while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk))
+        if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as HIRC first */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HIRC;
@@ -42,7 +47,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -83,7 +90,7 @@ void UART0_Init()
     SYS->IPRST1 &= ~SYS_IPRST1_UART0RST_Msk;
 
     /* Configure UART0 and set UART0 baud rate */
-    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 115200);
+    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 115200);
     UART0->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
@@ -97,7 +104,7 @@ void UART1_Init()
     SYS->IPRST1 &= ~SYS_IPRST1_UART1RST_Msk;
 
     /* Configure UART1 and set UART1 baud rate */
-    UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 115200);
+    UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 115200);
     UART1->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
@@ -211,13 +218,13 @@ void AutoBaudRate_TxTest(void)
         switch(u32Item)
         {
             case '1':
-                UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 38400);
+                UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 38400);
                 break;
             case '2':
-                UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 57600);
+                UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 57600);
                 break;
             default:
-                UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 115200);
+                UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 115200);
                 break;
         }
 
@@ -235,7 +242,7 @@ void AutoBaudRate_TxTest(void)
 uint32_t GetUartBaudrate(UART_T* uart)
 {
     uint8_t u8UartClkSrcSel, u8UartClkDivNum;
-    uint32_t au32ClkTbl[4] = {__HXT, 0, __LXT, (__HIRC>>1)};
+    uint32_t au32ClkTbl[4] = {__HXT, 0, __LXT, (__HIRC >> 1)};
     uint32_t u32Baud_Div;
 
     /* Get UART clock source selection and UART clock divider number */
@@ -257,7 +264,7 @@ uint32_t GetUartBaudrate(UART_T* uart)
 
     /* Get PLL clock frequency if UART clock source selection is PLL/2 */
     if(u8UartClkSrcSel == 1)
-        au32ClkTbl[u8UartClkSrcSel] = (CLK_GetPLLClockFreq()>>1);
+        au32ClkTbl[u8UartClkSrcSel] = (CLK_GetPLLClockFreq() >> 1);
 
     /* Get UART baud rate divider */
     u32Baud_Div = (uart->BAUD & UART_BAUD_BRD_Msk) >> UART_BAUD_BRD_Pos;
