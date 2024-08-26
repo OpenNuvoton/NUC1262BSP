@@ -40,6 +40,9 @@ void TMR2_IRQHandler(void)
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -47,7 +50,9 @@ void SYS_Init(void)
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
     /* Wait for HIRC clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as HIRC first */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HIRC;
@@ -59,7 +64,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -94,19 +101,21 @@ void SYS_Init(void)
     CLK->PWRCTL |= CLK_PWRCTL_HXTEN_Msk;
 
     /* Wait for HXT clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_HXTSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_HXTSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Enable peripheral clock */
     CLK->APBCLK0 |= (CLK_APBCLK0_TMR0CKEN_Msk | CLK_APBCLK0_TMR2CKEN_Msk | CLK_APBCLK0_TMR3CKEN_Msk);
 
     /* Peripheral clock source */
-    CLK->CLKSEL1 = (CLK->CLKSEL1 & (~(CLK_CLKSEL1_TMR0SEL_Msk | CLK_CLKSEL1_TMR2SEL_Msk | CLK_CLKSEL1_TMR3SEL_Msk))) | 
-                    (CLK_CLKSEL1_TMR0SEL_HXT | CLK_CLKSEL1_TMR2SEL_PCLK1 | CLK_CLKSEL1_TMR3SEL_HXT);
+    CLK->CLKSEL1 = (CLK->CLKSEL1 & (~(CLK_CLKSEL1_TMR0SEL_Msk | CLK_CLKSEL1_TMR2SEL_Msk | CLK_CLKSEL1_TMR3SEL_Msk))) |
+                   (CLK_CLKSEL1_TMR0SEL_HXT | CLK_CLKSEL1_TMR2SEL_PCLK1 | CLK_CLKSEL1_TMR3SEL_HXT);
 
     /* Select Timer2 event counter pin and external capture pin */
     SYS->GPB_MFPL = (SYS->GPB_MFPL & (~TM2_PB3_Msk)) | TM2_PB3;
     SYS->GPA_MFPH = (SYS->GPA_MFPH & (~TM2_EXT_PA9_Msk)) | TM2_EXT_PA9;
-   
+
     /* Select Timer0 and Timer3 toggle-output pin */
     SYS->GPB_MFPL = (SYS->GPB_MFPL & (~(TM0_PB5_Msk | TM3_PB2_Msk))) | (TM0_PB5 | TM3_PB2);
 }

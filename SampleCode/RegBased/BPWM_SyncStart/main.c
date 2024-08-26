@@ -23,6 +23,9 @@
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
+
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
@@ -32,7 +35,9 @@ void SYS_Init(void)
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
     /* Wait for HIRC clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as HIRC first */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HIRC;
@@ -44,7 +49,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -61,7 +68,7 @@ void SYS_Init(void)
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_UART0DIV_Msk)) | CLK_CLKDIV0_UART0(1);
 
     /* Enable BPWM0, BPWM1, BPWM2 and BPWM3 module clock */
-    CLK->APBCLK0 |= CLK_APBCLK0_BPWM0CKEN_Msk|CLK_APBCLK0_BPWM1CKEN_Msk|CLK_APBCLK0_BPWM2CKEN_Msk|CLK_APBCLK0_BPWM3CKEN_Msk;
+    CLK->APBCLK0 |= CLK_APBCLK0_BPWM0CKEN_Msk | CLK_APBCLK0_BPWM1CKEN_Msk | CLK_APBCLK0_BPWM2CKEN_Msk | CLK_APBCLK0_BPWM3CKEN_Msk;
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
@@ -98,12 +105,12 @@ void SYS_Init(void)
                       SYS_GPB_MFPL_PB3MFP_BPWM2_CH2 | SYS_GPB_MFPL_PB2MFP_BPWM2_CH3 |
                       SYS_GPB_MFPL_PB1MFP_BPWM2_CH4 | SYS_GPB_MFPL_PB0MFP_BPWM2_CH5);
 
-	/* Set multi-function pins for BPWM3 */
+    /* Set multi-function pins for BPWM3 */
     SYS->GPB_MFPH &= ~(SYS_GPB_MFPH_PB15MFP_Msk | SYS_GPB_MFPH_PB14MFP_Msk);
     SYS->GPB_MFPH |= (SYS_GPB_MFPH_PB15MFP_BPWM3_CH0 | SYS_GPB_MFPH_PB14MFP_BPWM3_CH1);
-    SYS->GPC_MFPL &= ~(SYS_GPC_MFPL_PC3MFP_Msk | SYS_GPC_MFPL_PC2MFP_Msk | 
+    SYS->GPC_MFPL &= ~(SYS_GPC_MFPL_PC3MFP_Msk | SYS_GPC_MFPL_PC2MFP_Msk |
                        SYS_GPC_MFPL_PC1MFP_Msk | SYS_GPC_MFPL_PC0MFP_Msk);
-    SYS->GPC_MFPL |= (SYS_GPC_MFPL_PC3MFP_BPWM3_CH2 | SYS_GPC_MFPL_PC2MFP_BPWM3_CH3 | 
+    SYS->GPC_MFPL |= (SYS_GPC_MFPL_PC3MFP_BPWM3_CH2 | SYS_GPC_MFPL_PC2MFP_BPWM3_CH3 |
                       SYS_GPC_MFPL_PC1MFP_BPWM3_CH4 | SYS_GPC_MFPL_PC0MFP_BPWM3_CH5);
 
 }
@@ -118,7 +125,7 @@ void UART0_Init()
     SYS->IPRST1 &= ~SYS_IPRST1_UART0RST_Msk;
 
     /* Configure UART0 and set UART0 baud rate */
-    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HIRC>>1, 115200);
+    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HIRC >> 1, 115200);
     UART0->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 

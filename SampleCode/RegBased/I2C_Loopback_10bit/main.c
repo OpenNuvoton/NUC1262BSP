@@ -89,6 +89,9 @@ void I2C1_IRQHandler(void)
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
+
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
@@ -98,7 +101,9 @@ void SYS_Init(void)
     CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 
     /* Wait for HIRC clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as HIRC first */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HIRC;
@@ -110,7 +115,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -246,13 +253,13 @@ void I2CM_Init_10bit(I2C_T *i2c, uint32_t u32BusClock)
     if(i2c == I2C0)
     {
         CLK->APBCLK0 |= (CLK_APBCLK0_I2C0CKEN_Msk);
-        SYS->IPRST1 |= (1<<SYS_IPRST1_I2C0RST_Pos);
+        SYS->IPRST1 |= (1 << SYS_IPRST1_I2C0RST_Pos);
         SYS->IPRST1 &= ~SYS_IPRST1_I2C0RST_Msk;
     }
     else if(i2c == I2C1)
     {
         CLK->APBCLK0 |= (CLK_APBCLK0_I2C1CKEN_Msk);
-        SYS->IPRST1 |= (1<<SYS_IPRST1_I2C1RST_Pos);
+        SYS->IPRST1 |= (1 << SYS_IPRST1_I2C1RST_Pos);
         SYS->IPRST1 &= ~SYS_IPRST1_I2C1RST_Msk;
     }
 
@@ -268,7 +275,7 @@ void I2CM_Init_10bit(I2C_T *i2c, uint32_t u32BusClock)
 
     /* I2C0 bus clock 100K divider setting, I2CLK = PCLK/(100K*4)-1 */
     u32CLK = (uint32_t)(((g_u32PCLKClock * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
-    if(u32CLK<4)
+    if(u32CLK < 4)
         u32CLK = 4;
     i2c->CLKDIV = u32CLK;
 
@@ -283,13 +290,13 @@ void I2CS_Init_10bit(I2C_T *i2c, uint32_t u32BusClock)
     if(i2c == I2C0)
     {
         CLK->APBCLK0 |= (CLK_APBCLK0_I2C0CKEN_Msk);
-        SYS->IPRST1 |= (1<<SYS_IPRST1_I2C0RST_Pos);
+        SYS->IPRST1 |= (1 << SYS_IPRST1_I2C0RST_Pos);
         SYS->IPRST1 &= ~SYS_IPRST1_I2C0RST_Msk;
     }
     else if(i2c == I2C1)
     {
         CLK->APBCLK0 |= (CLK_APBCLK0_I2C1CKEN_Msk);
-        SYS->IPRST1 |= (1<<SYS_IPRST1_I2C1RST_Pos);
+        SYS->IPRST1 |= (1 << SYS_IPRST1_I2C1RST_Pos);
         SYS->IPRST1 &= ~SYS_IPRST1_I2C1RST_Msk;
     }
 
@@ -304,7 +311,7 @@ void I2CS_Init_10bit(I2C_T *i2c, uint32_t u32BusClock)
 
     /* I2C1 bus clock 100K divider setting, I2CLK = PCLK/(100K*4)-1 */
     u32CLK = (uint32_t)(((g_u32PCLKClock * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
-    if(u32CLK<4)
+    if(u32CLK < 4)
         u32CLK = 4;
     i2c->CLKDIV = u32CLK;
     /* Get I2C0 Bus Clock */
@@ -444,11 +451,11 @@ void I2C_10bit_LB_MasterTx(I2C_T *tI2CM, uint32_t u32Status)
     }
     else if(u32Status == 0x20)                  /* SLA+W has been transmitted and NACK has been received */
     {
-        if(g_u8SLARetryCnt++>2)
+        if(g_u8SLARetryCnt++ > 2)
         {
             g_u8SLARetryCnt = 0;
             I2C_STOP(tI2CM);
-            g_u8SLARetryFail=1;
+            g_u8SLARetryFail = 1;
         }
         else
         {
@@ -491,8 +498,8 @@ int32_t I2C_10bit_Read_Write_SLAVE(I2C_T *tI2CM, I2C_T *tI2CS, uint16_t u16slvad
     g_u32I2CSPort = (uint32_t) tI2CS;
 
     /* Init Send 10-bit Addr */
-    g_u8DeviceHAddr = (u16slvaddr>>8)| SLV_10BIT_ADDR;
-    g_u8DeviceLAddr = u16slvaddr&0xFF;
+    g_u8DeviceHAddr = (u16slvaddr >> 8) | SLV_10BIT_ADDR;
+    g_u8DeviceLAddr = u16slvaddr & 0xFF;
 
     g_u8SLARetryFail = 0;
     g_u8MstEndFlag = 0;
@@ -514,10 +521,10 @@ int32_t I2C_10bit_Read_Write_SLAVE(I2C_T *tI2CM, I2C_T *tI2CS, uint16_t u16slvad
         I2C_SET_CONTROL_REG(I2C0, I2C_CTL_STA);
 
         /* Wait I2C Tx Finish */
-        while((g_u8MstEndFlag == 0)&&(g_u8SLARetryFail==0));
+        while((g_u8MstEndFlag == 0) && (g_u8SLARetryFail == 0));
         g_u8MstEndFlag = 0;
 
-        if(g_u8SLARetryFail>0)
+        if(g_u8SLARetryFail > 0)
         {
             g_u8SLARetryFail = 0;
             return -1;

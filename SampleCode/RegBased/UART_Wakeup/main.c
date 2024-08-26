@@ -36,7 +36,7 @@ void PowerDownFunction(void)
     /* Check if all the debug messages are finished */
     u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
     UART_WAIT_TX_EMPTY(UART0)
-        if(--u32TimeOutCnt == 0) break;
+    if(--u32TimeOutCnt == 0) break;
 
     /* Set the processor is deep sleep as its low power mode */
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
@@ -51,6 +51,9 @@ void PowerDownFunction(void)
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
+
 
     /* Set PF multi-function pins for X32_OUT(PF.4) and X32_IN(PF.5) */
     SYS->GPF_MFPL = (SYS->GPF_MFPL & (~SYS_GPF_MFPL_PF4MFP_Msk)) | SYS_GPF_MFPL_PF4MFP_X32_OUT;
@@ -76,7 +79,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -121,7 +126,7 @@ void UART0_Init()
     SYS->IPRST1 &= ~SYS_IPRST1_UART0RST_Msk;
 
     /* Configure UART0 and set UART0 baud rate */
-    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 115200);
+    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 115200);
     UART0->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
@@ -135,7 +140,7 @@ void UART1_Init()
     SYS->IPRST1 &= ~SYS_IPRST1_UART1RST_Msk;
 
     /* Configure UART1 and set UART1 baud rate */
-    UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC>>1), 9600);
+    UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER((__HIRC >> 1), 9600);
     UART1->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
@@ -183,12 +188,12 @@ void UART1_IRQHandler(void)
 
     if(u32IntSts & UART_INTSTS_WKINT_Msk)               /* UART wake-up interrupt flag */
     {
-    	u32WkSts = UART1->WKSTS;
-    	UART1->WKSTS = u32WkSts;
+        u32WkSts = UART1->WKSTS;
+        UART1->WKSTS = u32WkSts;
         printf("UART wake-up.\n");
         u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
         UART_WAIT_TX_EMPTY(UART0)
-            if(--u32TimeOutCnt == 0) break;
+        if(--u32TimeOutCnt == 0) break;
     }
     else if(u32IntSts & (UART_INTSTS_RDAINT_Msk | UART_INTSTS_RXTOINT_Msk)) /* UART receive data available flag */
     {

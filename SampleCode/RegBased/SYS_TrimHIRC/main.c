@@ -44,6 +44,9 @@ void CLKDIRC_IRQHandler(void)
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
+
 
     /* Set PF multi-function pins for X32_OUT(PF.4) and X32_IN(PF.5) */
     SYS->GPF_MFPL = (SYS->GPF_MFPL & (~SYS_GPF_MFPL_PF4MFP_Msk)) | SYS_GPF_MFPL_PF4MFP_X32_OUT;
@@ -76,7 +79,9 @@ void SYS_Init(void)
     CLK->PLLCTL = CLK_PLLCTL_144MHz_HIRC_DIV2;
 
     /* Wait for PLL clock ready */
-    while (!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HCLK clock source as PLL/2 and HCLK source divider as 1 */
     CLK->CLKDIV0 = (CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk)) | CLK_CLKDIV0_HCLK(1);
@@ -164,7 +169,7 @@ void TrimHIRC(void)
 
     /* Get HIRC Frequency Lock */
     u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
-    while( (SYS->IRCTISTS & SYS_IRCTISTS_FREQLOCK_Msk) == 0 )
+    while((SYS->IRCTISTS & SYS_IRCTISTS_FREQLOCK_Msk) == 0)
     {
         if(--u32TimeOutCnt == 0)
         {
