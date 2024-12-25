@@ -8,9 +8,9 @@
 #include <stdio.h>
 #include "fmc_user.h"
 
-int FMC_Proc(unsigned int u32Cmd, unsigned int addr_start, unsigned int addr_end, unsigned int *data)
+int FMC_Proc(uint32_t u32Cmd, uint32_t addr_start, uint32_t addr_end, uint32_t *data)
 {
-    unsigned int u32Addr, Reg;
+    uint32_t u32Addr, Reg;
     uint32_t u32TimeOutCnt;
 
     for(u32Addr = addr_start; u32Addr < addr_end; data++)
@@ -71,7 +71,7 @@ int FMC_Proc(unsigned int u32Cmd, unsigned int addr_start, unsigned int addr_end
  *             before using this function. User can check the status of
  *             Register Write-Protection Function with SYS_IsRegLocked().
  */
-int FMC_Write_User(unsigned int u32Addr, unsigned int u32Data)
+int FMC_Write_User(uint32_t u32Addr, uint32_t u32Data)
 {
     return FMC_Proc(FMC_ISPCMD_PROGRAM, u32Addr, u32Addr + 4, &u32Data);
 }
@@ -90,7 +90,7 @@ int FMC_Write_User(unsigned int u32Addr, unsigned int u32Data)
  *              before using this function. User can check the status of
  *              Register Write-Protection Function with SYS_IsRegLocked().
  */
-int FMC_Read_User(unsigned int u32Addr, unsigned int *data)
+int FMC_Read_User(uint32_t u32Addr, uint32_t *data)
 {
     return FMC_Proc(FMC_ISPCMD_READ, u32Addr, u32Addr + 4, data);
 }
@@ -108,32 +108,32 @@ int FMC_Read_User(unsigned int u32Addr, unsigned int *data)
  *             before using this function. User can check the status of
  *             Register Write-Protection Function with SYS_IsRegLocked().
  */
-int FMC_Erase_User(unsigned int u32Addr)
+int FMC_Erase_User(uint32_t u32Addr)
 {
     return FMC_Proc(FMC_ISPCMD_PAGE_ERASE, u32Addr, u32Addr + 4, 0);
 }
 
-void ReadData(unsigned int addr_start, unsigned int addr_end, unsigned int *data)    // Read data from flash
+void ReadData(uint32_t addr_start, uint32_t addr_end, uint32_t *data)    // Read data from flash
 {
     FMC_Proc(FMC_ISPCMD_READ, addr_start, addr_end, data);
     return;
 }
 
-void WriteData(unsigned int addr_start, unsigned int addr_end, unsigned int *data)  // Write data into flash
+void WriteData(uint32_t addr_start, uint32_t addr_end, uint32_t *data)  // Write data into flash
 {
     FMC_Proc(FMC_ISPCMD_PROGRAM, addr_start, addr_end, data);
     return;
 }
 
-int EraseAP(unsigned int addr_start, unsigned int size)
+int EraseAP(uint32_t addr_start, uint32_t size)
 {
     return FMC_Proc(FMC_ISPCMD_PAGE_ERASE, addr_start, addr_start + size, NULL);
 }
 
-void UpdateConfig(unsigned int *data, unsigned int *res)
+void UpdateConfig(uint32_t *data, uint32_t *res)
 {
     // For NUC1262 series, CONIFG2 must be 0xFFFFFF5A (Don't modify this value. It should be 0xFFFFFF5A after reset.)
-    unsigned int u32Size = 8;
+    uint32_t u32Size = 8;
     FMC_ENABLE_CFG_UPDATE();
     FMC_Proc(FMC_ISPCMD_PAGE_ERASE, Config0, Config0 + 8, 0);
     FMC_Proc(FMC_ISPCMD_PROGRAM, Config0, Config0 + u32Size, data);
