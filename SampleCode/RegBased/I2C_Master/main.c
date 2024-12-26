@@ -22,7 +22,7 @@
 //*** <<< end of configuration section >>> ***
 
 #if (I2C_10Bit_MODE)
-#define SLV_10BIT_ADDR (0x01<<2)
+#define SLV_10BIT_ADDR (0x1E<<2)
 #endif
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global variables                                                                                        */
@@ -158,6 +158,7 @@ void I2C_MasterRx(uint32_t u32Status)
         while(I2C0->CTL & I2C_CTL_SI_Msk)
             if(--u32TimeOutCnt == 0) break;
     }
+    I2C_WAIT_SI_CLEAR(I2C0);
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -243,6 +244,7 @@ void I2C_MasterTx(uint32_t u32Status)
         while(I2C0->CTL & I2C_CTL_SI_Msk)
             if(--u32TimeOutCnt == 0) break;
     }
+    I2C_WAIT_SI_CLEAR(I2C0);
 }
 
 void SYS_Init(void)
