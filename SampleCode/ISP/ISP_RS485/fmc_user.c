@@ -10,9 +10,9 @@
 #include "fmc_user.h"
 
 
-int FMC_Proc(unsigned int u32Cmd, unsigned int addr_start, unsigned int addr_end, unsigned int *data)
+int FMC_Proc(uint32_t u32Cmd, uint32_t addr_start, uint32_t addr_end, uint32_t *data)
 {
-    unsigned int u32Addr, Reg;
+    uint32_t u32Addr, Reg;
     uint32_t u32TimeOutCnt;
 
     for (u32Addr = addr_start; u32Addr < addr_end; data++) {
@@ -55,9 +55,9 @@ int FMC_Proc(unsigned int u32Cmd, unsigned int addr_start, unsigned int addr_end
     return 0;
 }
 
-void UpdateConfig(unsigned int *data, unsigned int *res)
+void UpdateConfig(uint32_t *data, uint32_t *res)
 {
-    unsigned int u32Size = CONFIG_SIZE;
+    uint32_t u32Size = CONFIG_SIZE;
     FMC_ENABLE_CFG_UPDATE();
     FMC_Proc(FMC_ISPCMD_PAGE_ERASE, Config0, Config0 + 8, 0);
     FMC_Proc(FMC_ISPCMD_PROGRAM, Config0, Config0 + u32Size, data);

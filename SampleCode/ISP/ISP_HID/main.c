@@ -12,6 +12,9 @@
 #define HIRC_AUTO_TRIM      0x611   /* Use USB signal to fine tune HIRC 48MHz */
 #define TRIM_INIT           (SYS_BASE+0x110)
 
+void ProcessHardFault(void) {}
+void SH_Return(void) {}
+
 int32_t SYS_Init(void)
 {
     uint32_t u32TimeOutCnt;

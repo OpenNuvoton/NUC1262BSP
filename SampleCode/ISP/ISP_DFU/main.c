@@ -20,8 +20,10 @@
 
 #define DetectPin   PD0
 
-uint32_t g_apromSize;
+void ProcessHardFault(void) {}
+void SH_Return(void) {}
 
+uint32_t g_apromSize;
 uint32_t GetApromSize()
 {
     //the smallest of APROM size is 2K
