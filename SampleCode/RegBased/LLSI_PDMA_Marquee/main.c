@@ -4,7 +4,6 @@
  * @brief    This is a LLSI demo for marquee display in PDMA mode.
  *           It needs to be used with WS2812 LED strip.
  *
- * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
@@ -25,7 +24,6 @@ volatile uint32_t g_u32PatternToggle = 0;
 void SYS_Init(void)
 {
     uint32_t u32TimeOutCnt;
-
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
@@ -142,125 +140,82 @@ int main(void)
     printf("+------------------------------------------------+\n");
     printf("The first to sixth LEDs will flash red in sequence.\n\n");
 
+    /* Init LLSI */
+    LLSI_Init();
+
+    /* Unlock protected registers */
+    SYS_UnlockReg();
     /* Reset PDMA module */
     SYS->IPRST0 |= SYS_IPRST0_PDMARST_Msk;
     SYS->IPRST0 &= ~SYS_IPRST0_PDMARST_Msk;
+    /* Lock protected registers */
+    SYS_LockReg();
 
     /* Open Channel 0 */
     PDMA->CHCTL |= (1 << 0);
 
     /* Transfer configuration of Channel 0 */
     PDMA->DSCT[0].CTL = \
-                        ((TEST_COUNT - 1) << PDMA_DSCT_CTL_TXCNT_Pos) | /* Transfer count is TEST_COUNT */ \
                         PDMA_WIDTH_32 |  /* Transfer width is 32 bits(one word) */ \
                         PDMA_SAR_INC |   /* Source increment size is 32 bits(one word) */ \
                         PDMA_DAR_FIX |   /* Fixed destination size is 32 bits(one word) */ \
                         PDMA_REQ_SINGLE | /* Transfer type is single transfer type */ \
-                        PDMA_BURST_4 |   /* Burst size is 4. No effect in single transfer type */ \
-                        PDMA_OP_BASIC;   /* Operation mode is basic mode */
-
-    /* Configure source address */
-    PDMA->DSCT[0].SA = (uint32_t)g_au32RED_Marquee0;
+                        PDMA_BURST_4;    /* Burst size is 4. No effect in single transfer type */
 
     /* Configure destination address */
     PDMA->DSCT[0].DA = (uint32_t)&LLSI0->DATA;
 
-    /* Configure LLSI0 as PDMA channel 0 request source */
-    PDMA->REQSEL0_3 = (PDMA->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC0_Msk) | (PDMA_LLSI0 << PDMA_REQSEL0_3_REQSRC0_Pos);
-
-    /* Init LLSI */
-    LLSI_Init();
-
+    g_u32PatternToggle = 0;
     while(g_u32PatternToggle < 7)
     {
-        CLK_SysTickDelay(100000);
-
-        g_u32PatternToggle++;
-
-        /* Reset PDMA module */
-        SYS->IPRST0 |= SYS_IPRST0_PDMARST_Msk;
-        SYS->IPRST0 &= ~SYS_IPRST0_PDMARST_Msk;
-
-        /* Open Channel 0 */
-        PDMA->CHCTL |= (1 << 0);
-
-        /* Transfer configuration of Channel 0 */
-        PDMA->DSCT[0].CTL = \
-                            ((TEST_COUNT - 1) << PDMA_DSCT_CTL_TXCNT_Pos) | /* Transfer count is TEST_COUNT */ \
-                            PDMA_WIDTH_32 |  /* Transfer width is 32 bits(one word) */ \
-                            PDMA_REQ_SINGLE;
-
-        if(g_u32PatternToggle == 1)
+        if(g_u32PatternToggle == 0)
+        {
+            /* Configure source address */
+            PDMA->DSCT[0].SA = (uint32_t)g_au32RED_Marquee0;
+        }
+        else if(g_u32PatternToggle == 1)
         {
             /* Configure source address */
             PDMA->DSCT[0].SA = (uint32_t)g_au32RED_Marquee1;
-
-            /* Configure destination address */
-            PDMA->DSCT[0].DA = (uint32_t)&LLSI0->DATA;
-
-            /* Source increment and fixed destination */
-            PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~(PDMA_DSCT_CTL_SAINC_Msk | PDMA_DSCT_CTL_DAINC_Msk)) | (PDMA_SAR_INC | PDMA_DAR_FIX);
         }
         else if(g_u32PatternToggle == 2)
         {
             /* Configure source address */
             PDMA->DSCT[0].SA = (uint32_t)g_au32RED_Marquee2;
-
-            /* Configure destination address */
-            PDMA->DSCT[0].DA = (uint32_t)&LLSI0->DATA;
-
-            /* Source increment and fixed destination */
-            PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~(PDMA_DSCT_CTL_SAINC_Msk | PDMA_DSCT_CTL_DAINC_Msk)) | (PDMA_SAR_INC | PDMA_DAR_FIX);
         }
         else if(g_u32PatternToggle == 3)
         {
             /* Configure source address */
             PDMA->DSCT[0].SA = (uint32_t)g_au32RED_Marquee3;
-
-            /* Configure destination address */
-            PDMA->DSCT[0].DA = (uint32_t)&LLSI0->DATA;
-
-            /* Source increment and fixed destination */
-            PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~(PDMA_DSCT_CTL_SAINC_Msk | PDMA_DSCT_CTL_DAINC_Msk)) | (PDMA_SAR_INC | PDMA_DAR_FIX);
         }
         else if(g_u32PatternToggle == 4)
         {
             /* Configure source address */
             PDMA->DSCT[0].SA = (uint32_t)g_au32RED_Marquee4;
-
-            /* Configure destination address */
-            PDMA->DSCT[0].DA = (uint32_t)&LLSI0->DATA;
-
-            /* Source increment and fixed destination */
-            PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~(PDMA_DSCT_CTL_SAINC_Msk | PDMA_DSCT_CTL_DAINC_Msk)) | (PDMA_SAR_INC | PDMA_DAR_FIX);
         }
         else if(g_u32PatternToggle == 5)
         {
             /* Configure source address */
             PDMA->DSCT[0].SA = (uint32_t)g_au32RED_Marquee5;
-
-            /* Configure destination address */
-            PDMA->DSCT[0].DA = (uint32_t)&LLSI0->DATA;
-
-            /* Source increment and fixed destination */
-            PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~(PDMA_DSCT_CTL_SAINC_Msk | PDMA_DSCT_CTL_DAINC_Msk)) | (PDMA_SAR_INC | PDMA_DAR_FIX);
         }
         else if(g_u32PatternToggle == 6)
         {
             /* Configure source address */
             PDMA->DSCT[0].SA = (uint32_t)g_au32RED_Marquee6;
-
-            /* Configure destination address */
-            PDMA->DSCT[0].DA = (uint32_t)&LLSI0->DATA;
-
-            /* Source increment and fixed destination */
-            PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~(PDMA_DSCT_CTL_SAINC_Msk | PDMA_DSCT_CTL_DAINC_Msk)) | (PDMA_SAR_INC | PDMA_DAR_FIX);
         }
+
+        /* Transfer count is TEST_COUNT */
+        PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~PDMA_DSCT_CTL_TXCNT_Msk) | ((TEST_COUNT - 1) << PDMA_DSCT_CTL_TXCNT_Pos);  
+
+        /* Operation mode is basic mode */
+        PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_BASIC;
 
         /* Request source is LLSI0 */
         PDMA->REQSEL0_3 = (PDMA->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC0_Msk) | (PDMA_LLSI0 << PDMA_REQSEL0_3_REQSRC0_Pos);
-        /* Operation mode is basic mode */
-        PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_BASIC;
+
+        CLK_SysTickDelay(50000);
+
+        g_u32PatternToggle++;
     }
 
     /* Close LLSI0 */

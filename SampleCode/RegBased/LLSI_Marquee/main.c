@@ -4,7 +4,6 @@
  * @brief    This is a LLSI demo for marquee display in software mode.
  *           It needs to be used with WS2812 LED strip.
  *
- * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
@@ -37,7 +36,6 @@ void LLSI0_IRQHandler()
 void SYS_Init(void)
 {
     uint32_t u32TimeOutCnt;
-
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
@@ -124,8 +122,8 @@ void LLSI_Init(void)
 
     /* Set GRB output format, software mode, enable reset command function */
     LLSI0->CTL = LLSI_FORMAT_GRB | LLSI_MODE_SW | LLSI_CTL_RSTCEN_Msk;
-    /* Set TX FIFO threshold and enable TX FIFO threshold interrupt */
-    LLSI0->CTL = (LLSI0->CTL & ~LLSI_CTL_TXTH_Msk) | (2 << LLSI_CTL_TXTH_Pos) | LLSI_CTL_TXTHIEN_Msk;
+    /* Set TX FIFO threshold */
+    LLSI0->CTL = (LLSI0->CTL & ~LLSI_CTL_TXTH_Msk) | (2 << LLSI_CTL_TXTH_Pos);
     /* Enable LLSI */
     LLSI0->CTL |= LLSI_CTL_LLSIEN_Msk;
 
@@ -158,26 +156,25 @@ int main(void)
     /* Init LLSI */
     LLSI_Init();
 
-    /* Write 4 word data to LLSI_DATA */
-    LLSI0->DATA = 0x000000FF;
-    LLSI0->DATA = 0x00000000;
-    LLSI0->DATA = 0x00000000;
-    LLSI0->DATA = 0x00000000;
-
+    g_u32PatternToggle = 0;
     while(g_u32PatternToggle < 7)
     {
-        CLK_SysTickDelay(100000);
-
         g_u32DataCount = 0;
-        g_u32PatternToggle++;
 
-        if(g_u32PatternToggle == 1)
+        /* Write 4 word data to LLSI_DATA */
+        if(g_u32PatternToggle == 0)
+        {
+            LLSI0->DATA = 0x000000FF;
+            LLSI0->DATA = 0x00000000;
+            LLSI0->DATA = 0x00000000;
+            LLSI0->DATA = 0x00000000;
+        }
+        else if(g_u32PatternToggle == 1)
         {
             LLSI0->DATA = 0xFF000000;
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x00000000;
-            LLSI0->CTL |= LLSI_CTL_TXTHIEN_Msk;
         }
         else if(g_u32PatternToggle == 2)
         {
@@ -185,7 +182,6 @@ int main(void)
             LLSI0->DATA = 0x00FF0000;
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x00000000;
-            LLSI0->CTL |= LLSI_CTL_TXTHIEN_Msk;
         }
         else if(g_u32PatternToggle == 3)
         {
@@ -193,7 +189,6 @@ int main(void)
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x0000FF00;
             LLSI0->DATA = 0x00000000;
-            LLSI0->CTL |= LLSI_CTL_TXTHIEN_Msk;
         }
         else if(g_u32PatternToggle == 4)
         {
@@ -201,7 +196,6 @@ int main(void)
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x000000FF;
-            LLSI0->CTL |= LLSI_CTL_TXTHIEN_Msk;
         }
         else if(g_u32PatternToggle == 5)
         {
@@ -209,7 +203,6 @@ int main(void)
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0xFF000000;
-            LLSI0->CTL |= LLSI_CTL_TXTHIEN_Msk;
         }
         else if(g_u32PatternToggle == 6)
         {
@@ -217,8 +210,14 @@ int main(void)
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x00000000;
             LLSI0->DATA = 0x00000000;
-            LLSI0->CTL |= LLSI_CTL_TXTHIEN_Msk;
         }
+
+        /* Enable TX FIFO threshold interrupt */
+        LLSI0->CTL |= LLSI_CTL_TXTHIEN_Msk;
+
+        CLK_SysTickDelay(50000);
+
+        g_u32PatternToggle++;
     }
 
     /* Close LLSI0 */

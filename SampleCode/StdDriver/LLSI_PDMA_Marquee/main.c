@@ -4,14 +4,14 @@
  * @brief    This is a LLSI demo for marquee display in PDMA mode.
  *           It needs to be used with WS2812 LED strip.
  *
- * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include <stdio.h>
 #include "NuMicro.h"
 
-#define TEST_COUNT 5
+#define HCLK_CLK    72000000
+#define TEST_COUNT  5
 
 volatile uint32_t g_au32RED_Marquee0[TEST_COUNT] = {0x000000FF, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
 volatile uint32_t g_au32RED_Marquee1[TEST_COUNT] = {0xFF000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
@@ -33,8 +33,8 @@ void SYS_Init(void)
     /* Wait for HIRC clock ready */
     CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);
 
-    /* Set core clock to 72MHz */
-    CLK_SetCoreClock(72000000);
+    /* Set core clock to HCLK_CLK Hz */
+    CLK_SetCoreClock(HCLK_CLK);
 
     /* Enable UART0 module clock */
     CLK_EnableModuleClock(UART0_MODULE);
@@ -80,7 +80,7 @@ void LLSI_Init(void)
     /* Set data transfer period. T_Period = 1250ns */
     /* Set duty period. T_T0H = 400ns; T_T1H = 850ns */
     /* Set reset command period. T_ResetPeriod = 50000ns */
-    LLSI_Open(LLSI0, LLSI_MODE_PDMA, LLSI_FORMAT_GRB, 72000000, 1250, 400, 850, 50000, 6, LLSI_IDLE_LOW);
+    LLSI_Open(LLSI0, LLSI_MODE_PDMA, LLSI_FORMAT_GRB, HCLK_CLK, 1250, 400, 850, 50000, 6, LLSI_IDLE_LOW);
 
     /* Enable reset command function */
     LLSI_ENABLE_RESET_COMMAND(LLSI0);
@@ -109,40 +109,30 @@ int main(void)
     printf("+------------------------------------------------+\n");
     printf("The first to sixth LEDs will flash red in sequence.\n\n");
 
-    /* Reset PDMA module */
-    SYS_ResetModule(PDMA_RST);
-
-    /* Open Channel 0 */
-    PDMA_Open(1 << 0);
-    /* Transfer count is TEST_COUNT, transfer width is 32 bits(one word) */
-    PDMA_SetTransferCnt(0, PDMA_WIDTH_32, TEST_COUNT);
-    /* Transfer type is single transfer */
-    PDMA_SetBurstType(0, PDMA_REQ_SINGLE, 0);
-    /* Set source address is g_au32RED_Marquee0, destination address is &LLSI0->DATA */
-    PDMA_SetTransferAddr(0, (uint32_t)g_au32RED_Marquee0, PDMA_SAR_INC, (uint32_t)&LLSI0->DATA, PDMA_DAR_FIX);
-    /* Request source is LLSI0 */
-    PDMA_SetTransferMode(0, PDMA_LLSI0, FALSE, 0);
-
     /* Init LLSI */
     LLSI_Init();
 
+    /* Unlock protected registers */
+    SYS_UnlockReg();
+    /* Reset PDMA0 module */
+    SYS_ResetModule(PDMA_RST);
+    /* Lock protected registers */
+    SYS_LockReg();
+
+    /* Open Channel 0 */
+    PDMA_Open(1 << 0);
+    /* Transfer type is single transfer */
+    PDMA_SetBurstType(0, PDMA_REQ_SINGLE, 0);
+
+    g_u32PatternToggle = 0;
     while(g_u32PatternToggle < 7)
     {
-        CLK_SysTickDelay(100000);
-
-        g_u32PatternToggle++;
-
-        /* Reset PDMA module */
-        SYS_ResetModule(PDMA_RST);
-
-        /* Open Channel 0 */
-        PDMA_Open(1 << 0);
-        /* Transfer count is TEST_COUNT, transfer width is 32 bits(one word) */
-        PDMA_SetTransferCnt(0, PDMA_WIDTH_32, TEST_COUNT);
-        /* Transfer type is single transfer */
-        PDMA_SetBurstType(0, PDMA_REQ_SINGLE, 0);
-
-        if(g_u32PatternToggle == 1)
+        if(g_u32PatternToggle == 0)
+        {
+            /* Set source address is g_au32RED_Marquee0, destination address is &LLSI0->DATA */
+            PDMA_SetTransferAddr(0, (uint32_t)g_au32RED_Marquee0, PDMA_SAR_INC, (uint32_t)&LLSI0->DATA, PDMA_DAR_FIX);
+        }
+        else if(g_u32PatternToggle == 1)
         {
             /* Set source address is g_au32RED_Marquee1, destination address is &LLSI0->DATA */
             PDMA_SetTransferAddr(0, (uint32_t)g_au32RED_Marquee1, PDMA_SAR_INC, (uint32_t)&LLSI0->DATA, PDMA_DAR_FIX);
@@ -173,8 +163,18 @@ int main(void)
             PDMA_SetTransferAddr(0, (uint32_t)g_au32RED_Marquee6, PDMA_SAR_INC, (uint32_t)&LLSI0->DATA, PDMA_DAR_FIX);
         }
 
+        /* Transfer count is TEST_COUNT, transfer width is 32 bits(one word) */
+        PDMA_SetTransferCnt(0, PDMA_WIDTH_32, TEST_COUNT);
+
+        /* Operation mode is basic mode */
+        PDMA->DSCT[0].CTL = (PDMA->DSCT[0].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_BASIC;
+
         /* Request source is LLSI0 */
-        PDMA_SetTransferMode(0, PDMA_LLSI0, FALSE, 0);
+        PDMA->REQSEL0_3 = (PDMA->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC0_Msk) | (PDMA_LLSI0 << PDMA_REQSEL0_3_REQSRC0_Pos);
+
+        CLK_SysTickDelay(50000);
+
+        g_u32PatternToggle++;
     }
 
     /* Close LLSI0 */

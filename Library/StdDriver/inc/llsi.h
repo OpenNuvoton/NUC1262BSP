@@ -1,9 +1,8 @@
 /******************************************************************************
  * @file     llsi.h
  * @version  V3.00
- * @brief    NUC1262 series LLSI driver header file
+ * @brief    LED Light Strip Interface(LLSI) driver header file
  *
- * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
@@ -29,12 +28,21 @@ extern "C"
 */
 typedef struct
 {
-    uint32_t u32BusClock;            /*!< Bus clock */
-    uint32_t u32TransferTimeNsec;    /*!< Transfer time in nano second */
-    uint32_t u32T0HTimeNsec;         /*!< T0H time in nano second */
-    uint32_t u32T1HTimeNsec;         /*!< T1H time in nano second */
-    uint32_t u32ResetTimeNsec;       /*!< Reset time in nano second */
+    uint32_t u32BusClock;           /*!< Bus clock */
+    uint32_t u32TransferTimeNsec;   /*!< Transfer time in nano second */
+    uint32_t u32T0HTimeNsec;        /*!< T0H time in nano second */
+    uint32_t u32T1HTimeNsec;        /*!< T1H time in nano second */
+    uint32_t u32ResetTimeNsec;      /*!< Reset time in nano second */
 } S_LLSI_TIME_INFO_T;
+
+typedef struct
+{
+    uint32_t u32LLSIMode;           /*!< Transfer mode */
+    uint32_t u32OutputFormat;       /*!< Output format */
+    S_LLSI_TIME_INFO_T sTimeInfo;   /*!< Timing information */
+    uint32_t u32PCNT;               /*!< Frame size */
+    uint32_t u32IDOS;               /*!< Idle output state */
+} S_LLSI_CONFIG_T;
 
 /*@}*/ /* end of group LLSI_EXPORTED_STRUCTS */
 
@@ -43,24 +51,24 @@ typedef struct
 */
 
 /* LLSI Mode */
-#define LLSI_MODE_SW                 (0 << LLSI_CTL_LLSIMODE_Pos)   /*!< Software mode */
-#define LLSI_MODE_PDMA               (1 << LLSI_CTL_LLSIMODE_Pos)   /*!< PDMA mode */
+#define LLSI_MODE_SW                (0 << LLSI_CTL_LLSIMODE_Pos)    /*!< Software mode \hideinitializer */
+#define LLSI_MODE_PDMA              (1 << LLSI_CTL_LLSIMODE_Pos)    /*!< PDMA mode \hideinitializer */
 
 /* LLSI Output Format */
-#define LLSI_FORMAT_RGB              (0 << LLSI_CTL_OFDEF_Pos)      /*!< Output RGB format */
-#define LLSI_FORMAT_GRB              (1 << LLSI_CTL_OFDEF_Pos)      /*!< Output GRB format */
+#define LLSI_FORMAT_RGB             (0 << LLSI_CTL_OFDEF_Pos)       /*!< Output RGB format \hideinitializer */
+#define LLSI_FORMAT_GRB             (1 << LLSI_CTL_OFDEF_Pos)       /*!< Output GRB format \hideinitializer */
 
 /* LLSI Idle Output State */
-#define LLSI_IDLE_LOW                (0 << LLSI_OCTL_IDOS_Pos)      /*!< Idle output low */
-#define LLSI_IDLE_HIGH               (1 << LLSI_OCTL_IDOS_Pos)      /*!< Idle output high */
+#define LLSI_IDLE_LOW               (0 << LLSI_OCTL_IDOS_Pos)       /*!< Idle output low \hideinitializer */
+#define LLSI_IDLE_HIGH              (1 << LLSI_OCTL_IDOS_Pos)       /*!< Idle output high \hideinitializer */
 
 /* LLSI Interrupt Mask */
-#define LLSI_UNDFL_INT_MASK          (0x001)                        /*!< Underflow interrupt mask */
-#define LLSI_FEND_INT_MASK           (0x002)                        /*!< Frame end interrupt mask */
-#define LLSI_RSTC_INT_MASK           (0x004)                        /*!< Reset command interrupt mask */
-#define LLSI_EMP_INT_MASK            (0x008)                        /*!< FIFO empty interrupt mask */
-#define LLSI_FUL_INT_MASK            (0x010)                        /*!< FIFO full interrupt mask */
-#define LLSI_TXTH_INT_MASK           (0x020)                        /*!< TX threshold interrupt mask */
+#define LLSI_UNDFL_INT_MASK         (0x001)                         /*!< Underflow interrupt mask \hideinitializer */
+#define LLSI_FEND_INT_MASK          (0x002)                         /*!< Frame end interrupt mask \hideinitializer */
+#define LLSI_RSTC_INT_MASK          (0x004)                         /*!< Reset command interrupt mask \hideinitializer */
+#define LLSI_EMP_INT_MASK           (0x008)                         /*!< FIFO empty interrupt mask \hideinitializer */
+#define LLSI_FUL_INT_MASK           (0x010)                         /*!< FIFO full interrupt mask \hideinitializer */
+#define LLSI_TXTH_INT_MASK          (0x020)                         /*!< TX threshold interrupt mask \hideinitializer */
 
 /*@}*/ /* end of group LLSI_EXPORTED_CONSTANTS */
 

@@ -103,8 +103,8 @@ typedef enum IRQn
 # define __SOFTFP__             1
 #endif
 
-#include "core_cm0.h"                   /*!< Cortex-M0 processor and core peripherals             */
-#include "system_NUC1262.h"             /*!< NUC1262 System                                    */
+#include "core_cm23.h"                  /*!< Cortex-M23 processor and core peripherals            */
+#include "system_NUC1262.h"             /*!< NUC1262 System                                       */
 
 
 #if defined ( __CC_ARM   )

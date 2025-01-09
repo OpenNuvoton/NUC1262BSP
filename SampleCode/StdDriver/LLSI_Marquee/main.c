@@ -4,14 +4,14 @@
  * @brief    This is a LLSI demo for marquee display in software mode.
  *           It needs to be used with WS2812 LED strip.
  *
- * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2021 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include <stdio.h>
 #include "NuMicro.h"
 
-#define TEST_COUNT 1
+#define HCLK_CLK    72000000
+#define TEST_COUNT  1
 
 volatile uint32_t g_au32RED_Marquee[TEST_COUNT] = {0x00000000};
 volatile uint32_t g_u32PatternToggle = 0;
@@ -45,8 +45,8 @@ void SYS_Init(void)
     /* Wait for HIRC clock ready */
     CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);
 
-    /* Set core clock to 72MHz */
-    CLK_SetCoreClock(72000000);
+    /* Set core clock to HCLK_CLK Hz */
+    CLK_SetCoreClock(HCLK_CLK);
 
     /* Enable UART0 module clock */
     CLK_EnableModuleClock(UART0_MODULE);
@@ -89,11 +89,11 @@ void LLSI_Init(void)
     /* Set data transfer period. T_Period = 1250ns */
     /* Set duty period. T_T0H = 400ns; T_T1H = 850ns */
     /* Set reset command period. T_ResetPeriod = 50000ns */
-    LLSI_Open(LLSI0, LLSI_MODE_SW, LLSI_FORMAT_GRB, 72000000, 1250, 400, 850, 50000, 6, LLSI_IDLE_LOW);
+    LLSI_Open(LLSI0, LLSI_MODE_SW, LLSI_FORMAT_GRB, HCLK_CLK, 1250, 400, 850, 50000, 6, LLSI_IDLE_LOW);
 
-    /* Set TX FIFO threshold, enable TX FIFO threshold interrupt */
+    /* Set TX FIFO threshold */
     LLSI_SetFIFO(LLSI0, 2);
-    LLSI_EnableInt(LLSI0, LLSI_TXTH_INT_MASK);
+
     /* Enable reset command function */
     LLSI_ENABLE_RESET_COMMAND(LLSI0);
 
@@ -126,26 +126,25 @@ int main(void)
     /* Init LLSI */
     LLSI_Init();
 
-    /* Write 4 word data to LLSI_DATA */
-    LLSI_WRITE_DATA(LLSI0, 0x000000FF);
-    LLSI_WRITE_DATA(LLSI0, 0x00000000);
-    LLSI_WRITE_DATA(LLSI0, 0x00000000);
-    LLSI_WRITE_DATA(LLSI0, 0x00000000);
-
+    g_u32PatternToggle = 0;
     while(g_u32PatternToggle < 7)
     {
-        CLK_SysTickDelay(100000);
-
         g_u32DataCount = 0;
-        g_u32PatternToggle++;
 
-        if(g_u32PatternToggle == 1)
+        /* Write 4 word data to LLSI_DATA */
+        if(g_u32PatternToggle == 0)
+        {
+            LLSI_WRITE_DATA(LLSI0, 0x000000FF);
+            LLSI_WRITE_DATA(LLSI0, 0x00000000);
+            LLSI_WRITE_DATA(LLSI0, 0x00000000);
+            LLSI_WRITE_DATA(LLSI0, 0x00000000);
+        }
+        else if(g_u32PatternToggle == 1)
         {
             LLSI_WRITE_DATA(LLSI0, 0xFF000000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
-            LLSI_EnableInt(LLSI0, LLSI_TXTH_INT_MASK);
         }
         else if(g_u32PatternToggle == 2)
         {
@@ -153,7 +152,6 @@ int main(void)
             LLSI_WRITE_DATA(LLSI0, 0x00FF0000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
-            LLSI_EnableInt(LLSI0, LLSI_TXTH_INT_MASK);
         }
         else if(g_u32PatternToggle == 3)
         {
@@ -161,7 +159,6 @@ int main(void)
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x0000FF00);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
-            LLSI_EnableInt(LLSI0, LLSI_TXTH_INT_MASK);
         }
         else if(g_u32PatternToggle == 4)
         {
@@ -169,7 +166,6 @@ int main(void)
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x000000FF);
-            LLSI_EnableInt(LLSI0, LLSI_TXTH_INT_MASK);
         }
         else if(g_u32PatternToggle == 5)
         {
@@ -177,7 +173,6 @@ int main(void)
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0xFF000000);
-            LLSI_EnableInt(LLSI0, LLSI_TXTH_INT_MASK);
         }
         else if(g_u32PatternToggle == 6)
         {
@@ -185,8 +180,14 @@ int main(void)
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
             LLSI_WRITE_DATA(LLSI0, 0x00000000);
-            LLSI_EnableInt(LLSI0, LLSI_TXTH_INT_MASK);
         }
+
+        /* Enable TX FIFO threshold interrupt */
+        LLSI_EnableInt(LLSI0, LLSI_TXTH_INT_MASK);
+
+        CLK_SysTickDelay(50000);
+
+        g_u32PatternToggle++;
     }
 
     /* Close LLSI0 */
