@@ -9,6 +9,9 @@ project:
   setups:
     - output:
         type: ["bin"]
+  linker:
+    - for-compiler: AC6
+      script: ../../../../Library/Device/Nuvoton/NUC1262/Source/ARM/LDROM.sct
   add-path:
         - ../../../../Library/CMSIS/Include
         - ../../../../Library/Device/Nuvoton/NUC1262/Include
