@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file     hid_mouse.h
  * @version  V3.00
- * @brief    NUC1262 series USBD HID mouse header file
+ * @brief    USBD HID mouse header file
  *
  * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
