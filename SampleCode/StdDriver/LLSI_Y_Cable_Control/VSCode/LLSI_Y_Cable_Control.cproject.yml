@@ -19,12 +19,15 @@ project:
     - output:
         type: ["elf", "bin"]
   linker:
+    - for-compiler: AC6
+      script: LLSI_Y_Cable_Control.sct
     - for-compiler: GCC
       script: ../../../../Library/Device/Nuvoton/NUC1262/Source/GCC/gcc_arm.ld
   add-path:
     - ../../../../Library/Device/Nuvoton/NUC1262/Include
     - ../../../../Library/StdDriver/inc
     - ../../../../Library/CMSIS/Include
+    - ../../../../Library/LlsiYcableLib
   groups:
     - group: CMSIS
       files:
@@ -44,10 +47,10 @@ project:
         - file: ../../../../Library/StdDriver/src/bpwm.c
     - group: LlsiYcableLib
       files:
-        - file: ../hdiv.c
-        - file: ../led_control.c
-        - file: ../led_gen2_control.c
-        - file: ../pdma_user.c
+        - file: ../../../../Library/LlsiYcableLib/hdiv.c
+        - file: ../../../../Library/LlsiYcableLib/led_control.c
+        - file: ../../../../Library/LlsiYcableLib/led_gen2_control.c
+        - file: ../../../../Library/LlsiYcableLib/pdma_config.c
     - group: User
       files:
         - file: ../main.c

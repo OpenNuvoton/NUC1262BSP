@@ -6,7 +6,7 @@ solution:
     - compiler: GCC@>=10.3.1
   build-types:
     - type: debug
-      optimize: debug
+      optimize: size
   target-types:
     - type: ARMCLANG
       compiler: AC6
@@ -16,4 +16,3 @@ solution:
       device: Nuvoton::NUC1262SE4AE
   projects:
     - project: fmc_ld_code.cproject.yml
-    - project: FMC_IAP.cproject.yml

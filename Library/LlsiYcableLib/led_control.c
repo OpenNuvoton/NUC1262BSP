@@ -140,7 +140,7 @@ void LLSI_Initial(uint8_t port)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Set LLSI multi-function pin */
     *(uint32_t *)(SYS_BASE + LED_LLSI_IO_Setting[port].IO_MFP_OFFSET) =
-        *(uint32_t *)(SYS_BASE + LED_LLSI_IO_Setting[port].IO_MFP_OFFSET) & (~(0xF << (LED_LLSI_IO_Setting[port].IO_Number*4))) | \
+        (*(uint32_t *)(SYS_BASE + LED_LLSI_IO_Setting[port].IO_MFP_OFFSET) & (~(0xF << (LED_LLSI_IO_Setting[port].IO_Number*4)))) | \
         LED_LLSI_IO_Setting[port].IO_LLSI_MSK;
 
     /* Set LLSI configuration */
