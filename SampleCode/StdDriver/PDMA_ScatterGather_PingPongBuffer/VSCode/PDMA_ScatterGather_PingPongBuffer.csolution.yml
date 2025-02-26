@@ -17,4 +17,4 @@ solution:
       compiler: GCC
       device: Nuvoton::NUC1262SE4AE
   projects:
-    - project: BPWM_DoubleBuffer_PLM.cproject.yml
+    - project: PDMA_ScatterGather_PingPongBuffer.cproject.yml

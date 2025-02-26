@@ -1,7 +1,7 @@
 {
     "cmsis-csolution.actions": [
         {
-            "path": "BPWM_DoubleBuffer_PLM.csolution.yml",
+            "path": "BPWM_DoubleBuffer_PeriodLoadingMode.csolution.yml",
             "target": "ARMCLANG",
             "config": {
                 "run": "arm-debugger.flash: Flash Device",
