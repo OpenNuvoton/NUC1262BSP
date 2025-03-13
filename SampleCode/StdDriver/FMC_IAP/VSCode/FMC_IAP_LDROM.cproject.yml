@@ -11,7 +11,7 @@ project:
           -fshort-enums, -funsigned-char, -mthumb, -Wno-main, -gdwarf-4]
       Link:
         - -Xlinker
-        - --gc-section
+        - --gc-sections
         - --specs=nano.specs
         - -Wl,--gc-sections,-Map="$elf()$.map"
   linker:
@@ -35,16 +35,20 @@ project:
         - file: ../../../../Library/Device/Nuvoton/NUC1262/Source/system_NUC1262.c
     - group: Library
       files:
+        - file: ../../../../Library/StdDriver/src/clk.c
+        - file: ../../../../Library/StdDriver/src/sys.c
+        - file: ../../../../Library/StdDriver/src/uart.c
         - file: ../../../../Library/StdDriver/src/retarget.c
+        - file: ../../../../Library/StdDriver/src/fmc.c
     - group: User
       files:
-        - file: ../main_LD.c
+        - file: ../LDROM_main.c
   # The execute: node is processed only for an application build when no --context option is specified.
   executes:
-    - execute: Copy bin file
+    - execute: Copy_Bin_File
       run: ${CMAKE_COMMAND} -E copy $input$ $output$
       always:
       input:
         - $bin()$
       output:
-        - $SolutionDir()$/bin/fmc_ld_iap.bin
+        - $SolutionDir()$/bin/$TargetType$

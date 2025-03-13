@@ -1,0 +1,5 @@
+{
+    "clangd.arguments": [
+        "--compile-commands-dir=c:\\git\\NUC1262_0313\\SampleCode\\StdDriver\\FMC_IAP\\VSCode\\out\\FMC_IAP_APROM\\GNUC\\debug"
+    ]
+}
