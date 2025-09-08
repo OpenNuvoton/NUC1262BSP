@@ -14,8 +14,6 @@
 #include <stdio.h>
 #include "NuMicro.h"
 
-#define KEY_ADDR    0x20000FFC      /* The location of signature */
-#define SIGNATURE   0x21557899      /* The signature word is used by AP code to check if simple LD is finished */
 
 extern uint32_t loaderImageBase;
 extern uint32_t loaderImageLimit;
@@ -23,11 +21,8 @@ extern uint32_t loaderImageLimit;
 uint32_t g_u32ImageSize;
 int32_t g_FMC_i32ErrCode;
 
-#if defined ( __ICCARM__ )
+
 uint32_t *g_au32funcTable = (uint32_t *)0x100e00; /* The location of function table */
-#else
-uint32_t *g_au32funcTable = (uint32_t *)0x100a6c; /* The location of function table */
-#endif
 
 
 void SYS_Init(void)
@@ -214,7 +209,7 @@ int32_t main(void)
 
     if((u32Cfg & 0xc0) != 0x80)
     {
-        printf("Do you want to set to new IAP mode (APROM boot + LDROM) (y/n)?\n");
+        printf("Do you want to set to new IAP mode (APROM boot + LDROM)? (y/n)\n");
         if(getchar() == 'y')
         {
             FMC->ISPCTL |= FMC_ISPCTL_CFGUEN_Msk; /* Enable user configuration update */
@@ -238,7 +233,7 @@ int32_t main(void)
         }
     }
 
-    printf("Do you want to write LDROM code to 0x100000\n");
+    printf("Do you want to write LDROM code to 0x100000? (y/n)\n");
 
     if(getchar() == 'y')
     {

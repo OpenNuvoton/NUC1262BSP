@@ -16,28 +16,32 @@ project:
         - -Wl,--gc-sections,-Map="$elf()$.map"
   linker:
       - for-compiler: GCC
-        script: ../../../../Library/Device/Nuvoton/NUC1262/Source/GCC/gcc_arm.ld
+        script: ../../../../../Library/Device/Nuvoton/NUC1262/Source/GCC/gcc_arm.ld
   setups:
     - output:
         type: ["elf", "bin"]
   add-path:
-    - ../../../../Library/Device/Nuvoton/NUC1262/Include
-    - ../../../../Library/StdDriver/inc
-    - ../../../../Library/CMSIS/Include
+    - ../../../../../Library/Device/Nuvoton/NUC1262/Include
+    - ../../../../../Library/StdDriver/inc
+    - ../../../../../Library/CMSIS/Include
   add-path-asm:
-    - ./bin/$TargetType$
+    - ../bin/$TargetType$
   groups:
     - group: CMSIS
       files:
-        - file: ../../../../Library/Device/Nuvoton/NUC1262/Source/ARM/startup_NUC1262.S
+        - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/ARM/startup_NUC1262.S
           for-compiler: AC6
-        - file: ../../../../Library/Device/Nuvoton/NUC1262/Source/GCC/startup_NUC1262.S
+        - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/GCC/startup_NUC1262.S
           for-compiler: GCC
-        - file: ../../../../Library/Device/Nuvoton/NUC1262/Source/system_NUC1262.c
+        - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/system_NUC1262.c
     - group: Library
       files:
-        - file: ../../../../Library/StdDriver/src/retarget.c
+        - file: ../../../../../Library/StdDriver/src/clk.c
+        - file: ../../../../../Library/StdDriver/src/sys.c
+        - file: ../../../../../Library/StdDriver/src/uart.c
+        - file: ../../../../../Library/StdDriver/src/retarget.c
+        - file: ../../../../../Library/StdDriver/src/fmc.c
     - group: User
       files:
-        - file: ../main.c
+        - file: ../../aprom_main.c
         - file: ./ap_image.S

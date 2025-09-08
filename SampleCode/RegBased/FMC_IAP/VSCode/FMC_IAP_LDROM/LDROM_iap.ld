@@ -1,8 +1,8 @@
 /* Linker script to configure memory regions. */
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x00100000, LENGTH = 0x20000   /*128K */
-  RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = 0x5000   /* 20K */
+  FLASH (rx) : ORIGIN = 0x00100000, LENGTH = 0x1000      /*  4k */
+  RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = 0x5000      /* 20k */
 }
 
 /* Library configurations */
@@ -64,11 +64,11 @@ SECTIONS
 		*(.ctors)
 
 		/* .dtors */
-		*crtbegin.o(.dtors)
-		*crtbegin?.o(.dtors)
-		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
-		*(SORT(.dtors.*))
-		*(.dtors)
+ 		*crtbegin.o(.dtors)
+ 		*crtbegin?.o(.dtors)
+ 		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+ 		*(SORT(.dtors.*))
+ 		*(.dtors)
 
 		*(.rodata*)
 
@@ -119,7 +119,12 @@ SECTIONS
 		LONG (__bss2_end__ - __bss2_start__)
 		__zero_table_end__ = .;
 	} > FLASH
-	*/
+	*/    
+
+    .IAP_section 0x00100E00 :
+    {
+        KEEP(*(.IAPFunTable))
+    } > FLASH
 
 	__etext = .;
 

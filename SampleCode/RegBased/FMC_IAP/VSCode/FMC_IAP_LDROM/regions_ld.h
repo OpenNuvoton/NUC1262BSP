@@ -1,5 +1,5 @@
-#ifndef REGIONS_NUC1263SD4AE_H
-#define REGIONS_NUC1263SD4AE_H
+#ifndef REGIONS_NUC1262SE4AE_H
+#define REGIONS_NUC1262SE4AE_H
 
 
 //-------- <<< Use Configuration Wizard in Context Menu >>> --------------------
@@ -12,12 +12,12 @@
 // <h> IROM1=<__ROM0>
 //   <o> Base address <0x0-0xFFFFFFFF:8>
 //   <i> Defines base address of memory region.
-//   <i> Default: 0x0000000
+//   <i> Default: 0x00000000
 #define __ROM0_BASE 0x0100000
 //   <o> Region size [bytes] <0x0-0xFFFFFFFF:8>
 //   <i> Defines size of memory region.
-//   <i> Default: 0x20000
-#define __ROM0_SIZE 0x20000
+//   <i> Default: 0x1000
+#define __ROM0_SIZE 0x1000
 //   <q>Default region
 //   <i> Enables memory region globally for the application.
 #define __ROM0_DEFAULT 1
@@ -37,7 +37,7 @@
 #define __RAM0_BASE 0x20000000
 //   <o> Region size [bytes] <0x0-0xFFFFFFFF:8>
 //   <i> Defines size of memory region.
-//   <i> Default: 0x80000
+//   <i> Default: 0x5000
 #define __RAM0_SIZE 0x5000
 //   <q>Default region
 //   <i> Enables memory region globally for the application.
@@ -57,4 +57,4 @@
 // </h>
 
 
-#endif /* REGIONS_NUC1263SD4AE_H */
+#endif /* REGIONS_NUC1262SE4AE_H */

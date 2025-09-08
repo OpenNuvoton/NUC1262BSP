@@ -11,7 +11,7 @@ project:
           -fshort-enums, -funsigned-char, -mthumb, -Wno-main, -gdwarf-4]
       Link:
         - -Xlinker
-        - --gc-section
+        - --gc-sections
         - --specs=nano.specs
         - -Wl,--gc-sections,-Map="$elf()$.map"
   linker:
@@ -22,23 +22,31 @@ project:
     - output:
         type: ["elf", "bin"]
   add-path:
-    - ../../../../Library/Device/Nuvoton/NUC1262/Include
-    - ../../../../Library/StdDriver/inc
-    - ../../../../Library/CMSIS/Include
+    - ../../../../../Library/Device/Nuvoton/NUC1262/Include
+    - ../../../../../Library/StdDriver/inc
+    - ../../../../../Library/CMSIS/Include
   groups:
     - group: CMSIS
       files:
-        - file: ../../../../Library/Device/Nuvoton/NUC1262/Source/ARM/startup_NUC1262.S
+        - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/ARM/startup_NUC1262.S
           for-compiler: AC6
-        - file: ../../../../Library/Device/Nuvoton/NUC1262/Source/GCC/startup_NUC1262.S
+        - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/GCC/startup_NUC1262.S
           for-compiler: GCC
-        - file: ../../../../Library/Device/Nuvoton/NUC1262/Source/system_NUC1262.c
+        - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/system_NUC1262.c
     - group: Library
       files:
-        - file: ../../../../Library/StdDriver/src/retarget.c
+        - file: ../../../../../Library/StdDriver/src/clk.c
+        - file: ../../../../../Library/StdDriver/src/sys.c
+        - file: ../../../../../Library/StdDriver/src/uart.c
+        - file: ../../../../../Library/StdDriver/src/retarget.c
+          for-compiler: AC6
+        - file: ../../../../../Library/StdDriver/src/fmc.c
     - group: User
       files:
-        - file: ../main_LD.c
+        - file: ../../LDROM_main.c
+          for-compiler: AC6
+        - file: ../../LDROM_iap.c
+          for-compiler: GCC
   # The execute: node is processed only for an application build when no --context option is specified.
   executes:
     - execute: Copy_Bin_File

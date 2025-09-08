@@ -13,12 +13,10 @@
 #include "NuMicro.h"
 
 
-#define KEY_ADDR            0x20000FFC  /* The location of signature */
-#define SIGNATURE           0x21557899  /* The signature word is used by AP code to check if simple LD is finished */
-
-#define CONFIG0_TEST_CODE   0x0F9000FF
-
-#define FUN_TBL_BASE        0x00100E00
+#if (defined(__GNUC__) && !defined(__ARMCC_VERSION))
+void ProcessHardFault(void){}
+void SH_Return(void){}
+#endif
 
 int32_t IAP_Func0(int32_t n);
 int32_t IAP_Func1(int32_t n);

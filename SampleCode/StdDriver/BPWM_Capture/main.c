@@ -277,7 +277,7 @@ int32_t main(void)
         {
             if(--u32TimeOutCnt == 0)
             {
-                printf("Wait for BPWM channel 0 Timer start to count time-out!\n");
+                printf("Wait for BPWM0 channel 0 Timer start to count time-out!\n");
                 goto lexit;
             }
         }
@@ -300,7 +300,7 @@ int32_t main(void)
         {
             if(--u32TimeOutCnt == 0)
             {
-                printf("Wait for BPWM channel 0 Timer Stop time-out!\n");
+                printf("Wait for BPWM1 channel 0 Timer Stop time-out!\n");
                 goto lexit;
             }
         }
@@ -325,7 +325,7 @@ int32_t main(void)
         {
             if(--u32TimeOutCnt == 0)
             {
-                printf("Wait for BPWM channel 0 current counter reach to 0 time-out!\n");
+                printf("Wait for BPWM0 channel 0 current counter reach to 0 time-out!\n");
                 goto lexit;
             }
         }

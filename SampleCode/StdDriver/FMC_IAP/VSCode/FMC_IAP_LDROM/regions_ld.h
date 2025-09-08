@@ -1,5 +1,5 @@
-#ifndef REGIONS_M467HJHAE_H
-#define REGIONS_M467HJHAE_H
+#ifndef REGIONS_NUC1262SE4AE_H
+#define REGIONS_NUC1262SE4AE_H
 
 
 //-------- <<< Use Configuration Wizard in Context Menu >>> --------------------
@@ -16,8 +16,8 @@
 #define __ROM0_BASE 0x0100000
 //   <o> Region size [bytes] <0x0-0xFFFFFFFF:8>
 //   <i> Defines size of memory region.
-//   <i> Default: 0x20000
-#define __ROM0_SIZE 0x20000
+//   <i> Default: 0x1000
+#define __ROM0_SIZE 0x1000
 //   <q>Default region
 //   <i> Enables memory region globally for the application.
 #define __ROM0_DEFAULT 1
@@ -57,4 +57,4 @@
 // </h>
 
 
-#endif /* REGIONS_M2A23SG5AC_H */
+#endif /* REGIONS_NUC1262SE4AE_H */
