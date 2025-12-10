@@ -31,8 +31,6 @@ project:
       files:
         - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/ARM/startup_NUC1262.S
           for-compiler: AC6
-        - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/GCC/startup_NUC1262.S
-          for-compiler: GCC
         - file: ../../../../../Library/Device/Nuvoton/NUC1262/Source/system_NUC1262.c
     - group: Library
       files:

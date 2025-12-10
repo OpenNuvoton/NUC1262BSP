@@ -390,9 +390,9 @@
               <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\system_NUC1262.c</FilePath>
             </File>
             <File>
-              <FileName>startup_NUC1262.s</FileName>
+              <FileName>startup_NUC1262.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.s</FilePath>
+              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -802,9 +802,9 @@
               <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\system_NUC1262.c</FilePath>
             </File>
             <File>
-              <FileName>startup_NUC1262.s</FileName>
+              <FileName>startup_NUC1262.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.s</FilePath>
+              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -1214,9 +1214,9 @@
               <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\system_NUC1262.c</FilePath>
             </File>
             <File>
-              <FileName>startup_NUC1262.s</FileName>
+              <FileName>startup_NUC1262.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.s</FilePath>
+              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -1626,9 +1626,9 @@
               <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\system_NUC1262.c</FilePath>
             </File>
             <File>
-              <FileName>startup_NUC1262.s</FileName>
+              <FileName>startup_NUC1262.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.s</FilePath>
+              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -2038,9 +2038,9 @@
               <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\system_NUC1262.c</FilePath>
             </File>
             <File>
-              <FileName>startup_NUC1262.s</FileName>
+              <FileName>startup_NUC1262.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.s</FilePath>
+              <FilePath>..\..\..\..\Library\Device\Nuvoton\NUC1262\Source\ARM\startup_NUC1262.S</FilePath>
             </File>
           </Files>
         </Group>
