@@ -160,10 +160,8 @@ void I2C_SlaveTRx(uint32_t u32Status)
     I2C_WAIT_SI_CLEAR(I2C0);
 }
 
-
 void SYS_Init(void)
 {
-
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -218,46 +216,39 @@ void UART0_Init()
 }
 
 
-void I2CS_Init_10bit(I2C_T *i2c, uint32_t u32BusClock)
+void I2C0_Init_10bit()
 {
-    uint32_t u32CLK;
+    uint32_t u32Div;
 
-    if(i2c == I2C0)
-    {
-        CLK->APBCLK0 |= (CLK_APBCLK0_I2C0CKEN_Msk);
-        SYS->IPRST1 |= (1<<SYS_IPRST1_I2C0RST_Pos);
-        SYS->IPRST1 &= ~SYS_IPRST1_I2C0RST_Msk;
-    }
-    else if(i2c == I2C1)
-    {
-        CLK->APBCLK0 |= (CLK_APBCLK0_I2C1CKEN_Msk);
-        SYS->IPRST1 |= (1<<SYS_IPRST1_I2C1RST_Pos);
-        SYS->IPRST1 &= ~SYS_IPRST1_I2C1RST_Msk;
-    }
+    /* Reset I2C0 */
+    SYS_ResetModule(I2C0_RST);
 
-    /* Enable I2C1 Controller */
-    i2c->CTL |= I2C_CTL_I2CEN_Msk;
+    /* Enable I2C0 Controller */
+    I2C0->CTL |= I2C_CTL_I2CEN_Msk;
 
-    /* Enable I2C1 10-bit address mode */
-    i2c->CTL1 |= I2C_CTL1_ADDR10EN_Msk;
+    /* Enable I2C0 10-bit address mode */
+    I2C0->CTL1 |= I2C_CTL1_ADDR10EN_Msk;
 
     SystemCoreClockUpdate();
+
+    g_u32PCLKDIV = (CLK->CLKSEL0 & CLK_CLKSEL0_PCLK0SEL_Msk) ? 1 : 0;
     g_u32PCLKClock = SystemCoreClock >> g_u32PCLKDIV;
 
-    /* I2C1 bus clock 100K divider setting, I2CLK = PCLK/(100K*4)-1 */
-    u32CLK = (uint32_t)(((g_u32PCLKClock * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
-    if(u32CLK<4)
-        u32CLK = 4;
-    i2c->CLKDIV = u32CLK;
+    /* I2C0 bus clock 100K divider setting, I2CLK = PCLK/(100K*4)-1 */
+    u32Div = (uint32_t)(((g_u32PCLKClock * 10) / (100000 * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
+    if(u32Div < 4)
+        u32Div = 4;
+    I2C0->CLKDIV = u32Div;
     /* Get I2C0 Bus Clock */
-    printf("I2CS clock %d Hz\n", (g_u32PCLKClock / (((i2c->CLKDIV) + 1) << 2)));
+    printf("I2C clock %d Hz\n", I2C_GetBusClockFreq(I2C0));
 
-    /* Set I2C1 4 Slave Addresses */
-    I2C_SetSlaveAddr(I2C0, 0, 0x115, 0);   /* Slave Address : 0x15 */
-    I2C_SetSlaveAddr(I2C0, 1, 0x135, 0);   /* Slave Address : 0x35 */
-    I2C_SetSlaveAddr(I2C0, 2, 0x155, 0);   /* Slave Address : 0x55 */
-    I2C_SetSlaveAddr(I2C0, 3, 0x175, 0);   /* Slave Address : 0x75 */
+    /* Set I2C0 4 Slave Addresses */
+    I2C_SetSlaveAddr(I2C0, 0, 0x116, 0);   /* Slave Address : 0x116 */
+    I2C_SetSlaveAddr(I2C0, 1, 0x136, 0);   /* Slave Address : 0x136 */
+    I2C_SetSlaveAddr(I2C0, 2, 0x156, 0);   /* Slave Address : 0x156 */
+    I2C_SetSlaveAddr(I2C0, 3, 0x176, 0);   /* Slave Address : 0x176 */
 
+    /* Enable I2C0 interrupt */
     I2C_EnableInt(I2C0);
     NVIC_EnableIRQ(I2C0_IRQn);
 }
@@ -286,7 +277,7 @@ int32_t main(void)
     */
     printf("\n");
     printf("+----------------------------------------------------------------------+\n");
-    printf("| I2C Driver Sample Code (Slave) for wake-up & access Slave test       |\n");
+    printf("| I2C Driver Sample Code (Slave) for wake-up & access Slave 10bit test |\n");
     printf("|                                                                      |\n");
     printf("| I2C Master (I2C0) <---> I2C Slave(I2C0)                              |\n");
     printf("+----------------------------------------------------------------------+\n");
@@ -296,7 +287,7 @@ int32_t main(void)
     printf("I2C0_SDA(PB.4), I2C0_SCL(PA.5)\n");
 
     /* Init I2C0 */
-    I2CS_Init_10bit(I2C0, 100000);
+    I2C0_Init_10bit();
 
     for(i = 0; i < 0x100; i++)
     {
@@ -322,9 +313,8 @@ int32_t main(void)
     g_u8SlvI2CWK = 0;
 
     printf("\n");
-    printf("Any key to enter PD 0x%x 0x%x\n", I2C0->CTL, I2C0->STATUS);
+    printf("Enter PD 0x%x 0x%x\n", I2C0->CTL, I2C0->STATUS);
     printf("\n");
-    getchar();
     printf("CHIP enter power down status.\n");
 
     if(((I2C0->CTL)&I2C_CTL_SI_Msk) != 0)

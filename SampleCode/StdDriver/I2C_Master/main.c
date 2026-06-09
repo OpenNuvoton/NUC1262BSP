@@ -15,9 +15,9 @@
 
 // *** <<< Use Configuration Wizard in Context Menu >>> ***
 // <e> I2C addressing mode transfer
-#define I2C_10Bit_MODE 0
 //  <o> Addressing Mode Interface
 //  <0=> 7-bit <1=> 10-bit
+#define I2C_10Bit_MODE 0
 // </e>
 //*** <<< end of configuration section >>> ***
 

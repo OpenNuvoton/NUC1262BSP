@@ -29,22 +29,22 @@
 const uint8_t g_u8MasterAddr[4] = {0x15, 0x35, 0x55, 0x75};
 const uint8_t g_u8SlaveAddr[4] = {0x18, 0x38, 0x58, 0x78};
 
-uint32_t slave_buff_addr;
-uint8_t g_u8SlvData[256];
-uint8_t g_au8RxData[4];
-uint8_t g_u8DeviceAddr;
-uint8_t g_u8ARA_Addr;
-uint8_t g_au8TxData[4];
-uint8_t g_u8RxData;
-uint8_t g_u8DataLen0;
-uint8_t g_u8DataLen1;
-uint8_t g_u8EndFlag = 0;
-uint8_t g_u8SendPEC = 0;
-uint8_t g_u8AlertInt0 = 0;
-uint8_t g_u8AlertInt1 = 0;
-uint8_t g_u8AlertAddrAck0 = 0;
-uint8_t g_u8AlertAddrAck1 = 0;
-uint8_t g_u8PECErr = 0;
+volatile uint32_t slave_buff_addr;
+volatile uint8_t g_u8SlvData[256];
+volatile uint8_t g_au8RxData[4];
+volatile uint8_t g_u8DeviceAddr;
+volatile uint8_t g_u8ARA_Addr;
+volatile uint8_t g_au8TxData[4];
+volatile uint8_t g_u8RxData;
+volatile uint8_t g_u8DataLen0;
+volatile uint8_t g_u8DataLen1;
+volatile uint8_t g_u8EndFlag = 0;
+volatile uint8_t g_u8SendPEC = 0;
+volatile uint8_t g_u8AlertInt0 = 0;
+volatile uint8_t g_u8AlertInt1 = 0;
+volatile uint8_t g_u8AlertAddrAck0 = 0;
+volatile uint8_t g_u8AlertAddrAck1 = 0;
+volatile uint8_t g_u8PECErr = 0;
 
 typedef void (*I2C_FUNC)(uint32_t u32Status);
 
