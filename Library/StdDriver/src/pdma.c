@@ -153,6 +153,15 @@ void PDMA_SetTransferAddr(uint32_t u32Ch, uint32_t u32SrcAddr, uint32_t u32SrcCt
 void PDMA_SetTransferMode(uint32_t u32Ch, uint32_t u32Peripheral, uint32_t u32ScatterEn, uint32_t u32DescAddr)
 {
     u32ChSelect[u32Ch] = (uint8_t)u32Peripheral;
+
+    if(u32ScatterEn)
+    {
+        PDMA->DSCT[u32Ch].FIRST = u32DescAddr - (PDMA->SCATBA);
+        PDMA->DSCT[u32Ch].CTL = (PDMA->DSCT[u32Ch].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_SCATTER;
+    }
+    else
+        PDMA->DSCT[u32Ch].CTL = (PDMA->DSCT[u32Ch].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_BASIC;
+
     switch(u32Ch)
     {
         case 0:
@@ -187,14 +196,53 @@ void PDMA_SetTransferMode(uint32_t u32Ch, uint32_t u32Peripheral, uint32_t u32Sc
         default:
             ;
     }
+}
 
-    if(u32ScatterEn)
+/**
+ * @brief       Clear PDMA Request Source Select
+ *
+ * @param[in]   u32Ch           The selected channel
+ *
+ * @return      None
+ *
+ * @details     This function clear the request source selection of the selected channel.
+ */
+void PDMA_SetREQSEL(uint32_t u32Ch)
+{
+    switch(u32Ch)
     {
-        PDMA->DSCT[u32Ch].CTL = (PDMA->DSCT[u32Ch].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_SCATTER;
-        PDMA->DSCT[u32Ch].FIRST = u32DescAddr - (PDMA->SCATBA);
+        case 0:
+            PDMA->REQSEL0_3 = (PDMA->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC0_Msk);
+            break;
+        case 1:
+            PDMA->REQSEL0_3 = (PDMA->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC1_Msk);
+            break;
+        case 2:
+            PDMA->REQSEL0_3 = (PDMA->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC2_Msk);
+            break;
+        case 3:
+            PDMA->REQSEL0_3 = (PDMA->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC3_Msk);
+            break;
+        case 4:
+            PDMA->REQSEL4_7 = (PDMA->REQSEL4_7 & ~PDMA_REQSEL4_7_REQSRC4_Msk);
+            break;
+        case 5:
+            PDMA->REQSEL4_7 = (PDMA->REQSEL4_7 & ~PDMA_REQSEL4_7_REQSRC5_Msk);
+            break;
+        case 6:
+            PDMA->REQSEL4_7 = (PDMA->REQSEL4_7 & ~PDMA_REQSEL4_7_REQSRC6_Msk);
+            break;
+        case 7:
+            PDMA->REQSEL4_7 = (PDMA->REQSEL4_7 & ~PDMA_REQSEL4_7_REQSRC7_Msk);
+            break;
+        case 8:
+            PDMA->REQSEL8_9 = (PDMA->REQSEL8_9 & ~PDMA_REQSEL8_9_REQSRC8_Msk);
+            break;
+        case 9:
+            PDMA->REQSEL8_9 = (PDMA->REQSEL8_9 & ~PDMA_REQSEL8_9_REQSRC9_Msk);
+        default:
+            ;
     }
-    else
-        PDMA->DSCT[u32Ch].CTL = (PDMA->DSCT[u32Ch].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_BASIC;
 }
 
 /**
