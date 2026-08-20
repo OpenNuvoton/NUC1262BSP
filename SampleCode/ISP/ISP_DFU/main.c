@@ -126,7 +126,7 @@ int32_t main(void)
                 USBD->INTSTS = USBD_INTSTS_SOFIF_Msk;
 
                 /* Re-enable crystal-less */
-                SYS->IRCTCTL = HIRC_AUTO_TRIM | (8 << SYS_IRCTCTL_BOUNDARY_Pos);
+                SYS->IRCTCTL = HIRC_AUTO_TRIM | (16 << SYS_IRCTCTL_BOUNDARY_Pos);
             }
         }
 
