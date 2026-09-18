@@ -2,10 +2,10 @@
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:04dd75dc-67ae-45f5-a5c1-ad7b87fdaab8",
+  "serialNumber": "urn:uuid:7740ced9-809c-4d0e-8cc5-8be5a8caa519",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-05T17:59:22+08:00",
+    "timestamp": "2026-09-18T16:39:20+08:00",
     "tools": {
       "components": [
         {
@@ -20,7 +20,14 @@
       "bom-ref": "f8571706e7367832",
       "type": "library",
       "name": "MCU Driver",
-      "version": "v3.00.004-dirty",
+      "version": "v3.00.004-4-gc0963d9",
+      "supplier": {
+        "name": "Nuvoton Technology Corp.",
+        "url": [
+          "https://www.nuvoton.com"
+        ]
+      },
+      "purl": "pkg:generic/nuvoton/mcu-driver@v3.00.004-4-gc0963d9",
       "licenses": [
         {
           "license": {
@@ -78,14 +85,43 @@
           "value": "SampleCode/"
         }
       ]
-    }
+    },
+    "lifecycles": [
+      {
+        "phase": "pre-build"
+      }
+    ],
+    "supplier": {
+      "name": "Nuvoton Technology Corp.",
+      "url": [
+        "https://www.nuvoton.com"
+      ]
+    },
+    "authors": [
+      {
+        "name": "Nuvoton Technology Corp."
+      }
+    ]
   },
   "components": [
     {
       "type": "library",
       "bom-ref": "nuc1262bsp:product-component:library-device",
       "name": "nuc1262 Device",
-      "version": "v3.00.004-dirty",
+      "version": "v3.00.004-4-gc0963d9",
+      "supplier": {
+        "name": "Nuvoton Technology Corp.",
+        "url": [
+          "https://www.nuvoton.com"
+        ]
+      },
+      "purl": "pkg:generic/nuvoton/library-device@v3.00.004-4-gc0963d9",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5857b8d312ed1567c7ab93d366afcda45b660f4fe9ff0dc8d1271a126b0136ae"
+        }
+      ],
       "licenses": [
         {
           "license": {
@@ -130,7 +166,20 @@
       "type": "library",
       "bom-ref": "nuc1262bsp:product-component:library-llsiycablelib",
       "name": "nuc1262 LlsiYcableLib",
-      "version": "v3.00.004-dirty",
+      "version": "v3.00.004-4-gc0963d9",
+      "supplier": {
+        "name": "Nuvoton Technology Corp.",
+        "url": [
+          "https://www.nuvoton.com"
+        ]
+      },
+      "purl": "pkg:generic/nuvoton/library-llsiycablelib@v3.00.004-4-gc0963d9",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "31a6a50317d5d5cdb2c128a95f32f374d694eb400789307ee0d7da3e6a0c28ff"
+        }
+      ],
       "licenses": [
         {
           "license": {
@@ -175,7 +224,20 @@
       "type": "library",
       "bom-ref": "nuc1262bsp:product-component:library-stddriver",
       "name": "nuc1262 StdDriver",
-      "version": "v3.00.004-dirty",
+      "version": "v3.00.004-4-gc0963d9",
+      "supplier": {
+        "name": "Nuvoton Technology Corp.",
+        "url": [
+          "https://www.nuvoton.com"
+        ]
+      },
+      "purl": "pkg:generic/nuvoton/library-stddriver@v3.00.004-4-gc0963d9",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bee1cb2d6ea05dcc14b0b12044502c3fdfcef03d0eadd7da660b49c448cc6dd2"
+        }
+      ],
       "licenses": [
         {
           "license": {
@@ -223,6 +285,12 @@
       "version": "5.1.1",
       "scope": "required",
       "author": "Arm Limited",
+      "manufacturer": {
+        "name": "Arm Limited"
+      },
+      "supplier": {
+        "name": "Arm Limited"
+      },
       "purl": "pkg:generic/cmsis@5.1.1",
       "description": "Arm CMSIS vendored in Library/CMSIS, including CMSIS-Core(M), CMSIS-Core(A), CMSIS-DSP Library, CMSIS-Driver, CMSIS-RTOS and CMSIS-RTOS2 API headers, CMSIS-DAP firmware sources, SVD files, Pack metadata/examples, templates, libraries, and documentation.",
       "licenses": [
@@ -269,6 +337,12 @@
           "name": "bsp:version-evidence",
           "value": "Library/CMSIS/Documentation/General/html/index.html; Library/CMSIS/Documentation/General/html/cm_revisionHistory.html"
         }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "faf8d95b5fd4d6153b747aa31b857dbfe25a5133c034611e617dbcfcb0d90a0b"
+        }
       ]
     }
   ],
@@ -281,5 +355,15 @@
         "nuc1262bsp:product-component:library-stddriver"
       ]
     }
-  ]
+  ],
+  "signature": {
+    "algorithm": "Ed25519",
+    "keyId": "wschang0@nuvoton.com",
+    "publicKey": {
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "x": "TgbfwoVHePVjOGkBXjwGXZ8R9W6uukRP7UOt3Sr52QM"
+    },
+    "value": "TFK2DjpBRvcohWA3TSjGJhFdh9vy70qGSqYvxdYuSAuZOYrm2ZyyVqhvxDgzHgCDxFzHYafEipgvJdJ5zHOADA"
+  }
 }
