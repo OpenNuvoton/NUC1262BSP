@@ -2,10 +2,10 @@
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:e2a01788-64ca-4d0c-b537-8a3f5b9e92df",
+  "serialNumber": "urn:uuid:639aef49-18b6-4225-b912-177b00257583",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-18T16:39:25+08:00",
+    "timestamp": "2026-09-18T16:52:10+08:00",
     "tools": {
       "components": [
         {
@@ -20,14 +20,14 @@
       "bom-ref": "f8d6726e7921ef31",
       "type": "application",
       "name": "MCU Test Sample",
-      "version": "v3.00.004-4-gc0963d9",
+      "version": "v3.00.004-4-gb9574a9",
       "supplier": {
         "name": "Nuvoton Technology Corp.",
         "url": [
           "https://www.nuvoton.com"
         ]
       },
-      "purl": "pkg:generic/nuvoton/mcu-test-sample@v3.00.004-4-gc0963d9",
+      "purl": "pkg:generic/nuvoton/mcu-test-sample@v3.00.004-4-gb9574a9",
       "licenses": [
         {
           "license": {
@@ -1409,14 +1409,14 @@
       "type": "application",
       "bom-ref": "nuc1262bsp:test-sample-component:samplecode",
       "name": "nuc1262 SampleCode",
-      "version": "v3.00.004-4-gc0963d9",
+      "version": "v3.00.004-4-gb9574a9",
       "supplier": {
         "name": "Nuvoton Technology Corp.",
         "url": [
           "https://www.nuvoton.com"
         ]
       },
-      "purl": "pkg:generic/nuvoton/samplecode@v3.00.004-4-gc0963d9",
+      "purl": "pkg:generic/nuvoton/samplecode@v3.00.004-4-gb9574a9",
       "hashes": [
         {
           "alg": "SHA-256",
@@ -1902,6 +1902,6 @@
       "crv": "Ed25519",
       "x": "TgbfwoVHePVjOGkBXjwGXZ8R9W6uukRP7UOt3Sr52QM"
     },
-    "value": "Jqq5Nj3NZfu3XAHu4waMtX9zELxsYmdtZ1oiWgT0PGICNMCgV24HsGIIW-3yj2Mnx3JHeQ_smV0dWy_fsd7bBA"
+    "value": "hK2ILKoJFvowCzRL5ZXC-gDEYho8zDLga7UF3lw2h5O5c4wEGi3DaGQb5FW4IqT_q_pvToES7HEyaXDkBPUxAw"
   }
 }

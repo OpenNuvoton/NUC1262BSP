@@ -1,13 +1,13 @@
 {
   "manifestFormat": "MCU-BSP-SBOM-Manifest",
   "manifestVersion": "1.0",
-  "serialNumber": "urn:uuid:4f4f380d-43cf-4d23-90c5-64f53407e271",
-  "createdAt": "2026-09-18T08:39:28.636090Z",
+  "serialNumber": "urn:uuid:3436ac55-1cd5-4f85-9563-b17df9867054",
+  "createdAt": "2026-09-18T08:52:13.347997Z",
   "bsp": {
     "name": "nuc1262bsp",
-    "version": "v3.00.004-4-gc0963d9",
+    "version": "v3.00.004-4-gb9574a9",
     "releaseIdentifierSource": "SBOM file name",
-    "gitDescribe": "v3.00.004-4-gc0963d9"
+    "gitDescribe": "v3.00.004-4-gb9574a9"
   },
   "sbomPackage": {
     "name": "MCU BSP SBOM Package",
@@ -24,14 +24,14 @@
       "sbomType": "Product SBOM",
       "bomFormat": "CycloneDX",
       "specVersion": "1.6",
-      "serialNumber": "urn:uuid:7740ced9-809c-4d0e-8cc5-8be5a8caa519",
+      "serialNumber": "urn:uuid:c9940b94-c522-4d00-8599-cf132a4a39e2",
       "sbomVersion": 1,
-      "generatedTimestamp": "2026-09-18T16:39:20+08:00",
+      "generatedTimestamp": "2026-09-18T16:52:05+08:00",
       "metadataComponent": {
         "bomRef": "f8571706e7367832",
         "type": "library",
         "name": "MCU Driver",
-        "version": "v3.00.004-4-gc0963d9",
+        "version": "v3.00.004-4-gb9574a9",
         "properties": [
           {
             "name": "bsp:sbom-category",
@@ -96,7 +96,7 @@
       },
       "hash": {
         "algorithm": "SHA-256",
-        "value": "d5a3a7a6062ffb47b63f87b2645ceab0b7b84373440621bd1692953d8599e9e0"
+        "value": "2e3c4abcf38e342c65c26aac218f3aa40a349d46cdfc4b3e9e8477e5f83ba96d"
       }
     },
     {
@@ -104,14 +104,14 @@
       "sbomType": "Test Sample SBOM",
       "bomFormat": "CycloneDX",
       "specVersion": "1.6",
-      "serialNumber": "urn:uuid:e2a01788-64ca-4d0c-b537-8a3f5b9e92df",
+      "serialNumber": "urn:uuid:639aef49-18b6-4225-b912-177b00257583",
       "sbomVersion": 1,
-      "generatedTimestamp": "2026-09-18T16:39:25+08:00",
+      "generatedTimestamp": "2026-09-18T16:52:10+08:00",
       "metadataComponent": {
         "bomRef": "f8d6726e7921ef31",
         "type": "application",
         "name": "MCU Test Sample",
-        "version": "v3.00.004-4-gc0963d9",
+        "version": "v3.00.004-4-gb9574a9",
         "properties": [
           {
             "name": "bsp:sbom-category",
@@ -169,7 +169,7 @@
       },
       "hash": {
         "algorithm": "SHA-256",
-        "value": "e137658e907d7971cfc758a3e2b253dab2768e19a6a6bae5eb29e1ee94afbf9c"
+        "value": "8737135d07ce57035a3b5e45341054fad9cad64ddc92ea5443339a7673724956"
       },
       "relationshipToProductSbom": {
         "usesProductComponents": true,
