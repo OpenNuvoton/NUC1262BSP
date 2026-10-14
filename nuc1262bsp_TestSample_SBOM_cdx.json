@@ -2,10 +2,10 @@
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:639aef49-18b6-4225-b912-177b00257583",
+  "serialNumber": "urn:uuid:b86ab80f-bf7c-461e-9ce5-25ca84ae7bed",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-18T16:52:10+08:00",
+    "timestamp": "2026-10-14T14:13:03+08:00",
     "tools": {
       "components": [
         {
@@ -20,14 +20,14 @@
       "bom-ref": "f8d6726e7921ef31",
       "type": "application",
       "name": "MCU Test Sample",
-      "version": "v3.00.004-4-gb9574a9",
+      "version": "v3.00.004-5-gce3955c",
       "supplier": {
         "name": "Nuvoton Technology Corp.",
         "url": [
           "https://www.nuvoton.com"
         ]
       },
-      "purl": "pkg:generic/nuvoton/mcu-test-sample@v3.00.004-4-gb9574a9",
+      "purl": "pkg:generic/nuvoton/mcu-test-sample@v3.00.004-5-gce3955c",
       "licenses": [
         {
           "license": {
@@ -1409,14 +1409,14 @@
       "type": "application",
       "bom-ref": "nuc1262bsp:test-sample-component:samplecode",
       "name": "nuc1262 SampleCode",
-      "version": "v3.00.004-4-gb9574a9",
+      "version": "v3.00.004-5-gce3955c",
       "supplier": {
         "name": "Nuvoton Technology Corp.",
         "url": [
           "https://www.nuvoton.com"
         ]
       },
-      "purl": "pkg:generic/nuvoton/samplecode@v3.00.004-4-gb9574a9",
+      "purl": "pkg:generic/nuvoton/samplecode@v3.00.004-5-gce3955c",
       "hashes": [
         {
           "alg": "SHA-256",
@@ -1895,13 +1895,14 @@
     }
   ],
   "signature": {
-    "algorithm": "Ed25519",
+    "algorithm": "ES256",
     "keyId": "wschang0@nuvoton.com",
     "publicKey": {
-      "kty": "OKP",
-      "crv": "Ed25519",
-      "x": "TgbfwoVHePVjOGkBXjwGXZ8R9W6uukRP7UOt3Sr52QM"
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "Yjak-cZfA8dgOThPETOK7jyK7VE8E8jz8BnURXS2h24",
+      "y": "QfyRtTn7Hdbu7YoOOEVRKP_PFTXZVFQ12TW8E5rO_pU"
     },
-    "value": "hK2ILKoJFvowCzRL5ZXC-gDEYho8zDLga7UF3lw2h5O5c4wEGi3DaGQb5FW4IqT_q_pvToES7HEyaXDkBPUxAw"
+    "value": "3rmeuCZDd5_alVpDj8l30P1PNa5qAzmXbF189Fn-A3JN0YiAbKhoFI8A1HDonW54pmatfQ_YAX9XE5naq07qQQ"
   }
 }
